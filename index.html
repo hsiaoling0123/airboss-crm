@@ -12,16 +12,27 @@
             letter-spacing: 0.02em;
         } 
     </style>
+    <script>
+        // 🔒 未登入檢查機制
+        const user = localStorage.getItem('airboss_user');
+        if (!user) {
+            window.location.href = 'login.html';
+        }
+    </script>
 </head>
 <body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-12">
 
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-5 shadow-sm rounded-b-[2rem] text-center relative">
+        <button onclick="logout()" class="absolute top-4 right-4 text-[11px] bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full font-bold transition-all">
+            登出 🚪
+        </button>
         <div class="inline-block bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-xs font-bold tracking-wider mb-1">
             ✨ 冷氣維修與保養小助手
         </div>
         <h1 class="text-2xl font-extrabold tracking-wide flex items-center justify-center gap-2">
             ❄️ AirBoss CRM 🐻
         </h1>
+        <p id="userTag" class="text-[10px] text-white/80 font-bold mt-1"></p>
     </header>
 
     <main class="max-w-md mx-auto p-5 space-y-6">
@@ -100,6 +111,18 @@
     </main>
 
     <script>
+        const userData = JSON.parse(localStorage.getItem('airboss_user'));
+        if (userData && userData.email) {
+            document.getElementById('userTag').textContent = `使用者：${userData.email}`;
+        }
+
+        function logout() {
+            if (confirm('確定要登出系統嗎？')) {
+                localStorage.removeItem('airboss_user');
+                window.location.href = 'login.html';
+            }
+        }
+
         document.getElementById('todayDate').textContent = new Date().toLocaleDateString('zh-TW', { month: 'short', day: 'numeric', weekday: 'short' });
 
         const customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];

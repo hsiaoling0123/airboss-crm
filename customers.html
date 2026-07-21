@@ -22,91 +22,61 @@
     <!-- 主要內容 -->
     <main class="max-w-md mx-auto p-4 space-y-4">
         
-        <!-- 搜尋列 -->
-        <div class="relative">
-            <input type="text" placeholder="🔍 搜尋客戶姓名、電話、地址..." class="w-full p-3 pl-4 bg-white border border-slate-200 rounded-xl shadow-sm text-sm focus:outline-none focus:border-blue-500">
+        <!-- 客戶卡片列表 -->
+        <div id="customerList" class="space-y-3">
+            <!-- JavaScript 會自動將 LocalStorage 的客戶資料繪製在這裡 -->
         </div>
 
-        <!-- 客戶卡片列表 (範例資料) -->
-        <div class="space-y-3">
-            
-            <!-- 卡片 1 -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-2">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-bold text-slate-900 text-base">陳先生</h3>
-                            <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded font-medium">一般客戶</span>
-                        </div>
-                        <p class="text-xs text-slate-500 mt-1">📞 0912-345-678</p>
-                    </div>
-                    <a href="tel:0912345678" class="bg-emerald-50 text-emerald-600 p-2 rounded-lg text-xs font-bold flex items-center gap-1 border border-emerald-200">
-                        📞 打電話
-                    </a>
-                </div>
-                
-                <p class="text-xs text-slate-600 flex items-start gap-1">
-                    📍 <span>新北市板橋區文化路一段 100 號</span>
-                </p>
-
-                <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
-                    <span>上次保養：2025-06-15</span>
-                    <span class="text-blue-600 font-medium">保養設備：3 台</span>
-                </div>
-            </div>
-
-            <!-- 卡片 2 -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-2">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-bold text-slate-900 text-base">林小姐</h3>
-                            <span class="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded font-medium">VIP客戶</span>
-                        </div>
-                        <p class="text-xs text-slate-500 mt-1">📞 0988-765-432</p>
-                    </div>
-                    <a href="tel:0988765432" class="bg-emerald-50 text-emerald-600 p-2 rounded-lg text-xs font-bold flex items-center gap-1 border border-emerald-200">
-                        📞 打電話
-                    </a>
-                </div>
-                
-                <p class="text-xs text-slate-600 flex items-start gap-1">
-                    📍 <span>台北市大安區信義路四段 250 號</span>
-                </p>
-
-                <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
-                    <span>上次保養：2025-08-20</span>
-                    <span class="text-blue-600 font-medium">保養設備：2 台</span>
-                </div>
-            </div>
-
-            <!-- 卡片 3 -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-2">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-bold text-slate-900 text-base">鼎泰豐板橋店</h3>
-                            <span class="bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded font-medium">商業客戶</span>
-                        </div>
-                        <p class="text-xs text-slate-500 mt-1">📞 02-8951-2345</p>
-                    </div>
-                    <a href="tel:0289512345" class="bg-emerald-50 text-emerald-600 p-2 rounded-lg text-xs font-bold flex items-center gap-1 border border-emerald-200">
-                        📞 打電話
-                    </a>
-                </div>
-                
-                <p class="text-xs text-slate-600 flex items-start gap-1">
-                    📍 <span>新北市板橋區新站路 28 號 B1</span>
-                </p>
-
-                <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
-                    <span>上次保養：2026-01-10</span>
-                    <span class="text-blue-600 font-medium">保養設備：8 台</span>
-                </div>
-            </div>
-
-        </div>
     </main>
+
+    <!-- 自動讀取資料的 JavaScript -->
+    <script>
+        function renderCustomers() {
+            const listContainer = document.getElementById('customerList');
+            const customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
+
+            if (customers.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="bg-white p-8 rounded-xl shadow-sm text-center border border-slate-200">
+                        <p class="text-slate-500 text-sm font-medium mb-3">目前還沒有客戶資料喔！</p>
+                        <a href="add-customer.html" class="inline-block bg-blue-600 text-white text-xs px-4 py-2 rounded-lg font-bold">
+                            + 建立第一筆客戶
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = customers.map(c => `
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-slate-900 text-base">${c.name}</h3>
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded font-medium">${c.category || '一般客戶'}</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">📞 ${c.phone}</p>
+                        </div>
+                        <a href="tel:${c.phone}" class="bg-emerald-50 text-emerald-600 p-2 rounded-lg text-xs font-bold flex items-center gap-1 border border-emerald-200">
+                            📞 打電話
+                        </a>
+                    </div>
+                    
+                    <p class="text-xs text-slate-600 flex items-start gap-1">
+                        📍 <span>${c.address || '未填寫地址'}</span>
+                    </p>
+
+                    <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
+                        <span>建立時間：${c.date}</span>
+                        <span class="text-slate-400 truncate max-w-[150px]">${c.note ? '備註: ' + c.note : ''}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 頁面載入時自動執行
+        document.addEventListener('DOMContentLoaded', renderCustomers);
+    </script>
 
 </body>
 </html>

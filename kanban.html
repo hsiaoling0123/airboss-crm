@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拖曳派工看板 - AirBoss CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入流暢的手機拖曳庫 HTML5Sortable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5sortable/0.13.3/html5sortable.min.js"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 pb-12">
+
+    <!-- 頂部導覽列 -->
+    <header class="bg-blue-600 text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
+        <a href="index.html" class="text-sm bg-blue-700 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1">
+            ‹ 返回首頁
+        </a>
+        <h1 class="text-lg font-bold">📅 週拖曳派工看板</h1>
+        <a href="create-order.html" class="text-sm bg-emerald-500 hover:bg-emerald-400 px-3 py-1.5 rounded-lg font-medium">
+            + 開單
+        </a>
+    </header>
+
+    <!-- 看板主要內容區（橫向滾動容器） -->
+    <main class="p-4 overflow-x-auto">
+        <div class="flex gap-4 min-w-[1200px] items-start">
+
+            <!-- 未排程欄位 -->
+            <div class="w-72 bg-slate-200/80 p-3 rounded-2xl flex-shrink-0 border border-slate-300">
+                <div class="flex justify-between items-center mb-3 px-1">
+                    <h2 class="font-bold text-slate-700 text-sm flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> 待排程工單
+                    </h2>
+                    <span id="count-unassigned" class="bg-slate-300 text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                </div>
+                <div id="col-unassigned" data-day="待排程" class="kanban-col space-y-3 min-h-[350px] p-1 transition-colors">
+                    <!-- 動態渲染工單 -->
+                </div>
+            </div>
+
+            <!-- 週一至週日欄位 -->
+            <script>
+                const days = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
+                days.forEach(day => {
+                    document.write(`
+                        <div class="w-72 bg-blue-50/70 p-3 rounded-2xl flex-shrink-0 border border-blue-200/60">
+                            <div class="flex justify-between items-center mb-3 px-1">
+                                <h2 class="font-bold text-blue-900 text-sm flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> ${day}
+                                </h2>
+                                <span id="count-${day}" class="bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                            </div>
+                            <div id="col-${day}" data-day="${day}" class="kanban-col space-y-3 min-h-[350px] p-1 transition-colors">
+                            </div>
+                        </div>
+                    `);
+                });
+            </script>
+
+            <!-- 已完成欄位 -->
+            <div class="w-72 bg-emerald-50/80 p-3 rounded-2xl flex-shrink-0 border border-emerald-200">
+                <div class="flex justify-between items-center mb-3 px-1">
+                    <h2 class="font-bold text-emerald-800 text-sm flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 已完工
+                    </h2>
+                    <span id="count-completed" class="bg-emerald-200 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                </div>
+                <div id="col-completed" data-day="已完工" class="kanban-col space-y-3 min-h-[350px] p-1 transition-colors">
+                    <!-- 動態渲染工單 -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let orders = JSON.parse(localStorage.getItem('airboss_orders')) || [];
+
+        function renderKanban() {
+            // 清空所有欄位
+            document.querySelectorAll('.kanban-col').forEach(col => col.innerHTML = '');
+
+            // 依據 assignedDay 填入工單卡片
+            orders.forEach(order => {
+                const dayGroup = order.assignedDay || '待排程';
+                let colEl = document.querySelector(`[data-day="${dayGroup}"]`);
+                if (!colEl) colEl = document.getElementById('col-unassigned');
+
+                const cardHtml = `
+                    <div data-id="${order.id}" class="kanban-card bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 cursor-grab active:cursor-grabbing hover:shadow-md transition-all space-y-2">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-slate-900 text-sm">${order.customerName}</h3>
+                            <span class="text-xs font-bold text-emerald-600">NT$ ${Number(order.price || 0).toLocaleString()}</span>
+                        </div>
+                        <p class="text-xs text-blue-600 font-medium">🔧 ${order.serviceType}</p>
+                        <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-[10px] text-slate-400">
+                            <span>📅 ${order.date || '無日期'}</span>
+                            <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">${order.status || '待處理'}</span>
+                        </div>
+                    </div>
+                `;
+                colEl.insertAdjacentHTML('beforeend', cardHtml);
+            });
+
+            updateCounts();
+            initSortable();
+        }
+
+        function updateCounts() {
+            document.querySelectorAll('.kanban-col').forEach(col => {
+                const day = col.getAttribute('data-day');
+                const count = col.children.length;
+                const countEl = document.getElementById(`count-${day === '待排程' ? 'unassigned' : day === '已完工' ? 'completed' : day}`);
+                if (countEl) countEl.textContent = count;
+            });
+        }
+
+        function initSortable() {
+            // 啟用跨欄位拖曳連動
+            sortable('.kanban-col', {
+                acceptFrom: '.kanban-col',
+                items: '.kanban-card',
+                placeholderClass: 'bg-blue-100/60 border-2 border-dashed border-blue-400 rounded-xl mb-3'
+            });
+
+            // 監聽拖曳放下事件，即時更新 LocalStorage
+            document.querySelectorAll('.kanban-col').forEach(col => {
+                col.addEventListener('sortupdate', function(e) {
+                    const targetDay = e.target.getAttribute('data-day');
+                    const cardEl = e.detail.item;
+                    const orderId = Number(cardEl.getAttribute('data-id'));
+
+                    // 更新記憶體資料
+                    let order = orders.find(o => o.id === orderId);
+                    if (order) {
+                        order.assignedDay = targetDay;
+                        if (targetDay === '已完工') {
+                            order.status = '已完工';
+                        }
+                        localStorage.setItem('airboss_orders', JSON.stringify(orders));
+                    }
+                    updateCounts();
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', renderKanban);
+    </script>
+
+</body>
+</html>

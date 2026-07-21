@@ -15,7 +15,6 @@
 </head>
 <body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-12">
 
-    <!-- 頂部導覽列 -->
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-50 flex justify-between items-center rounded-b-2xl">
         <div class="flex items-center gap-2">
             <span class="text-2xl">❄️</span>
@@ -29,7 +28,6 @@
         </button>
     </header>
 
-    <!-- 側邊欄抽屜 -->
     <div id="drawerOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-slate-900/40 opacity-0 pointer-events-none transition-opacity duration-300 z-50"></div>
     <aside id="drawer" class="fixed top-0 right-0 w-64 h-full bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50 p-5 flex flex-col justify-between">
         <div class="space-y-4">
@@ -42,16 +40,19 @@
                     <span>🏠</span> 系統首頁
                 </a>
                 <a href="create-order.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
-                    <span>➕</span> 新增派工單
+                    <span>✍️</span> 新增派工單
                 </a>
                 <a href="kanban.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
-                    <span>📅</span> 派工行程與推播
+                    <span>📅</span> 派工行程與分析
                 </a>
                 <a href="customers.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
-                    <span>👤</span> 客戶檔案與照片
+                    <span>🖼️</span> 客戶與施工照片
                 </a>
                 <a href="inventory.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
                     <span>🧰</span> 零組件與耗材庫存
+                </a>
+                <a href="marketing.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
+                    <span>📢</span> 每日行銷中心 (IG/FB/LINE/短影片)
                 </a>
                 <a href="reminders.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
                     <span>🗓️</span> 定期保養回訪提醒
@@ -65,7 +66,6 @@
 
     <main class="max-w-md mx-auto p-4 space-y-4">
 
-        <!-- 歡迎卡片 -->
         <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-5 rounded-3xl border border-amber-100 flex items-center justify-between">
             <div>
                 <h2 class="font-black text-sm text-amber-900">歡迎使用 AirBoss ☕</h2>
@@ -74,10 +74,8 @@
             <div class="text-3xl">🐻❄️</div>
         </div>
 
-        <!-- 功能快捷網格 (捷徑門) -->
         <div class="grid grid-cols-2 gap-3">
 
-            <!-- 1. 新增派工單 -->
             <a href="create-order.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md transition-all flex flex-col justify-between h-28">
                 <div class="text-2xl">✍️</div>
                 <div>
@@ -86,61 +84,10 @@
                 </div>
             </a>
 
-            <!-- 2. 派工行程看板 -->
             <a href="kanban.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md transition-all flex flex-col justify-between h-28">
                 <div class="text-2xl">📅</div>
                 <div>
-                    <h3 class="font-black text-xs text-slate-800">派工看板 / 推播</h3>
-                    <p class="text-[10px] text-slate-400 font-bold">即時行程與雲端通知</p>
+                    <h3 class="font-black text-xs text-slate-800">派工看板 / 分析</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">營收統計與拖曳行程</p>
                 </div>
             </a>
-
-            <!-- 3. 客戶檔案與照片 -->
-            <a href="customers.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md transition-all flex flex-col justify-between h-28">
-                <div class="text-2xl">🖼️</div>
-                <div>
-                    <h3 class="font-black text-xs text-slate-800">客戶與施工照片</h3>
-                    <p class="text-[10px] text-slate-400 font-bold">前後比對與歷程紀錄</p>
-                </div>
-            </a>
-
-            <!-- 4. 耗材庫存 -->
-            <a href="inventory.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md transition-all flex flex-col justify-between h-28">
-                <div class="text-2xl">🧰</div>
-                <div>
-                    <h3 class="font-black text-xs text-slate-800">零組件與冷媒庫存</h3>
-                    <p class="text-[10px] text-slate-400 font-bold">備料追蹤與數量扣減</p>
-                </div>
-            </a>
-
-            <!-- 5. 定期保養提醒 (滿寬卡片) -->
-            <a href="reminders.html" class="col-span-2 bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 rounded-3xl shadow-sm hover:shadow-md transition-all flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <span class="text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">CRM 行銷</span>
-                    <h3 class="font-black text-sm pt-1">🗓️ 定期保養智慧回訪提醒</h3>
-                    <p class="text-[10px] text-white/90 font-bold">自動抓出滿 10 個月未保養舊客，一鍵送優惠</p>
-                </div>
-                <div class="text-2xl">🚀</div>
-            </a>
-
-        </div>
-
-    </main>
-
-    <script>
-        function toggleDrawer() {
-            const drawer = document.getElementById('drawer');
-            const overlay = document.getElementById('drawerOverlay');
-            const isOpen = !drawer.classList.contains('translate-x-full');
-
-            if (isOpen) {
-                drawer.classList.add('translate-x-full');
-                overlay.classList.add('opacity-0', 'pointer-events-none');
-            } else {
-                drawer.classList.remove('translate-x-full');
-                overlay.classList.remove('opacity-0', 'pointer-events-none');
-            }
-        }
-    </script>
-</body>
-</html>

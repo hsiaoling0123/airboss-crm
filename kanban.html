@@ -9,7 +9,6 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 pb-12">
 
-    <!-- 頂部導覽列 -->
     <header class="bg-blue-600 text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
         <a href="index.html" class="text-sm bg-blue-700 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1">
             ‹ 返回首頁
@@ -20,16 +19,13 @@
         </a>
     </header>
 
-    <!-- 視角切換 & 控制列 -->
     <div class="bg-white border-b border-slate-200 px-4 py-2.5 flex flex-col gap-2 shadow-sm sticky top-[60px] z-40">
-        <!-- 切換按鈕 -->
         <div class="flex bg-slate-100 p-1 rounded-xl gap-1">
             <button onclick="switchView('day')" id="btn-day" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-600">本日焦點</button>
             <button onclick="switchView('week')" id="btn-week" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-600">本週看板</button>
             <button onclick="switchView('month')" id="btn-month" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-600">本月月曆</button>
         </div>
 
-        <!-- 日期導覽列 -->
         <div class="flex justify-between items-center px-1">
             <button onclick="navigateDate(-1)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg font-bold">‹ 上一個</button>
             <span id="dateRangeText" class="text-xs font-bold text-slate-800">載入中...</span>
@@ -37,21 +33,24 @@
         </div>
     </div>
 
-    <!-- 主要內容區 -->
-    <main class="p-4 max-w-4xl mx-auto">
-        
-        <!-- 視角 1：本日檢視 -->
-        <div id="view-day" class="hidden space-y-4">
-            <div class="bg-blue-600 text-white p-4 rounded-2xl shadow">
-                <p class="text-xs text-blue-100">今日預估總營收</p>
-                <p id="dayTotalRevenue" class="text-2xl font-black mt-0.5">NT$ 0</p>
+    <main class="p-4 max-w-4xl mx-auto space-y-4">
+
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-2xl shadow-md flex justify-between items-center">
+            <div>
+                <p id="statLabel" class="text-xs text-blue-100">今日預估總營收</p>
+                <p id="statTotalRevenue" class="text-2xl font-black mt-0.5">NT$ 0</p>
             </div>
-            <div id="dayOrdersList" class="space-y-3">
-                <!-- 動態繪製當日工單 -->
+            <div class="text-right">
+                <p class="text-xs text-blue-100">工單數量</p>
+                <p id="statTotalOrders" class="text-lg font-bold mt-0.5">0 單</p>
             </div>
         </div>
+        
+        <div id="view-day" class="hidden space-y-3">
+            <div id="dayOrdersList" class="space-y-3">
+                </div>
+        </div>
 
-        <!-- 視角 2：本週拖曳看板 -->
         <div id="view-week" class="hidden overflow-x-auto">
             <div class="flex gap-4 min-w-[1400px] items-start">
                 <div class="w-72 bg-slate-200/80 p-3 rounded-2xl flex-shrink-0 border border-slate-300">
@@ -78,21 +77,19 @@
             </div>
         </div>
 
-        <!-- 視角 3：本月月曆檢視 -->
         <div id="view-month" class="hidden bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
             <div class="grid grid-cols-7 text-center font-bold text-xs text-slate-500 pb-2 border-b">
                 <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
             </div>
             <div id="monthGrid" class="grid grid-cols-7 gap-1 text-center">
-                <!-- 動態生成月曆格子 -->
-            </div>
+                </div>
         </div>
 
     </main>
 
     <script>
         let currentMode = 'week'; // 預設視角 'day' | 'week' | 'month'
-        let currentDate = new Date(); // 當前錨點日期
+        let currentDate = new Date();
         let orders = JSON.parse(localStorage.getItem('airboss_orders')) || [];
 
         function formatDate(d) {
@@ -147,10 +144,13 @@
         function renderDayView() {
             const targetDateStr = formatDate(currentDate);
             document.getElementById('dateRangeText').textContent = `${currentDate.getMonth() + 1}月${currentDate.getDate()}日 (今日行程)`;
+            document.getElementById('statLabel').textContent = '今日預估總營收';
 
             const dayOrders = orders.filter(o => o.date === targetDateStr);
             const totalRev = dayOrders.reduce((sum, o) => sum + Number(o.price || 0), 0);
-            document.getElementById('dayTotalRevenue').textContent = `NT$ ${totalRev.toLocaleString()}`;
+            
+            document.getElementById('statTotalRevenue').textContent = `NT$ ${totalRev.toLocaleString()}`;
+            document.getElementById('statTotalOrders').textContent = `${dayOrders.length} 單`;
 
             const listEl = document.getElementById('dayOrdersList');
             if (dayOrders.length === 0) {
@@ -158,7 +158,6 @@
                 return;
             }
 
-            // 按時間排序
             dayOrders.sort((a,b) => (a.time || '00:00').localeCompare(b.time || '00:00'));
 
             listEl.innerHTML = dayOrders.map(o => `
@@ -179,6 +178,21 @@
         // 2. 本週看板檢視
         function renderWeekView() {
             const monday = getMonday(currentDate);
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+
+            document.getElementById('dateRangeText').textContent = `${monday.getMonth() + 1}/${monday.getDate()} ~ ${sunday.getMonth() + 1}/${sunday.getDate()}`;
+            document.getElementById('statLabel').textContent = '本週預估總營收';
+
+            // 計算本週營收與工單量
+            const mondayStr = formatDate(monday);
+            const sundayStr = formatDate(sunday);
+            const weekOrders = orders.filter(o => o.date >= mondayStr && o.date <= sundayStr);
+            const totalRev = weekOrders.reduce((sum, o) => sum + Number(o.price || 0), 0);
+
+            document.getElementById('statTotalRevenue').textContent = `NT$ ${totalRev.toLocaleString()}`;
+            document.getElementById('statTotalOrders').textContent = `${weekOrders.length} 單`;
+
             const weekContainer = document.getElementById('weekColumns');
             weekContainer.innerHTML = '';
 
@@ -201,10 +215,6 @@
                     </div>
                 `;
             }
-
-            const sunday = new Date(monday);
-            sunday.setDate(monday.getDate() + 6);
-            document.getElementById('dateRangeText').textContent = `${monday.getMonth() + 1}/${monday.getDate()} ~ ${sunday.getMonth() + 1}/${sunday.getDate()}`;
 
             document.getElementById('col-unassigned').innerHTML = '';
             document.getElementById('col-completed').innerHTML = '';
@@ -235,7 +245,17 @@
         function renderMonthView() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
+            
             document.getElementById('dateRangeText').textContent = `${year} 年 ${month + 1} 月`;
+            document.getElementById('statLabel').textContent = '本月預估總營收';
+
+            // 計算本月營收與工單量
+            const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+            const monthOrders = orders.filter(o => o.date && o.date.startsWith(monthPrefix));
+            const totalRev = monthOrders.reduce((sum, o) => sum + Number(o.price || 0), 0);
+
+            document.getElementById('statTotalRevenue').textContent = `NT$ ${totalRev.toLocaleString()}`;
+            document.getElementById('statTotalOrders').textContent = `${monthOrders.length} 單`;
 
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -243,12 +263,10 @@
             const gridEl = document.getElementById('monthGrid');
             gridEl.innerHTML = '';
 
-            // 補空格
             for (let i = 0; i < firstDay; i++) {
                 gridEl.innerHTML += `<div class="h-16 bg-slate-50/50 rounded-lg"></div>`;
             }
 
-            // 填入日期與工單數量
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const count = orders.filter(o => o.date === dateStr).length;
@@ -285,6 +303,7 @@
                         localStorage.setItem('airboss_orders', JSON.stringify(orders));
                     }
                     updateCounts();
+                    render(); // 移動卡片後自動重新計算預估營收
                 });
             });
         }

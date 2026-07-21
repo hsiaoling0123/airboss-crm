@@ -13,26 +13,30 @@
         } 
     </style>
 </head>
-<body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-12">
+<body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-16">
 
+    <!-- 頂部導覽列 -->
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-50 flex justify-between items-center rounded-b-2xl">
         <div class="flex items-center gap-2">
             <span class="text-2xl">❄️</span>
             <div>
                 <h1 class="text-base font-black tracking-wide">AirBoss CRM</h1>
-                <p class="text-[10px] opacity-90 font-bold">冷氣空調管理系統</p>
+                <p class="text-[10px] opacity-90 font-bold">冷氣空調智慧管理系統</p>
             </div>
         </div>
-        <button onclick="toggleDrawer()" class="p-2 bg-white/20 hover:bg-white/30 rounded-xl transition-all">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        </button>
+        <div class="flex items-center gap-2">
+            <button onclick="toggleDrawer()" class="p-2 bg-white/20 hover:bg-white/30 rounded-xl transition-all">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
     </header>
 
+    <!-- 側邊欄抽屜 (Drawer) -->
     <div id="drawerOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-slate-900/40 opacity-0 pointer-events-none transition-opacity duration-300 z-50"></div>
     <aside id="drawer" class="fixed top-0 right-0 w-64 h-full bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50 p-5 flex flex-col justify-between">
         <div class="space-y-4">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                <span class="font-black text-sm text-slate-800">🌸 系統選單</span>
+                <span class="font-black text-sm text-slate-800">🌸 系統功能選單</span>
                 <button onclick="toggleDrawer()" class="text-slate-400 font-bold text-xs">✕ 關閉</button>
             </div>
             <nav class="space-y-1 text-xs font-bold">
@@ -40,54 +44,162 @@
                     <span>🏠</span> 系統首頁
                 </a>
                 <a href="create-order.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
-                    <span>✍️</span> 新增派工單
+                    <span>✍️</span> 新增派工與報價
                 </a>
                 <a href="kanban.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
-                    <span>📅</span> 派工行程與分析
+                    <span>📅</span> 派工行程與完工回報
                 </a>
                 <a href="customers.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
-                    <span>🖼️</span> 客戶與施工照片
+                    <span>🖼️</span> 客戶檔案與施工照片
                 </a>
                 <a href="inventory.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
                     <span>🧰</span> 零組件與耗材庫存
                 </a>
                 <a href="marketing.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
-                    <span>📢</span> 每日行銷中心 (IG/FB/LINE/短影片)
+                    <span>📢</span> 每日行銷中心 (社群打勾)
                 </a>
                 <a href="reminders.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
-                    <span>🗓️</span> 定期保養回訪提醒
+                    <span>🗓️</span> 定期保養智慧提醒
                 </a>
             </nav>
         </div>
-        <div class="text-[10px] text-slate-400 font-bold text-center border-t border-slate-100 pt-3">
-            AirBoss CRM v10.8 Cloud Edition
+
+        <div class="space-y-3">
+            <div class="p-3 bg-slate-50 rounded-2xl text-[11px] space-y-1 border border-slate-100">
+                <p class="text-slate-400 font-bold">🔑 目前登入者</p>
+                <p id="userEmailDisplay" class="font-black text-slate-700 truncate">載入中...</p>
+            </div>
+            <button onclick="handleLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-black py-2.5 rounded-xl text-xs transition-all">
+                🚪 安全登出系統
+            </button>
+            <div class="text-[10px] text-slate-400 font-bold text-center border-t border-slate-100 pt-2">
+                AirBoss CRM v10.8 Cloud Edition
+            </div>
         </div>
     </aside>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
 
+        <!-- 歡迎面板 -->
         <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-5 rounded-3xl border border-amber-100 flex items-center justify-between">
             <div>
                 <h2 class="font-black text-sm text-amber-900">歡迎使用 AirBoss ☕</h2>
-                <p class="text-xs text-amber-700 font-bold mt-1">智慧化冷氣保養與客戶管理中心</p>
+                <p class="text-xs text-amber-700 font-bold mt-1">智慧派工、施工照片、社群行銷一站整合</p>
             </div>
             <div class="text-3xl">🐻❄️</div>
         </div>
 
+        <!-- 8 大核心功能卡片網格 -->
         <div class="grid grid-cols-2 gap-3">
 
-            <a href="create-order.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md transition-all flex flex-col justify-between h-28">
+            <!-- 1. 新增派工與報價 -->
+            <a href="create-order.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between h-28">
                 <div class="text-2xl">✍️</div>
                 <div>
-                    <h3 class="font-black text-xs text-slate-800">新增派工單</h3>
-                    <p class="text-[10px] text-slate-400 font-bold">自動發送 LINE 通知</p>
+                    <h3 class="font-black text-xs text-slate-800">新增派工與報價</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">LINE 預約/報價單發送</p>
                 </div>
             </a>
 
-            <a href="kanban.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md transition-all flex flex-col justify-between h-28">
+            <!-- 2. 派工看板與完工回報 -->
+            <a href="kanban.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between h-28">
                 <div class="text-2xl">📅</div>
                 <div>
-                    <h3 class="font-black text-xs text-slate-800">派工看板 / 分析</h3>
-                    <p class="text-[10px] text-slate-400 font-bold">營收統計與拖曳行程</p>
+                    <h3 class="font-black text-xs text-slate-800">派工行程與完工</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">點擊回報金額與收據</p>
                 </div>
             </a>
+
+            <!-- 3. 客戶檔案與施工照片 -->
+            <a href="customers.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between h-28">
+                <div class="text-2xl">🖼️</div>
+                <div>
+                    <h3 class="font-black text-xs text-slate-800">客戶與施工照片</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Before/After 前後對比</p>
+                </div>
+            </a>
+
+            <!-- 4. 零組件與冷媒庫存 -->
+            <a href="inventory.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between h-28">
+                <div class="text-2xl">🧰</div>
+                <div>
+                    <h3 class="font-black text-xs text-slate-800">耗材與冷媒庫存</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">冷媒/電容加減數量追蹤</p>
+                </div>
+            </a>
+
+            <!-- 5. 📢 每日行銷中心卡片 -->
+            <a href="marketing.html" class="col-span-2 bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 rounded-3xl shadow-sm hover:shadow-md transition-all flex items-center justify-between">
+                <div class="space-y-0.5">
+                    <span class="text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">每日曝光</span>
+                    <h3 class="font-black text-sm pt-1">📢 每日行銷中心 (IG/FB/Threads/短影片)</h3>
+                    <p class="text-[10px] text-white/90 font-bold">每日曝光打勾、文案產生器與達成率 % 分析</p>
+                </div>
+                <div class="text-2xl">📣</div>
+            </a>
+
+            <!-- 6. 🗓️ 10 個月定期保養提醒卡片 -->
+            <a href="reminders.html" class="col-span-2 bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md hover:border-sky-300 transition-all flex items-center justify-between">
+                <div class="space-y-0.5">
+                    <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">舊客關懷</span>
+                    <h3 class="font-black text-sm pt-1 text-slate-800">🗓️ 10 個月定期保養智慧追蹤</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">自動篩選滿 10 個月舊客，一鍵 LINE 發送早鳥優惠</p>
+                </div>
+                <div class="text-2xl">🗓️</div>
+            </a>
+
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfy9ARrE9wp-bCrABsFVb-qM8_sp9_wqs",
+            authDomain: "airboss-4f084.firebaseapp.com",
+            projectId: "airboss-4f084",
+            storageBucket: "airboss-4f084.firebasestorage.app",
+            messagingSenderId: "1067344741307",
+            appId: "1:1067344741307:web:15a54741a5bdb26e897a9e",
+            measurementId: "G-P9ZGJH366L"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // 登入狀態驗證
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('userEmailDisplay').innerText = user.email;
+            } else {
+                // 若未登入，跳轉至登入頁
+                window.location.href = 'login.html';
+            }
+        });
+
+        window.handleLogout = function() {
+            if (confirm('確定要登出 AirBoss CRM 系統嗎？')) {
+                signOut(auth).then(() => {
+                    window.location.href = 'login.html';
+                });
+            }
+        };
+
+        window.toggleDrawer = function() {
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('drawerOverlay');
+            const isOpen = !drawer.classList.contains('translate-x-full');
+
+            if (isOpen) {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            }
+        };
+    </script>
+</body>
+</html>

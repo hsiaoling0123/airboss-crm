@@ -15,7 +15,6 @@
 </head>
 <body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-16">
 
-    <!-- 頂部導覽列 -->
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-50 flex justify-between items-center rounded-b-2xl">
         <div class="flex items-center gap-2">
             <span class="text-2xl">❄️</span>
@@ -31,7 +30,6 @@
         </div>
     </header>
 
-    <!-- 側邊欄抽屜 (Drawer) -->
     <div id="drawerOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-slate-900/40 opacity-0 pointer-events-none transition-opacity duration-300 z-50"></div>
     <aside id="drawer" class="fixed top-0 right-0 w-64 h-full bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50 p-5 flex flex-col justify-between">
         <div class="space-y-4">
@@ -43,6 +41,9 @@
                 <a href="index.html" class="flex items-center gap-2.5 p-3 rounded-2xl bg-sky-50 text-sky-600">
                     <span>🏠</span> 系統首頁
                 </a>
+                <a href="analytics.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
+                    <span>📊</span> 營業與客源分析
+                </a>
                 <a href="create-order.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
                     <span>✍️</span> 新增派工與報價
                 </a>
@@ -50,13 +51,13 @@
                     <span>📅</span> 派工行程與完工回報
                 </a>
                 <a href="customers.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
-                    <span>🖼️</span> 客戶檔案與施工照片
+                    <span>🖼️</span> 客戶檔案與客源管理
                 </a>
                 <a href="inventory.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
                     <span>🧰</span> 零組件與耗材庫存
                 </a>
                 <a href="marketing.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
-                    <span>📢</span> 每日行銷中心 (社群打勾)
+                    <span>📢</span> 每日行銷中心
                 </a>
                 <a href="reminders.html" class="flex items-center gap-2.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-700">
                     <span>🗓️</span> 定期保養智慧提醒
@@ -72,37 +73,41 @@
             <button onclick="handleLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-black py-2.5 rounded-xl text-xs transition-all">
                 🚪 安全登出系統
             </button>
-            <div class="text-[10px] text-slate-400 font-bold text-center border-t border-slate-100 pt-2">
-                AirBoss CRM v10.8 Cloud Edition
-            </div>
         </div>
     </aside>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
 
-        <!-- 歡迎面板 -->
         <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-5 rounded-3xl border border-amber-100 flex items-center justify-between">
             <div>
                 <h2 class="font-black text-sm text-amber-900">歡迎使用 AirBoss ☕</h2>
-                <p class="text-xs text-amber-700 font-bold mt-1">智慧派工、施工照片、社群行銷一站整合</p>
+                <p class="text-xs text-amber-700 font-bold mt-1">智慧派工、施工照片、客源與營業分析一站整合</p>
             </div>
             <div class="text-3xl">🐻❄️</div>
         </div>
 
-        <!-- 8 大核心功能卡片網格 -->
+        <a href="analytics.html" class="block bg-gradient-to-r from-indigo-500 to-sky-500 text-white p-4 rounded-3xl shadow-sm hover:shadow-md transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold">數據決策</span>
+                    <h3 class="font-black text-base pt-1">📊 營業與客源分析中心</h3>
+                    <p class="text-[10px] text-white/90 font-bold mt-0.5">本月總營收、客源管道比例 (FB/Google/介紹) 分析</p>
+                </div>
+                <div class="text-3xl">📈</div>
+            </div>
+        </a>
+
         <div class="grid grid-cols-2 gap-3">
 
-            <!-- 1. 新增派工與報價 -->
-            <a href="create-order.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between h-28">
+            <a href="create-order.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md transition-all flex flex-col justify-between h-28">
                 <div class="text-2xl">✍️</div>
                 <div>
                     <h3 class="font-black text-xs text-slate-800">新增派工與報價</h3>
-                    <p class="text-[10px] text-slate-400 font-bold">LINE 預約/報價單發送</p>
+                    <p class="text-[10px] text-slate-400 font-bold">PDF 報價單下載/LINE 發送</p>
                 </div>
             </a>
 
-            <!-- 2. 派工看板與完工回報 -->
-            <a href="kanban.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between h-28">
+            <a href="kanban.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md transition-all flex flex-col justify-between h-28">
                 <div class="text-2xl">📅</div>
                 <div>
                     <h3 class="font-black text-xs text-slate-800">派工行程與完工</h3>
@@ -110,42 +115,20 @@
                 </div>
             </a>
 
-            <!-- 3. 客戶檔案與施工照片 -->
-            <a href="customers.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between h-28">
+            <a href="customers.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md transition-all flex flex-col justify-between h-28">
                 <div class="text-2xl">🖼️</div>
                 <div>
-                    <h3 class="font-black text-xs text-slate-800">客戶與施工照片</h3>
-                    <p class="text-[10px] text-slate-400 font-bold">Before/After 前後對比</p>
+                    <h3 class="font-black text-xs text-slate-800">客戶與客源管理</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">客源分析/Before After 照片</p>
                 </div>
             </a>
 
-            <!-- 4. 零組件與冷媒庫存 -->
-            <a href="inventory.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between h-28">
+            <a href="inventory.html" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md transition-all flex flex-col justify-between h-28">
                 <div class="text-2xl">🧰</div>
                 <div>
                     <h3 class="font-black text-xs text-slate-800">耗材與冷媒庫存</h3>
                     <p class="text-[10px] text-slate-400 font-bold">冷媒/電容加減數量追蹤</p>
                 </div>
-            </a>
-
-            <!-- 5. 📢 每日行銷中心卡片 -->
-            <a href="marketing.html" class="col-span-2 bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 rounded-3xl shadow-sm hover:shadow-md transition-all flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <span class="text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">每日曝光</span>
-                    <h3 class="font-black text-sm pt-1">📢 每日行銷中心 (IG/FB/Threads/短影片)</h3>
-                    <p class="text-[10px] text-white/90 font-bold">每日曝光打勾、文案產生器與達成率 % 分析</p>
-                </div>
-                <div class="text-2xl">📣</div>
-            </a>
-
-            <!-- 6. 🗓️ 10 個月定期保養提醒卡片 -->
-            <a href="reminders.html" class="col-span-2 bg-white p-4 rounded-3xl shadow-sm border border-amber-100 hover:shadow-md hover:border-sky-300 transition-all flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">舊客關懷</span>
-                    <h3 class="font-black text-sm pt-1 text-slate-800">🗓️ 10 個月定期保養智慧追蹤</h3>
-                    <p class="text-[10px] text-slate-400 font-bold">自動篩選滿 10 個月舊客，一鍵 LINE 發送早鳥優惠</p>
-                </div>
-                <div class="text-2xl">🗓️</div>
             </a>
 
         </div>
@@ -169,7 +152,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Firebase 登入狀態監聽 (修復初始化過早跳轉問題)
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const emailElem = document.getElementById('userEmailDisplay');

@@ -3,119 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>客戶目錄 - AirBoss CRM</title>
+    <title>客戶名冊簿 - AirBoss CRM</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Zen Maru Gothic', sans-serif; } </style>
+    <link href="https://fonts.googleapis.com/css2?family=MOPLUS+Rounded+1c:wght@500;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    <style> 
+        body { 
+            font-family: 'MOPLUS Rounded 1c', 'Noto Sans TC', sans-serif; 
+            letter-spacing: 0.02em;
+        } 
+    </style>
 </head>
 <body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-12">
 
-    <!-- 頂部導覽列 -->
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-50 flex justify-between items-center rounded-b-2xl">
         <a href="index.html" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full font-bold transition-all">
             ‹ 首頁
         </a>
-        <h1 class="text-base font-black">👥 客戶名冊寶典</h1>
-        <a href="add-customer.html" class="text-xs bg-amber-300 text-amber-900 hover:bg-amber-200 px-3 py-1.5 rounded-full font-bold shadow-sm">
+        <h1 class="text-base font-black">👥 客戶名冊簿 🌸</h1>
+        <button onclick="openAddModal()" class="text-xs bg-amber-300 text-amber-900 hover:bg-amber-200 px-3 py-1.5 rounded-full font-bold shadow-sm">
             + 新增客戶
-        </a>
+        </button>
     </header>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
-        
-        <!-- 搜尋列 -->
-        <input type="text" id="searchInput" oninput="renderCustomers()" placeholder="🔍 搜尋姓名、電話、地址、標籤..." class="w-full p-3.5 bg-white border border-amber-100 rounded-2xl text-xs shadow-sm focus:outline-none focus:border-sky-400">
 
-        <!-- 客戶卡片列表 -->
-        <div id="customerList" class="space-y-4"></div>
+        <div class="relative">
+            <input type="text" id="searchInput" oninput="renderCustomers()" placeholder="🔍 搜尋姓名、電話、地址或社區..." class="w-full p-3 pl-4 bg-white border border-amber-100 rounded-2xl text-xs focus:outline-none focus:border-sky-400 shadow-sm">
+        </div>
+
+        <div id="customerList" class="space-y-3">
+            </div>
 
     </main>
 
+    <div id="detailModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 space-y-4 animate-slide-up">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h2 id="modalName" class="text-base font-black text-slate-800">客戶詳情</h2>
+                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg px-2">✕</button>
+            </div>
+
+            <div id="modalInfo" class="bg-amber-50/50 p-3.5 rounded-2xl border border-amber-100 space-y-1.5 text-xs">
+                </div>
+
+            <div class="space-y-3 border-t border-slate-100 pt-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                        <span class="text-sky-500">📸</span> 施工照片歷史紀錄
+                    </h3>
+                    <label class="cursor-pointer bg-sky-400 hover:bg-sky-500 text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-sm transition-all flex items-center gap-1">
+                        <span>+ 上傳照片</span>
+                        <input type="file" accept="image/*" multiple onchange="uploadPhotos(event)" class="hidden">
+                    </label>
+                </div>
+
+                <div id="photoTimeline" class="space-y-4 pt-1">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-3.5">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                <h2 class="text-sm font-black text-slate-800">新增客戶資料</h2>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+            </div>
+            <form id="addForm" class="space-y-3">
+                <input type="text" id="newName" required placeholder="客戶姓名 *" class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
+                <input type="tel" id="newPhone" required placeholder="聯絡電話 *" class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
+                <input type="text" id="newAddress" placeholder="施工地址" class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
+                <input type="text" id="newNote" placeholder="設備資訊 / 備註" class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
+                <button type="submit" class="w-full bg-gradient-to-r from-sky-400 to-indigo-300 text-white font-black py-2.5 rounded-xl text-xs shadow-sm">
+                    ✨ 儲存客戶
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
+        let currentCustomerId = null;
+
+        function getCustomers() {
+            return JSON.parse(localStorage.getItem('airboss_customers')) || [
+                { id: 101, name: '王先生', phone: '0912-345-678', address: '台北市中山區民生東路二段 88 號', note: '客廳日立變頻 x1 / 房間國際牌 x2', photos: [] }
+            ];
+        }
+
+        function saveCustomers(data) {
+            localStorage.setItem('airboss_customers', JSON.stringify(data));
+        }
+
         function renderCustomers() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
-            const container = document.getElementById('customerList');
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const customers = getCustomers();
+            const listEl = document.getElementById('customerList');
 
             const filtered = customers.filter(c => 
                 (c.name && c.name.toLowerCase().includes(query)) ||
                 (c.phone && c.phone.includes(query)) ||
-                (c.address && c.address.toLowerCase().includes(query)) ||
-                (c.tags && c.tags.toLowerCase().includes(query))
+                (c.address && c.address.toLowerCase().includes(query))
             );
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="bg-white p-8 rounded-3xl text-center text-slate-400 text-xs border border-amber-100">還沒有找到這個客戶耶 🐱</div>`;
+                listEl.innerHTML = `<div class="bg-white p-8 rounded-3xl text-center text-slate-400 text-xs border border-amber-100">找不到符合的客戶資料 🐻</div>`;
                 return;
             }
 
-            container.innerHTML = filtered.map(c => {
-                const encodedAddr = encodeURIComponent(c.address || '');
-                const googleMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddr}`;
-                const googleNavUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddr}`;
-
-                const tagsList = c.tags ? c.tags.split(',').map(t => `<span class="bg-rose-50 text-rose-600 text-[10px] px-2.5 py-0.5 rounded-full font-bold">#${t.trim()}</span>`).join(' ') : '';
-                const acCount = c.acList ? c.acList.length : 0;
-
-                const acDetails = (c.acList || []).map((ac, idx) => `
-                    <div class="bg-sky-50/50 p-2.5 rounded-2xl text-xs space-y-1 border border-sky-100">
-                        <div class="font-bold text-sky-900 flex justify-between">
-                            <span>❄️ 冷氣 ${idx + 1}：${ac.brand || '未填品牌'} ${ac.model || ''}</span>
-                            <span class="text-slate-400 font-medium">${ac.power || ''}</span>
+            listEl.innerHTML = filtered.map(c => `
+                <div onclick="openDetailModal(${c.id})" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100/70 hover:border-sky-300 transition-all cursor-pointer space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-black text-slate-800 text-sm flex items-center gap-1.5">
+                                <span>👤</span> ${c.name}
+                            </h3>
+                            <p class="text-xs text-sky-600 font-bold mt-0.5">📞 ${c.phone}</p>
                         </div>
-                        <div class="text-[11px] text-slate-500 flex gap-3">
-                            <span>冷媒: ${ac.gas || '未填'}</span>
-                            <span>保固: ${ac.warranty || '無'}</span>
-                        </div>
+                        <span class="text-[10px] bg-sky-50 text-sky-700 px-2.5 py-1 rounded-full font-bold">
+                            📸 照片 ${(c.photos || []).length} 張
+                        </span>
                     </div>
-                `).join('');
+                    ${c.address ? `<p class="text-xs text-slate-500 font-medium truncate">📍 ${c.address}</p>` : ''}
+                </div>
+            `).join('');
+        }
 
-                return `
-                    <div class="bg-white p-4.5 rounded-3xl shadow-sm border border-amber-100 space-y-3">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="font-bold text-slate-800 text-base">${c.name}</h3>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <a href="tel:${c.phone}" class="text-xs bg-emerald-100/70 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">
-                                        📞 ${c.phone}
-                                    </a>
-                                    ${c.lineId ? `<span class="text-xs bg-green-100/70 text-green-800 px-2.5 py-0.5 rounded-full font-bold">LINE: ${c.lineId}</span>` : ''}
-                                </div>
-                            </div>
-                            <span class="text-[10px] bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-bold">${c.source || '一般來源'}</span>
-                        </div>
+        function openDetailModal(id) {
+            currentCustomerId = id;
+            const customers = getCustomers();
+            const c = customers.find(item => item.id === id);
+            if (!c) return;
 
-                        ${tagsList ? `<div class="flex flex-wrap gap-1">${tagsList}</div>` : ''}
+            document.getElementById('modalName').textContent = `${c.name} - 客戶卡片`;
+            document.getElementById('modalInfo').innerHTML = `
+                <p class="font-bold text-slate-700">📞 電話：<a href="tel:${c.phone}" class="text-sky-600 underline">${c.phone}</a></p>
+                <p class="font-bold text-slate-700">📍 地址：${c.address || '未填寫'}</p>
+                <p class="font-bold text-slate-700">📝 設備 / 備註：${c.note || '無'}</p>
+            `;
 
-                        <!-- 地址與一鍵導航 -->
-                        <div class="bg-amber-50/40 p-3 rounded-2xl space-y-2 border border-amber-100/60">
-                            <p class="text-xs text-slate-600 font-bold">📍 ${c.address || '未填地址'}</p>
-                            <div class="flex gap-2 text-xs">
-                                <a href="${googleNavUrl}" target="_blank" class="flex-1 bg-sky-400 text-white text-center py-2 rounded-xl font-bold hover:bg-sky-500 transition-colors shadow-sm">
-                                    🚗 開啟 Google 導航
-                                </a>
-                                <a href="${googleMapUrl}" target="_blank" class="flex-1 bg-slate-100 text-slate-600 text-center py-2 rounded-xl font-bold hover:bg-slate-200 transition-colors">
-                                    🗺️ 地圖查看
-                                </a>
-                            </div>
-                        </div>
+            renderPhotoTimeline(c.photos || []);
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
 
-                        ${(c.parkingNote || c.guardPhone || c.notice) ? `
-                            <div class="text-xs space-y-1 bg-rose-50/50 p-2.5 rounded-2xl border border-rose-100 text-rose-900">
-                                ${c.parkingNote ? `<div>🅿️ <b>停車：</b>${c.parkingNote}</div>` : ''}
-                                ${c.guardPhone ? `<div>👮 <b>管理員：</b>${c.guardPhone}</div>` : ''}
-                                ${c.notice ? `<div>⚠️ <b>注意事項：</b>${c.notice}</div>` : ''}
-                            </div>
-                        ` : ''}
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+            currentCustomerId = null;
+        }
 
-                        <div class="space-y-2 pt-1">
-                            <span class="text-xs font-bold text-slate-500">冷氣設備 (共 ${acCount} 台)</span>
-                            ${acDetails}
-                        </div>
+        // 🌸 繪製按年份時間軸排列的照片庫
+        function renderPhotoTimeline(photos) {
+            const container = document.getElementById('photoTimeline');
+
+            if (!photos || photos.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        <p class="text-xs text-slate-400 font-bold">尚無施工照片</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">點擊右上角「+ 上傳照片」儲存施工對比！</p>
                     </div>
                 `;
-            }).join('');
+                return;
+            }
+
+            // 按年份分組 (例: { "2026": [...], "2025": [...] })
+            const grouped = {};
+            photos.forEach(p => {
+                const year = p.date ? p.date.substring(0, 4) : '未分類';
+                if (!grouped[year]) grouped[year] = [];
+                grouped[year].push(p);
+            });
+
+            // 年份由新到舊排序
+            const sortedYears = Object.keys(grouped).sort((a,b) => b.localeCompare(a));
+
+            container.innerHTML = sortedYears.map(year => `
+                <div class="space-y-2 relative pl-4 border-l-2 border-sky-300">
+                    <div class="absolute -left-[9px] top-0.5 w-4 h-4 rounded-full bg-sky-400 border-2 border-white shadow-sm flex items-center justify-center"></div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black text-sky-900 bg-sky-100 px-2.5 py-0.5 rounded-full">${year} 年施工紀錄</span>
+                        <span class="text-[10px] text-slate-400 font-bold">${grouped[year].length} 張照片</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 pt-1">
+                        ${grouped[year].map(p => `
+                            <div class="relative group aspect-square rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-sm">
+                                <img src="${p.url}" class="w-full h-full object-cover">
+                                <div class="absolute bottom-0 inset-x-0 bg-black/40 text-white text-[9px] px-1 py-0.5 text-center font-bold truncate">
+                                    ${p.date ? p.date.substring(5, 10) : ''}
+                                </div>
+                                <button onclick="deletePhoto('${p.id}')" class="absolute top-1 right-1 bg-red-500/80 hover:bg-red-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                                    ✕
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
         }
+
+        // 上傳照片並自動記下上傳日期與年份
+        function uploadPhotos(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0 || !currentCustomerId) return;
+
+            const customers = getCustomers();
+            const customer = customers.find(c => c.id === currentCustomerId);
+            if (!customer) return;
+
+            if (!customer.photos) customer.photos = [];
+
+            const today = new Date().toISOString().split('T')[0]; // 格式: YYYY-MM-DD
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    customer.photos.unshift({
+                        id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                        url: e.target.result,
+                        date: today
+                    });
+
+                    saveCustomers(customers);
+                    renderPhotoTimeline(customer.photos);
+                    renderCustomers();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function deletePhoto(photoId) {
+            if (!confirm('確定要刪除這張施工照片嗎？')) return;
+
+            const customers = getCustomers();
+            const customer = customers.find(c => c.id === currentCustomerId);
+            if (!customer) return;
+
+            customer.photos = (customer.photos || []).filter(p => p.id !== photoId);
+            saveCustomers(customers);
+            renderPhotoTimeline(customer.photos);
+            renderCustomers();
+        }
+
+        // 新增客戶相關
+        function openAddModal() { document.getElementById('addModal').classList.remove('hidden'); }
+        function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); }
+
+        document.getElementById('addForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newCustomer = {
+                id: Date.now(),
+                name: document.getElementById('newName').value,
+                phone: document.getElementById('newPhone').value,
+                address: document.getElementById('newAddress').value,
+                note: document.getElementById('newNote').value,
+                photos: []
+            };
+
+            const customers = getCustomers();
+            customers.unshift(newCustomer);
+            saveCustomers(customers);
+
+            closeAddModal();
+            renderCustomers();
+            document.getElementById('addForm').reset();
+        });
 
         document.addEventListener('DOMContentLoaded', renderCustomers);
     </script>

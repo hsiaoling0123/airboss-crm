@@ -8,12 +8,12 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 pb-12">
 
-    <!-- 頂部導覽列 -->
+    <!-- 頂部導覽列 (加入安全返回機制) -->
     <header class="bg-blue-600 text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
-        <a href="customers.html" class="text-sm bg-blue-700 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1">
-            ‹ 返回目錄
-        </a>
-        <h1 class="text-lg font-bold">新增完整客戶資料</h1>
+        <button type="button" onclick="goBack()" class="text-sm bg-blue-700 hover:bg-blue-800 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1 transition-colors">
+            ‹ 返回
+        </button>
+        <h1 class="text-base font-bold">新增完整客戶資料</h1>
         <div class="w-12"></div>
     </header>
 
@@ -96,12 +96,12 @@
                         <input type="text" id="referrer" placeholder="若有介紹人請填寫" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
                     </div>
                     <div class="col-span-2">
-                        <label class="block text-xs font-bold text-slate-600 mb-1">客戶標籤 (多選/自訂逗號隔開)</label>
-                        <input type="text" id="tags" placeholder="例：VIP, 社區客, 愛殺價, 怕狗要脫鞋" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">客戶標籤 (逗號隔開)</label>
+                        <input type="text" id="tags" placeholder="例：VIP, 社區客, 愛殺價" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
                     </div>
                     <div class="col-span-2">
                         <label class="block text-xs font-bold text-slate-600 mb-1">特殊注意事項</label>
-                        <textarea id="notice" rows="2" placeholder="例：家中有大狗、需要帶腳踏墊、社區需先向管理室換證" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm"></textarea>
+                        <textarea id="notice" rows="2" placeholder="例：家中有大狗、需要帶腳踏墊" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm"></textarea>
                     </div>
                 </div>
             </div>
@@ -133,6 +133,14 @@
     <script>
         let acCount = 0;
 
+        function goBack() {
+            if (document.referrer) {
+                window.location.href = document.referrer;
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
         function addACRow() {
             acCount++;
             const container = document.getElementById('acContainer');
@@ -160,13 +168,11 @@
             document.getElementById(`ac-card-${id}`).remove();
         }
 
-        // 預設先加一台冷氣
         document.addEventListener('DOMContentLoaded', addACRow);
 
         document.getElementById('customerForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // 收集冷氣資料
             const acList = [];
             document.querySelectorAll('#acContainer > div').forEach(card => {
                 acList.push({
@@ -203,7 +209,7 @@
             localStorage.setItem('airboss_customers', JSON.stringify(customers));
 
             alert('🎉 客戶資料建立成功！');
-            window.location.href = 'customers.html';
+            window.location.href = 'index.html';
         });
     </script>
 

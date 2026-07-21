@@ -6,9 +6,7 @@
     <title>AirBoss CRM - 涼爽小管家</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Zen Maru Gothic', sans-serif; }
-    </style>
+    <style> body { font-family: 'Zen Maru Gothic', sans-serif; } </style>
 </head>
 <body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-12">
 
@@ -75,6 +73,17 @@
                     </div>
                 </a>
 
+                <!-- 📢 亮點：新增行銷中心 -->
+                <a href="marketing.html" class="bg-purple-50 border border-purple-100 hover:bg-purple-100 p-4 rounded-3xl transition-all shadow-sm flex flex-col items-center text-center space-y-2 group">
+                    <div class="w-12 h-12 bg-purple-200/60 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                        📢
+                    </div>
+                    <div>
+                        <div class="font-bold text-sm text-purple-900">行銷推廣中心</div>
+                        <div class="text-[10px] text-purple-600 font-medium">每日社群打卡追蹤</div>
+                    </div>
+                </a>
+
                 <a href="create-order.html" class="bg-emerald-50 border border-emerald-100 hover:bg-emerald-100 p-4 rounded-3xl transition-all shadow-sm flex flex-col items-center text-center space-y-2 group">
                     <div class="w-12 h-12 bg-emerald-200/60 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
                         📝
@@ -82,16 +91,6 @@
                     <div>
                         <div class="font-bold text-sm text-emerald-900">快速新增工單</div>
                         <div class="text-[10px] text-emerald-600 font-medium">指派日期與服務項目</div>
-                    </div>
-                </a>
-
-                <a href="add-customer.html" class="bg-amber-50 border border-amber-100 hover:bg-amber-100 p-4 rounded-3xl transition-all shadow-sm flex flex-col items-center text-center space-y-2 group">
-                    <div class="w-12 h-12 bg-amber-200/60 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                        🏡
-                    </div>
-                    <div>
-                        <div class="font-bold text-sm text-amber-900">建立新客戶</div>
-                        <div class="text-[10px] text-amber-600 font-medium">登錄冷氣台數與備註</div>
                     </div>
                 </a>
             </div>
@@ -108,7 +107,6 @@
         document.getElementById('stat-customers').textContent = customers.length;
         document.getElementById('stat-pending').textContent = orders.filter(o => o.status !== '已完工').length;
 
-        // 計算本月總金額
         const now = new Date();
         const monthPrefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
         const totalRev = orders.filter(o => o.date && o.date.startsWith(monthPrefix)).reduce((sum, o) => sum + Number(o.price || 0), 0);

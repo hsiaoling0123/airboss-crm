@@ -14,55 +14,84 @@
             ‹ 返回首頁
         </a>
         <h1 class="text-lg font-bold">新增客戶資料</h1>
-        <div class="w-16"></div> <!-- 保持標題置中用的空區塊 -->
+        <div class="w-16"></div>
     </header>
 
     <!-- 主要表單內容 -->
     <main class="max-w-md mx-auto p-4">
-        <form class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+        <form id="customerForm" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
             
             <!-- 客戶姓名 -->
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">客戶姓名 *</label>
-                <input type="text" placeholder="例：張先生 / 鼎泰豐板橋店" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                <input type="text" id="name" placeholder="例：張先生 / 鼎泰豐" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
             </div>
 
             <!-- 聯絡電話 -->
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">聯絡電話 *</label>
-                <input type="tel" placeholder="例：0912345678" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                <input type="tel" id="phone" placeholder="例：0912345678" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+            </div>
+
+            <!-- 客戶類別 -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">客戶類別</label>
+                <select id="category" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-500">
+                    <option value="一般客戶">一般客戶 (住家)</option>
+                    <option value="VIP客戶">VIP客戶</option>
+                    <option value="商業客戶">商業客戶 (餐廳/公司)</option>
+                </select>
             </div>
 
             <!-- 地址 -->
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">服務地址</label>
-                <input type="text" placeholder="例：新北市板橋區文化路..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                <input type="text" id="address" placeholder="例：新北市板橋區文化路..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
             </div>
 
-            <!-- 客戶分類標籤 -->
+            <!-- 備註 -->
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">客戶分類</label>
-                <select class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-500">
-                    <option value="一般客戶">一般客戶 (住宅)</option>
-                    <option value="VIP客戶">VIP 客戶</option>
-                    <option value="商業客戶">商業客戶 (餐廳/辦公室)</option>
-                    <option value="社區大樓">社區大樓</option>
-                </select>
+                <label class="block text-xs font-bold text-slate-700 mb-1">備註/冷氣機型紀錄</label>
+                <textarea id="note" rows="3" placeholder="例：客廳日立分離式 1 台、房間大金 2 台" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"></textarea>
             </div>
 
-            <!-- 備註說明 -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">重要備註 (如：停車資訊、怕狗等)</label>
-                <textarea rows="3" placeholder="例：地下室可免費停車，室內有貓需注意關門..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"></textarea>
-            </div>
-
-            <!-- 儲存按鈕 -->
-            <button type="button" onclick="alert('客戶資料已成功預覽儲存！')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg text-sm transition-colors shadow-md mt-2">
+            <!-- 按鈕 -->
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg text-sm transition-colors shadow-md mt-2 flex justify-center items-center gap-1">
                 💾 儲存客戶資料
             </button>
 
         </form>
     </main>
+
+    <!-- 自動儲存資料的 JavaScript -->
+    <script>
+        document.getElementById('customerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nameInput = document.getElementById('name');
+            const phoneInput = document.getElementById('phone');
+            const categoryInput = document.getElementById('category');
+            const addressInput = document.getElementById('address');
+            const noteInput = document.getElementById('note');
+
+            const newCustomer = {
+                id: Date.now(),
+                name: nameInput ? nameInput.value : '',
+                phone: phoneInput ? phoneInput.value : '',
+                category: categoryInput ? categoryInput.value : '一般客戶',
+                address: addressInput ? addressInput.value : '',
+                note: noteInput ? noteInput.value : '',
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            let customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
+            customers.unshift(newCustomer);
+            localStorage.setItem('airboss_customers', JSON.stringify(customers));
+
+            alert('🎉 客戶資料已成功儲存！');
+            window.location.href = 'customers.html';
+        });
+    </script>
 
 </body>
 </html>

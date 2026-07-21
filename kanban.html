@@ -17,7 +17,7 @@
             <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
             <div>
                 <h1 class="text-base font-black">📅 派工行程看板</h1>
-                <p class="text-[10px] opacity-90 font-bold">切換每日/每週/每月，支援卡片改期與完工</p>
+                <p class="text-[10px] opacity-90 font-bold">切換每日/每週/每月，支援無彈窗靜音拖曳改期</p>
             </div>
         </div>
     </header>
@@ -69,9 +69,9 @@
             </div>
         </div>
 
-        <!-- ==================== 檢視內容區 1：每日視角 (Kanban 拖曳) ==================== -->
+        <!-- ==================== 檢視內容區 1：每日視角 (可靜音拖曳) ==================== -->
         <div id="viewDay" class="space-y-4">
-            <!-- 欄位 A: 今天 -->
+            <!-- 今天 -->
             <div class="bg-sky-50/60 p-3 rounded-3xl border border-sky-100">
                 <div class="flex justify-between items-center mb-2 px-1">
                     <span class="font-black text-xs text-sky-800 flex items-center gap-1">📌 今天行程 (7/22) (<span id="countToday">2</span>)</span>
@@ -112,7 +112,7 @@
                 </div>
             </div>
 
-            <!-- 欄位 B: 明天 -->
+            <!-- 明天 -->
             <div class="bg-indigo-50/60 p-3 rounded-3xl border border-indigo-100">
                 <div class="flex justify-between items-center mb-2 px-1">
                     <span class="font-black text-xs text-indigo-800 flex items-center gap-1">🗓️ 明天行程 (7/23) (<span id="countTomorrow">1</span>)</span>
@@ -137,7 +137,7 @@
                 </div>
             </div>
 
-            <!-- 欄位 C: 本週其他預約 -->
+            <!-- 本週其他預約 -->
             <div class="bg-amber-50/60 p-3 rounded-3xl border border-amber-100">
                 <div class="flex justify-between items-center mb-2 px-1">
                     <span class="font-black text-xs text-amber-800 flex items-center gap-1">📅 本週其他預約 (<span id="countFuture">0</span>)</span>
@@ -146,41 +146,77 @@
             </div>
         </div>
 
-        <!-- ==================== 檢視內容區 2：每週總覽 ==================== -->
+        <!-- ==================== 檢視內容區 2：每週總覽 (支援卡片跨日拖曳) ==================== -->
         <div id="viewWeek" class="hidden space-y-3">
             <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
-                <h3 class="font-black text-xs text-slate-800 border-b pb-2">🗓️ 本週派工清單 (7/20 - 7/26)</h3>
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 class="font-black text-xs text-slate-800">🗓️ 本週派工總覽 (跨日可自由拖曳改期)</h3>
+                    <span class="text-[10px] text-slate-400 font-bold">按住卡片拖曳</span>
+                </div>
                 
-                <div class="space-y-2 border-l-2 border-sky-400 pl-3">
-                    <p class="text-xs font-black text-sky-700">週一 (7/20) — 2 件 (已完工)</p>
-                    <p class="text-[11px] text-slate-500">・林先生 (新北市蘆洲區) - $6,000</p>
-                    <p class="text-[11px] text-slate-500">・快樂美髮店 (台北市中山區) - $12,000</p>
+                <!-- 週一 -->
+                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
+                    <p class="text-xs font-black text-slate-700">週一 (7/20)</p>
+                    <div id="weekMon" class="space-y-1.5 min-h-[40px]">
+                        <div class="bg-white p-2 rounded-xl border border-slate-200 text-xs flex justify-between items-center cursor-grab active:cursor-grabbing">
+                            <span>林先生 (新北市蘆洲區)</span>
+                            <span class="font-bold text-slate-500">$6,000</span>
+                        </div>
+                    </div>
                 </div>
-                <hr class="border-slate-100">
-                <div class="space-y-2 border-l-2 border-sky-400 pl-3">
-                    <p class="text-xs font-black text-sky-700">週二 (7/21) — 1 件 (已完工)</p>
-                    <p class="text-[11px] text-slate-500">・黃太太 (台北市信義區) - $4,500</p>
+
+                <!-- 週二 -->
+                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
+                    <p class="text-xs font-black text-slate-700">週二 (7/21)</p>
+                    <div id="weekTue" class="space-y-1.5 min-h-[40px]">
+                        <div class="bg-white p-2 rounded-xl border border-slate-200 text-xs flex justify-between items-center cursor-grab active:cursor-grabbing">
+                            <span>黃太太 (台北市信義區)</span>
+                            <span class="font-bold text-slate-500">$4,500</span>
+                        </div>
+                    </div>
                 </div>
-                <hr class="border-slate-100">
-                <div class="space-y-2 border-l-2 border-amber-400 pl-3 bg-amber-50/50 p-2 rounded-xl">
-                    <p class="text-xs font-black text-amber-700">週三 (7/22 今天) — 2 件進行中</p>
-                    <p class="text-[11px] text-slate-600 font-bold">・張先生 - 10:30 AM ($5,000)</p>
-                    <p class="text-[11px] text-slate-600 font-bold">・王小姐 - 02:00 PM ($3,500)</p>
+
+                <!-- 週三 (今天) -->
+                <div class="bg-sky-50/70 p-2.5 rounded-2xl border border-sky-100 space-y-1.5">
+                    <p class="text-xs font-black text-sky-800">週三 (7/22 今天)</p>
+                    <div id="weekWed" class="space-y-1.5 min-h-[40px]">
+                        <div class="bg-white p-2 rounded-xl border border-sky-200 text-xs flex justify-between items-center cursor-grab active:cursor-grabbing">
+                            <span>張先生 - 10:30 AM</span>
+                            <span class="font-bold text-emerald-600">$5,000</span>
+                        </div>
+                        <div class="bg-white p-2 rounded-xl border border-sky-200 text-xs flex justify-between items-center cursor-grab active:cursor-grabbing">
+                            <span>王小姐 - 02:00 PM</span>
+                            <span class="font-bold text-amber-600">$3,500</span>
+                        </div>
+                    </div>
                 </div>
-                <hr class="border-slate-100">
-                <div class="space-y-2 border-l-2 border-slate-300 pl-3">
-                    <p class="text-xs font-black text-slate-600">週四 (7/23 明天) — 1 件預約</p>
-                    <p class="text-[11px] text-slate-500">・陳先生 - 09:00 AM ($4,200)</p>
+
+                <!-- 週四 -->
+                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
+                    <p class="text-xs font-black text-slate-700">週四 (7/23 明天)</p>
+                    <div id="weekThu" class="space-y-1.5 min-h-[40px]">
+                        <div class="bg-white p-2 rounded-xl border border-slate-200 text-xs flex justify-between items-center cursor-grab active:cursor-grabbing">
+                            <span>陳先生 - 09:00 AM</span>
+                            <span class="font-bold text-indigo-600">$4,200</span>
+                        </div>
+                    </div>
                 </div>
-                <hr class="border-slate-100">
-                <div class="space-y-2 border-l-2 border-slate-300 pl-3">
-                    <p class="text-xs font-black text-slate-600">週五 (7/24) — 1 件預約</p>
-                    <p class="text-[11px] text-slate-500">・許老闆 (新莊區工廠) - $6,800</p>
+
+                <!-- 週五 -->
+                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
+                    <p class="text-xs font-black text-slate-700">週五 (7/24)</p>
+                    <div id="weekFri" class="space-y-1.5 min-h-[40px]">
+                        <div class="bg-white p-2 rounded-xl border border-slate-200 text-xs flex justify-between items-center cursor-grab active:cursor-grabbing">
+                            <span>許老闆 (新莊區工廠)</span>
+                            <span class="font-bold text-slate-600">$6,800</span>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
 
-        <!-- ==================== 檢視內容區 3：每月月曆 (一整個月日曆) ==================== -->
+        <!-- ==================== 檢視內容區 3：每月月曆 ==================== -->
         <div id="viewMonth" class="hidden space-y-3">
             <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
                 <div class="flex justify-between items-center border-b pb-2">
@@ -188,7 +224,6 @@
                     <span class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">共 31 天</span>
                 </div>
 
-                <!-- 星期表頭 -->
                 <div class="grid grid-cols-7 text-center font-black text-[10px] text-slate-400 py-1 border-b">
                     <span class="text-red-400">日</span>
                     <span>一</span>
@@ -199,14 +234,11 @@
                     <span class="text-sky-500">六</span>
                 </div>
 
-                <!-- 31 天月曆網格 -->
                 <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold pt-1">
-                    <!-- 補白格 (7/1從週三開始) -->
                     <div class="p-2 opacity-20 text-slate-300">28</div>
                     <div class="p-2 opacity-20 text-slate-300">29</div>
                     <div class="p-2 opacity-20 text-slate-300">30</div>
 
-                    <!-- 1號 ~ 31號 -->
                     <div class="p-1.5 rounded-xl hover:bg-slate-50">1</div>
                     <div class="p-1.5 rounded-xl hover:bg-slate-50">2</div>
                     <div class="p-1.5 rounded-xl hover:bg-slate-50">3</div>
@@ -228,10 +260,7 @@
                     <div class="p-1.5 rounded-xl hover:bg-slate-50">19</div>
                     <div class="p-1.5 rounded-xl bg-sky-50 text-sky-700">20<span class="block text-[8px] text-sky-500 font-normal">2件</span></div>
                     <div class="p-1.5 rounded-xl bg-sky-50 text-sky-700">21<span class="block text-[8px] text-sky-500 font-normal">1件</span></div>
-                    
-                    <!-- 今天 (22號) 高亮 -->
                     <div class="p-1.5 rounded-xl bg-amber-400 text-white font-black shadow-md">22<span class="block text-[8px] font-normal">今天</span></div>
-
                     <div class="p-1.5 rounded-xl bg-indigo-50 text-indigo-700">23<span class="block text-[8px] text-indigo-500 font-normal">1件</span></div>
                     <div class="p-1.5 rounded-xl bg-indigo-50 text-indigo-700">24<span class="block text-[8px] text-indigo-500 font-normal">1件</span></div>
                     <div class="p-1.5 rounded-xl hover:bg-slate-50">25</div>
@@ -270,20 +299,24 @@
     <script>
         let currentNavAddress = "新北市三重區正義北路 100 號";
 
-        // 初始化 SortableJS：卡片拖曳改期
+        // 1. 初始化「每日視角」拖曳 (完全靜音，移除 alert 彈窗)
         ['colToday', 'colTomorrow', 'colFuture'].forEach(colId => {
             new Sortable(document.getElementById(colId), {
                 group: 'kanban_dates',
                 animation: 150,
                 ghostClass: 'opacity-50',
-                onEnd: function (evt) {
+                onEnd: function () {
                     updateCounts();
-                    const targetCol = evt.to.id;
-                    let targetDateName = "今天";
-                    if(targetCol === "colTomorrow") targetDateName = "明天";
-                    if(targetCol === "colFuture") targetDateName = "其他預約日";
-                    alert(`✅ 已成功將工單改期移至【${targetDateName}】！`);
                 }
+            });
+        });
+
+        // 2. 初始化「每週視角」跨日拖曳 (完全靜音，移除 alert 彈窗)
+        ['weekMon', 'weekTue', 'weekWed', 'weekThu', 'weekFri'].forEach(colId => {
+            new Sortable(document.getElementById(colId), {
+                group: 'kanban_week',
+                animation: 150,
+                ghostClass: 'opacity-50'
             });
         });
 
@@ -293,7 +326,7 @@
             document.getElementById('countFuture').innerText = document.getElementById('colFuture').children.length;
         }
 
-        // 🔥 三大視角真正切換控制 JavaScript
+        // 三大視角切換控制
         function switchPeriod(period) {
             const btnDay = document.getElementById('btnPeriodDay');
             const btnWeek = document.getElementById('btnPeriodWeek');
@@ -303,17 +336,14 @@
             const viewWeek = document.getElementById('viewWeek');
             const viewMonth = document.getElementById('viewMonth');
 
-            // 1. 重設所有按鈕樣式
             [btnDay, btnWeek, btnMonth].forEach(b => {
                 b.className = "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all";
             });
 
-            // 2. 隱藏所有視角畫面
             viewDay.classList.add('hidden');
             viewWeek.classList.add('hidden');
             viewMonth.classList.add('hidden');
 
-            // 3. 根據選擇顯示對應視角與樣式
             if(period === 'day') {
                 btnDay.className = "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all";
                 viewDay.classList.remove('hidden');
@@ -326,7 +356,7 @@
             }
         }
 
-        // 地圖展開/收合
+        // 地圖控制
         function toggleMap() {
             const container = document.getElementById('mapContainer');
             const icon = document.getElementById('mapIcon');

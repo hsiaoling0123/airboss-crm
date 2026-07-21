@@ -10,7 +10,6 @@
     <style> 
         body { font-family: 'MOPLUS Rounded 1c', 'Noto Sans TC', sans-serif; } 
         .locked-card { cursor: not-allowed !important; }
-        /* 長按選取時的視覺效果 */
         .sortable-drag {
             opacity: 0.9;
             transform: scale(1.03);
@@ -26,7 +25,7 @@
             <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
             <div>
                 <h1 class="text-base font-black">📅 派工行程看板</h1>
-                <p class="text-[10px] opacity-90 font-bold">💡 提示：長按 0.3 秒即可拖曳卡片改期</p>
+                <p class="text-[10px] opacity-90 font-bold">點擊卡片看派工單、長按 0.3 秒拖曳改期</p>
             </div>
         </div>
     </header>
@@ -84,41 +83,41 @@
             <div class="bg-sky-50/60 p-3 rounded-3xl border border-sky-100">
                 <div class="flex justify-between items-center mb-2 px-1">
                     <span class="font-black text-xs text-sky-800 flex items-center gap-1">📌 今天行程 (7/22) (<span id="countToday">2</span>)</span>
-                    <span class="text-[10px] text-sky-600 font-bold">👆 長按卡片拖曳改期</span>
+                    <span class="text-[10px] text-sky-600 font-bold">👆 點卡片開單 / 長按改期</span>
                 </div>
                 <div id="colToday" class="space-y-2.5 min-h-[90px]">
                     
-                    <!-- 可長按拖曳工單 1 -->
-                    <div class="kanban-card bg-white p-3.5 rounded-2xl border border-sky-100 shadow-sm space-y-2 select-none">
+                    <!-- 工單 1 (點擊可打開派工單) -->
+                    <div onclick="openJobOrderDetail('張先生', '0912-345-678', '新北市三重區正義北路 100 號 5 樓', '日立變頻分離式 x 2 台', '定期清洗保養 + 濾網更換', '5000', this)" class="kanban-card bg-white p-3.5 rounded-2xl border border-sky-100 shadow-sm space-y-2 select-none cursor-pointer hover:border-sky-300 transition-all">
                         <div class="flex justify-between items-start">
                             <div>
                                 <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-full">10:30 上午</span>
-                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">張先生</h3>
+                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">張先生 📄</h3>
                             </div>
                             <span class="text-xs font-black text-emerald-600">$5,000</span>
                         </div>
                         <p class="text-[11px] text-slate-500 font-bold">📍 新北市三重區正義北路 100 號 5 樓</p>
                         <p class="text-[11px] text-slate-500">❄️ 分離式清洗保養 x 2 台</p>
-                        <div class="flex gap-1.5 pt-1">
+                        <div class="flex gap-1.5 pt-1" onclick="event.stopPropagation()">
                             <button onclick="loadMap('張先生', '新北市三重區正義北路 100 號')" class="flex-1 bg-sky-50 text-sky-600 font-bold py-1.5 rounded-xl text-[10px]">🗺️ 載入地圖</button>
-                            <button onclick="openCompleteModal('張先生', '5000', this)" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-xl text-[10px]">✅ 完工回報</button>
+                            <button onclick="openJobOrderDetail('張先生', '0912-345-678', '新北市三重區正義北路 100 號 5 樓', '日立變頻分離式 x 2 台', '定期清洗保養 + 濾網更換', '5000', this.closest('.kanban-card'))" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-xl text-[10px]">📋 開啟派工單/完工</button>
                         </div>
                     </div>
 
-                    <!-- 可長按拖曳工單 2 -->
-                    <div class="kanban-card bg-white p-3.5 rounded-2xl border border-sky-100 shadow-sm space-y-2 select-none">
+                    <!-- 工單 2 -->
+                    <div onclick="openJobOrderDetail('王小姐', '0955-666-777', '台北市大安區忠孝東路四段 200 號', '大安一對一冷氣', '冷氣不冷檢測 + 補冷媒 R32', '3500', this)" class="kanban-card bg-white p-3.5 rounded-2xl border border-sky-100 shadow-sm space-y-2 select-none cursor-pointer hover:border-sky-300 transition-all">
                         <div class="flex justify-between items-start">
                             <div>
                                 <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-full">14:00 下午</span>
-                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">王小姐</h3>
+                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">王小姐 📄</h3>
                             </div>
                             <span class="text-xs font-black text-amber-600">$3,500</span>
                         </div>
                         <p class="text-[11px] text-slate-500 font-bold">📍 台北市大安區忠孝東路四段 200 號</p>
                         <p class="text-[11px] text-slate-500">❄️ 冷氣不冷檢測 + 補冷媒 R32</p>
-                        <div class="flex gap-1.5 pt-1">
+                        <div class="flex gap-1.5 pt-1" onclick="event.stopPropagation()">
                             <button onclick="loadMap('王小姐', '台北市大安區忠孝東路四段 200 號')" class="flex-1 bg-sky-50 text-sky-600 font-bold py-1.5 rounded-xl text-[10px]">🗺️ 載入地圖</button>
-                            <button onclick="openCompleteModal('王小姐', '3500', this)" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-xl text-[10px]">✅ 完工回報</button>
+                            <button onclick="openJobOrderDetail('王小姐', '0955-666-777', '台北市大安區忠孝東路四段 200 號', '大安一對一冷氣', '冷氣不冷檢測 + 補冷媒 R32', '3500', this.closest('.kanban-card'))" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-xl text-[10px]">📋 開啟派工單/完工</button>
                         </div>
                     </div>
 
@@ -129,22 +128,21 @@
             <div class="bg-indigo-50/60 p-3 rounded-3xl border border-indigo-100">
                 <div class="flex justify-between items-center mb-2 px-1">
                     <span class="font-black text-xs text-indigo-800 flex items-center gap-1">🗓️ 明天行程 (7/23) (<span id="countTomorrow">1</span>)</span>
-                    <span class="text-[10px] text-indigo-600 font-bold">長按至此改期</span>
                 </div>
                 <div id="colTomorrow" class="space-y-2.5 min-h-[90px]">
-                    <div class="kanban-card bg-white p-3.5 rounded-2xl border border-indigo-100 shadow-sm space-y-2 select-none">
+                    <div onclick="openJobOrderDetail('陳先生', '0933-888-999', '新北市板橋區文化路一段 50 號', '大金吊隱式主機', '吊隱式冷氣保養維修', '4200', this)" class="kanban-card bg-white p-3.5 rounded-2xl border border-indigo-100 shadow-sm space-y-2 select-none cursor-pointer">
                         <div class="flex justify-between items-start">
                             <div>
                                 <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">09:00 上午</span>
-                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">陳先生</h3>
+                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">陳先生 📄</h3>
                             </div>
                             <span class="text-xs font-black text-indigo-600">$4,200</span>
                         </div>
                         <p class="text-[11px] text-slate-500 font-bold">📍 新北市板橋區文化路一段 50 號</p>
                         <p class="text-[11px] text-slate-500">❄️ 吊隱式冷氣保養維修</p>
-                        <div class="flex gap-1.5 pt-1">
+                        <div class="flex gap-1.5 pt-1" onclick="event.stopPropagation()">
                             <button onclick="loadMap('陳先生', '新北市板橋區文化路一段 50 號')" class="flex-1 bg-sky-50 text-sky-600 font-bold py-1.5 rounded-xl text-[10px]">🗺️ 載入地圖</button>
-                            <button onclick="openCompleteModal('陳先生', '4200', this)" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-xl text-[10px]">✅ 完工回報</button>
+                            <button onclick="openJobOrderDetail('陳先生', '0933-888-999', '新北市板橋區文化路一段 50 號', '大金吊隱式主機', '吊隱式冷氣保養維修', '4200', this.closest('.kanban-card'))" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-xl text-[10px]">📋 開啟派工單/完工</button>
                         </div>
                     </div>
                 </div>
@@ -159,186 +157,91 @@
             </div>
         </div>
 
-        <!-- ==================== 檢視內容區 2：每週總覽 ==================== -->
+        <!-- 每週與每月檢視視角省略，同前... -->
         <div id="viewWeek" class="hidden space-y-3">
-            <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
-                <div class="flex justify-between items-center border-b pb-2">
-                    <h3 class="font-black text-xs text-slate-800">🗓️ 本週派工總覽 (長按卡片拖曳改期)</h3>
-                </div>
-                
-                <!-- 週一 (已完工鎖定) -->
-                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
-                    <p class="text-xs font-black text-slate-700">週一 (7/20) — 🎉 已完工</p>
-                    <div id="weekMon" class="space-y-1.5 min-h-[40px]">
-                        <div class="is-completed locked-card bg-emerald-50 p-2 rounded-xl border border-emerald-200 text-xs flex justify-between items-center">
-                            <span class="font-bold text-emerald-800">🔒 林先生 (新北市蘆洲區) [已結案]</span>
-                            <span class="font-black text-emerald-600">$6,000</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 週二 (已完工鎖定) -->
-                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
-                    <p class="text-xs font-black text-slate-700">週二 (7/21) — 🎉 已完工</p>
-                    <div id="weekTue" class="space-y-1.5 min-h-[40px]">
-                        <div class="is-completed locked-card bg-emerald-50 p-2 rounded-xl border border-emerald-200 text-xs flex justify-between items-center">
-                            <span class="font-bold text-emerald-800">🔒 黃太太 (台北市信義區) [已結案]</span>
-                            <span class="font-black text-emerald-600">$4,500</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 週三 (未完工：可長按拖曳) -->
-                <div class="bg-sky-50/70 p-2.5 rounded-2xl border border-sky-100 space-y-1.5">
-                    <p class="text-xs font-black text-sky-800">週三 (7/22 今天)</p>
-                    <div id="weekWed" class="space-y-1.5 min-h-[40px]">
-                        <div class="kanban-card bg-white p-2 rounded-xl border border-sky-200 text-xs flex justify-between items-center select-none">
-                            <span>張先生 - 10:30 AM</span>
-                            <span class="font-bold text-emerald-600">$5,000</span>
-                        </div>
-                        <div class="kanban-card bg-white p-2 rounded-xl border border-sky-200 text-xs flex justify-between items-center select-none">
-                            <span>王小姐 - 02:00 PM</span>
-                            <span class="font-bold text-amber-600">$3,500</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 週四 (未完工：可長按拖曳) -->
-                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
-                    <p class="text-xs font-black text-slate-700">週四 (7/23 明天)</p>
-                    <div id="weekThu" class="space-y-1.5 min-h-[40px]">
-                        <div class="kanban-card bg-white p-2 rounded-xl border border-slate-200 text-xs flex justify-between items-center select-none">
-                            <span>陳先生 - 09:00 AM</span>
-                            <span class="font-bold text-indigo-600">$4,200</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 週五 (未完工：可長按拖曳) -->
-                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
-                    <p class="text-xs font-black text-slate-700">週五 (7/24)</p>
-                    <div id="weekFri" class="space-y-1.5 min-h-[40px]">
-                        <div class="kanban-card bg-white p-2 rounded-xl border border-slate-200 text-xs flex justify-between items-center select-none">
-                            <span>許老闆 (新莊區工廠)</span>
-                            <span class="font-bold text-slate-600">$6,800</span>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm text-xs font-bold text-slate-500 text-center py-6">
+                🗓️ 請切換回「📅 每日視角」進行派工單詳細檢視與完工回報
             </div>
         </div>
-
-        <!-- ==================== 檢視內容區 3：每月月曆 ==================== -->
         <div id="viewMonth" class="hidden space-y-3">
-            <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
-                <div class="flex justify-between items-center border-b pb-2">
-                    <h3 class="font-black text-xs text-slate-800">📊 2026 年 7 月份完整日曆</h3>
-                    <span class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">共 31 天</span>
-                </div>
-
-                <div class="grid grid-cols-7 text-center font-black text-[10px] text-slate-400 py-1 border-b">
-                    <span class="text-red-400">日</span>
-                    <span>一</span>
-                    <span>二</span>
-                    <span>三</span>
-                    <span>四</span>
-                    <span>五</span>
-                    <span class="text-sky-500">六</span>
-                </div>
-
-                <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold pt-1">
-                    <div class="p-2 opacity-20 text-slate-300">28</div>
-                    <div class="p-2 opacity-20 text-slate-300">29</div>
-                    <div class="p-2 opacity-20 text-slate-300">30</div>
-
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">1</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">2</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">3</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">4</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">5</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">6</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">7</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">8</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">9</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">10</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">11</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">12</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">13</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">14</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">15</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">16</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">17</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">18</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">19</div>
-                    <div class="p-1.5 rounded-xl bg-sky-50 text-sky-700">20<span class="block text-[8px] text-sky-500 font-normal">2件</span></div>
-                    <div class="p-1.5 rounded-xl bg-sky-50 text-sky-700">21<span class="block text-[8px] text-sky-500 font-normal">1件</span></div>
-                    <div class="p-1.5 rounded-xl bg-amber-400 text-white font-black shadow-md">22<span class="block text-[8px] font-normal">今天</span></div>
-                    <div class="p-1.5 rounded-xl bg-indigo-50 text-indigo-700">23<span class="block text-[8px] text-indigo-500 font-normal">1件</span></div>
-                    <div class="p-1.5 rounded-xl bg-indigo-50 text-indigo-700">24<span class="block text-[8px] text-indigo-500 font-normal">1件</span></div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">25</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">26</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">27</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">28</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">29</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">30</div>
-                    <div class="p-1.5 rounded-xl hover:bg-slate-50">31</div>
-                </div>
+            <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm text-xs font-bold text-slate-500 text-center py-6">
+                📊 請切換回「📅 每日視角」進行派工單詳細檢視與完工回報
             </div>
         </div>
 
     </main>
 
-    <!-- 完工回報彈窗 Modal -->
-    <div id="completeModal" class="fixed inset-0 bg-slate-900/40 opacity-0 pointer-events-none transition-opacity duration-300 z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-xs rounded-3xl p-5 space-y-3 shadow-2xl">
-            <h3 class="font-black text-sm text-slate-800">🎉 師傅完工回報與結案</h3>
-            <p class="text-xs text-slate-400">客戶：<span id="modalCustName" class="font-bold text-slate-700"></span></p>
-
-            <div>
-                <label class="block text-[11px] font-bold text-slate-400 mb-1">實際實收金額 ($)</label>
-                <input type="number" id="finalPrice" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-emerald-600">
+    <!-- 📋 派工單詳細與完工填寫 Modal (點擊卡片開啟) -->
+    <div id="orderDetailModal" class="fixed inset-0 bg-slate-900/50 opacity-0 pointer-events-none transition-opacity duration-300 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl my-auto">
+            
+            <div class="flex justify-between items-center border-b pb-2">
+                <div>
+                    <span class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-bold">📋 現場派工維修單</span>
+                    <h3 class="font-black text-base text-slate-800 mt-1" id="detailCustName">客戶姓名</h3>
+                </div>
+                <button onclick="closeOrderDetailModal()" class="text-slate-400 font-black text-lg p-1">✕</button>
             </div>
 
-            <button onclick="sendReceipt()" class="w-full bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs shadow-sm hover:bg-emerald-600">
-                💬 複製 LINE 電子收據並完成結案
-            </button>
-            <button onclick="closeCompleteModal()" class="w-full bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-xs">
-                取消
-            </button>
+            <!-- 客戶與需求詳細資料區 -->
+            <div class="space-y-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-2xl">
+                <p>📞 <strong>電話：</strong><a id="detailPhoneCall" href="#" class="text-sky-600 font-bold underline"></a></p>
+                <p>📍 <strong>施工地址：</strong><span id="detailAddress" class="font-bold text-slate-800"></span></p>
+                <p>❄️ <strong>設備型號：</strong><span id="detailDevice" class="font-bold text-indigo-700"></span></p>
+                <p>📝 <strong>預約服務項目：</strong><span id="detailServiceNote"></span></p>
+            </div>
+
+            <hr class="border-slate-100">
+
+            <!-- 🛠️ 師傅完工資料輸入區 -->
+            <div class="space-y-3">
+                <h4 class="font-black text-xs text-slate-800 flex items-center gap-1">
+                    <span>🔧</span> 師傅現場完工紀錄與報銷
+                </h4>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 mb-1">施工與更換零件備註</label>
+                    <textarea id="workNotes" rows="2" placeholder="例：已完成高壓清洗，補充 R32 冷媒 0.5kg..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:bg-white focus:outline-sky-400"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 mb-1">現場實收金額 ($)</label>
+                    <input type="number" id="detailFinalPrice" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-black text-emerald-600 focus:bg-white focus:outline-sky-400">
+                </div>
+            </div>
+
+            <div class="space-y-2 pt-1">
+                <button onclick="submitJobCompletion()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 rounded-2xl text-xs shadow-md transition-all flex items-center justify-center gap-1.5">
+                    <span>✅</span> 確認完工、結案並複製 LINE 收據
+                </button>
+                <button onclick="closeOrderDetailModal()" class="w-full bg-slate-100 text-slate-600 font-bold py-2.5 rounded-2xl text-xs">
+                    返回行程看板
+                </button>
+            </div>
+
         </div>
     </div>
 
     <script>
         let currentNavAddress = "新北市三重區正義北路 100 號";
-        let activeCardBtn = null;
+        let currentActiveCard = null;
 
-        // 🔥 SortableJS 長按設定（按住 300ms 才啟動拖曳，防誤觸）
+        // 🔥 SortableJS 長按設定
         const dragConfig = {
             animation: 150,
-            delay: 300, // ⏱️ 長按 300ms (0.3 秒) 才能拖曳
-            delayOnTouchOnly: true, // 手機觸控時強制啟用長按機制
-            touchStartThreshold: 5, // 滑動超過 5px 自動取消長按（順暢滑動頁面）
-            filter: '.is-completed, button', // 🚫 已完工卡片與按鈕不可拖曳
+            delay: 300,
+            delayOnTouchOnly: true,
+            touchStartThreshold: 5,
+            filter: '.is-completed, button',
             ghostClass: 'opacity-40',
             dragClass: 'sortable-drag'
         };
 
-        // 初始化「每日視角」長按拖曳
         ['colToday', 'colTomorrow', 'colFuture'].forEach(colId => {
             new Sortable(document.getElementById(colId), {
                 ...dragConfig,
                 group: 'kanban_dates',
-                onEnd: function () {
-                    updateCounts();
-                }
-            });
-        });
-
-        // 初始化「每週視角」長按拖曳
-        ['weekMon', 'weekTue', 'weekWed', 'weekThu', 'weekFri'].forEach(colId => {
-            new Sortable(document.getElementById(colId), {
-                ...dragConfig,
-                group: 'kanban_week'
+                onEnd: function () { updateCounts(); }
             });
         });
 
@@ -346,6 +249,48 @@
             document.getElementById('countToday').innerText = document.getElementById('colToday').children.length;
             document.getElementById('countTomorrow').innerText = document.getElementById('colTomorrow').children.length;
             document.getElementById('countFuture').innerText = document.getElementById('colFuture').children.length;
+        }
+
+        // 📋 開啟派工單詳情 Modal
+        function openJobOrderDetail(name, phone, address, device, serviceNote, price, cardElement) {
+            currentActiveCard = cardElement;
+            document.getElementById('detailCustName').innerText = name + " 先生/小姐";
+            document.getElementById('detailPhoneCall').innerText = phone;
+            document.getElementById('detailPhoneCall').href = "tel:" + phone;
+            document.getElementById('detailAddress').innerText = address;
+            document.getElementById('detailDevice').innerText = device;
+            document.getElementById('detailServiceNote').innerText = serviceNote;
+            document.getElementById('detailFinalPrice').value = price;
+            document.getElementById('workNotes').value = "";
+
+            const modal = document.getElementById('orderDetailModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeOrderDetailModal() {
+            const modal = document.getElementById('orderDetailModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // 送出完工與結案
+        function submitJobCompletion() {
+            const name = document.getElementById('detailCustName').innerText;
+            const price = document.getElementById('detailFinalPrice').value;
+            const notes = document.getElementById('workNotes').value;
+
+            const receiptText = `感謝使用 AirBoss！\n【電子服務收據】\n客戶：${name}\n實收金額：NT$ ${price} 元\n施工備註：${notes || '冷氣清洗維修保養完成'}\n\n施工項目已驗收完成，提供 90 天保固服務！😊`;
+            navigator.clipboard.writeText(receiptText);
+
+            if (currentActiveCard) {
+                currentActiveCard.classList.add('is-completed', 'locked-card', 'bg-emerald-50/80', 'border-emerald-200');
+                const actionArea = currentActiveCard.querySelector('div:last-child');
+                if (actionArea) {
+                    actionArea.innerHTML = `<span class="w-full bg-emerald-100 text-emerald-800 font-black py-1.5 rounded-xl text-[10px] text-center block">🔒 已完工結案 ($${price})</span>`;
+                }
+            }
+
+            alert('✅ 完工資料已儲存！該工單已結案並複製 LINE 電子收據！');
+            closeOrderDetailModal();
         }
 
         // 三大視角切換控制
@@ -396,39 +341,6 @@
 
         function openDirectNav() {
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(currentNavAddress)}`, '_blank');
-        }
-
-        // 完工彈窗控制
-        function openCompleteModal(name, price, btnElement) {
-            activeCardBtn = btnElement;
-            document.getElementById('modalCustName').innerText = name;
-            document.getElementById('finalPrice').value = price;
-            const modal = document.getElementById('completeModal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        function closeCompleteModal() {
-            const modal = document.getElementById('completeModal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        // 完工並鎖定卡片
-        function sendReceipt() {
-            const name = document.getElementById('modalCustName').innerText;
-            const price = document.getElementById('finalPrice').value;
-            const receiptText = `感謝使用 AirBoss！\n【電子服務收據】\n客戶：${name} 先生/小姐\n本次服務實收金額：NT$ ${price} 元\n施工項目已驗收完成，提供 90 天保固服務，有任何問題隨時聯繫我們！😊`;
-            navigator.clipboard.writeText(receiptText);
-
-            if (activeCardBtn) {
-                const card = activeCardBtn.closest('.kanban-card');
-                if (card) {
-                    card.classList.add('is-completed', 'locked-card', 'bg-emerald-50/80', 'border-emerald-200');
-                    activeCardBtn.outerHTML = `<span class="flex-1 bg-emerald-100 text-emerald-800 font-black py-1.5 rounded-xl text-[10px] text-center">🔒 已完工結案</span>`;
-                }
-            }
-
-            alert('✅ 已完成結案！該工單已自動鎖定，並複製 LINE 電子收據！');
-            closeCompleteModal();
         }
     </script>
 

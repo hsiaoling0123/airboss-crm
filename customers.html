@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客戶列表 - AirBoss CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+
+    <!-- 頂部導覽列 -->
+    <header class="bg-blue-600 text-white p-4 shadow-lg sticky top-0 z-50 flex items-center justify-between">
+        <a href="index.html" class="text-sm bg-blue-700 px-3 py-1.5 rounded-lg flex items-center gap-1 font-medium">
+            ‹ 返回首頁
+        </a>
+        <h1 class="text-lg font-bold">客戶管理目錄</h1>
+        <a href="add-customer.html" class="text-sm bg-blue-500 hover:bg-blue-400 px-3 py-1.5 rounded-lg font-medium">
+            + 新增
+        </a>
+    </header>
+
+    <!-- 主要內容 -->
+    <main class="max-w-md mx-auto p-4 space-y-4">
+        
+        <!-- 搜尋列 -->
+        <div class="relative">
+            <input type="text" placeholder="🔍 搜尋客戶姓名、電話、地址..." class="w-full p-3 pl-4 bg-white border border-slate-200 rounded-xl shadow-sm text-sm focus:outline-none focus:border-blue-500">
+        </div>
+
+        <!-- 客戶卡片列表 (範例資料) -->
+        <div class="space-y-3">
+            
+            <!-- 卡片 1 -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-2">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-bold text-slate-900 text-base">陳先生</h3>
+                            <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded font-medium">一般客戶</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">📞 0912-345-678</p>
+                    </div>
+                    <a href="tel:0912345678" class="bg-emerald-50 text-emerald-600 p-2 rounded-lg text-xs font-bold flex items-center gap-1 border border-emerald-200">
+                        📞 打電話
+                    </a>
+                </div>
+                
+                <p class="text-xs text-slate-600 flex items-start gap-1">
+                    📍 <span>新北市板橋區文化路一段 100 號</span>
+                </p>
+
+                <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
+                    <span>上次保養：2025-06-15</span>
+                    <span class="text-blue-600 font-medium">保養設備：3 台</span>
+                </div>
+            </div>
+
+            <!-- 卡片 2 -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-2">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-bold text-slate-900 text-base">林小姐</h3>
+                            <span class="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded font-medium">VIP客戶</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">📞 0988-765-432</p>
+                    </div>
+                    <a href="tel:0988765432" class="bg-emerald-50 text-emerald-600 p-2 rounded-lg text-xs font-bold flex items-center gap-1 border border-emerald-200">
+                        📞 打電話
+                    </a>
+                </div>
+                
+                <p class="text-xs text-slate-600 flex items-start gap-1">
+                    📍 <span>台北市大安區信義路四段 250 號</span>
+                </p>
+
+                <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
+                    <span>上次保養：2025-08-20</span>
+                    <span class="text-blue-600 font-medium">保養設備：2 台</span>
+                </div>
+            </div>
+
+            <!-- 卡片 3 -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-2">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-bold text-slate-900 text-base">鼎泰豐板橋店</h3>
+                            <span class="bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded font-medium">商業客戶</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">📞 02-8951-2345</p>
+                    </div>
+                    <a href="tel:0289512345" class="bg-emerald-50 text-emerald-600 p-2 rounded-lg text-xs font-bold flex items-center gap-1 border border-emerald-200">
+                        📞 打電話
+                    </a>
+                </div>
+                
+                <p class="text-xs text-slate-600 flex items-start gap-1">
+                    📍 <span>新北市板橋區新站路 28 號 B1</span>
+                </p>
+
+                <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
+                    <span>上次保養：2026-01-10</span>
+                    <span class="text-blue-600 font-medium">保養設備：8 台</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>

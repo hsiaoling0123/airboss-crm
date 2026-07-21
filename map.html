@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>客戶與派工地圖 - AirBoss CRM</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet 地圖套件 (免 API Key) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=MOPLUS+Rounded+1c:wght@500;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
@@ -18,6 +19,7 @@
 </head>
 <body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-12">
 
+    <!-- 頂部導覽列 -->
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-50 flex justify-between items-center rounded-b-2xl">
         <a href="index.html" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full font-bold transition-all">
             ‹ 首頁
@@ -28,19 +30,22 @@
 
     <main class="max-w-md mx-auto p-4 space-y-4">
 
+        <!-- 模式切換按鈕 -->
         <div class="bg-slate-100 p-1 rounded-2xl flex gap-1">
             <button onclick="switchMapMode('today')" id="btn-today" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all bg-sky-400 text-white shadow-sm">
-                📍 今日行程規劃 (${new Date().getMonth()+1}/${new Date().getDate()})
+                📍 今日行程規劃 (<span id="mapTodayDate"></span>)
             </button>
             <button onclick="switchMapMode('all')" id="btn-all" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all text-slate-500">
                 👥 全部客戶地圖
             </button>
         </div>
 
+        <!-- 地圖展示區 -->
         <div class="bg-white p-2 rounded-3xl shadow-sm border border-amber-100 relative">
             <div id="map"></div>
         </div>
 
+        <!-- 今日路線規劃區 -->
         <div id="routeSection" class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 space-y-3">
             <div class="flex justify-between items-center border-b border-amber-50 pb-2">
                 <h2 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
@@ -49,8 +54,10 @@
                 <span id="orderCountTag" class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2.5 py-0.5 rounded-full">0 處行程</span>
             </div>
 
+            <!-- 今日行程順序列表 -->
             <div id="todayRouteList" class="space-y-2">
-                </div>
+                <!-- 動態生成行程順序卡片 -->
+            </div>
 
             <button onclick="openGoogleMapsNavigation()" class="w-full bg-gradient-to-r from-emerald-400 to-teal-400 hover:opacity-90 text-white font-black py-3 rounded-2xl text-xs shadow-sm transition-all flex items-center justify-center gap-1.5">
                 <span>🧭 開啟 Google Maps 開始全天導航</span>
@@ -69,6 +76,10 @@
         const DEFAULT_LNG = 121.5654;
 
         function initMap() {
+            // 動態顯示今天日期 (例如 7/22)
+            const now = new Date();
+            document.getElementById('mapTodayDate').textContent = `${now.getMonth() + 1}/${now.getDate()}`;
+
             map = L.map('map').setView([DEFAULT_LAT, DEFAULT_LNG], 12);
 
             // 載入 OpenStreetMap 免費圖資
@@ -113,14 +124,13 @@
                     return;
                 }
 
-                // 排序時間 (例: 09:00 -> 14:00)
+                // 排序時間
                 todayOrders.sort((a,b) => (a.time || '00:00').localeCompare(b.time || '00:00'));
 
                 let bounds = [];
                 routeListEl.innerHTML = '';
 
                 todayOrders.forEach((o, index) => {
-                    // 尋找對應的客戶地址
                     const cust = customers.find(c => c.name === o.customerName) || {};
                     const address = cust.address || '地址待確認';
 
@@ -139,7 +149,6 @@
                         </div>
                     `;
 
-                    // 簡化模擬地圖標記點 (實務上輸入地址可自動定位)
                     const mockLat = DEFAULT_LAT + (Math.sin(index + 1) * 0.03);
                     const mockLng = DEFAULT_LNG + (Math.cos(index + 1) * 0.03);
                     bounds.push([mockLat, mockLng]);
@@ -151,7 +160,6 @@
                 if (bounds.length > 0) map.fitBounds(bounds, { padding: [30, 30] });
 
             } else {
-                // 全部客戶模式
                 document.getElementById('orderCountTag').textContent = `共 ${customers.length} 位客戶`;
                 document.getElementById('todayRouteList').innerHTML = `<div class="text-center text-slate-400 text-xs py-2">已在地圖上顯示所有客戶位置 📍</div>`;
 
@@ -169,7 +177,6 @@
             }
         }
 
-        // 開啟 Google Maps 進行全天多點導航
         function openGoogleMapsNavigation() {
             const todayStr = formatDate(new Date());
             const orders = JSON.parse(localStorage.getItem('airboss_orders')) || [];
@@ -182,13 +189,11 @@
                 return;
             }
 
-            // 組合地址列表
             const addresses = todayOrders.map(o => {
                 const cust = customers.find(c => c.name === o.customerName) || {};
                 return cust.address || o.customerName;
             });
 
-            // Google Maps 路線網址語法
             const origin = encodeURIComponent(addresses[0]);
             const destination = encodeURIComponent(addresses[addresses.length - 1]);
             const waypoints = addresses.slice(1, -1).map(addr => encodeURIComponent(addr)).join('|');

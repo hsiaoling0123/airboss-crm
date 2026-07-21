@@ -14,16 +14,27 @@
         <a href="index.html" class="text-sm bg-blue-700 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1">
             ‹ 返回首頁
         </a>
-        <h1 class="text-lg font-bold">📅 週拖曳派工看板</h1>
+        <h1 class="text-lg font-bold">📅 日期拖曳派工看板</h1>
         <a href="create-order.html" class="text-sm bg-emerald-500 hover:bg-emerald-400 px-3 py-1.5 rounded-lg font-medium">
             + 開單
         </a>
     </header>
 
+    <!-- 週別切換控制列 -->
+    <div class="bg-white border-b border-slate-200 px-4 py-2.5 flex justify-between items-center shadow-sm">
+        <button onclick="changeWeek(-1)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+            ‹ 上一週
+        </button>
+        <span id="currentWeekRange" class="text-sm font-bold text-slate-800">2026/07/20 - 2026/07/26</span>
+        <button onclick="changeWeek(1)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+            下一週 ›
+        </button>
+    </div>
+
     <!-- 看板主要內容區（橫向滾動容器） -->
     <main class="p-4 overflow-x-auto">
-        <div class="flex gap-4 min-w-[1200px] items-start">
-
+        <div class="flex gap-4 min-w-[1400px] items-start" id="kanbanContainer">
+            
             <!-- 未排程欄位 -->
             <div class="w-72 bg-slate-200/80 p-3 rounded-2xl flex-shrink-0 border border-slate-300">
                 <div class="flex justify-between items-center mb-3 px-1">
@@ -32,28 +43,12 @@
                     </h2>
                     <span id="count-unassigned" class="bg-slate-300 text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
                 </div>
-                <div id="col-unassigned" data-day="待排程" class="kanban-col space-y-3 min-h-[350px] p-1 transition-colors">
+                <div id="col-unassigned" data-date="待排程" class="kanban-col space-y-3 min-h-[380px] p-1 transition-colors">
                 </div>
             </div>
 
-            <!-- 週一至週日欄位 -->
-            <script>
-                const days = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
-                days.forEach(day => {
-                    document.write(`
-                        <div class="w-72 bg-blue-50/70 p-3 rounded-2xl flex-shrink-0 border border-blue-200/60">
-                            <div class="flex justify-between items-center mb-3 px-1">
-                                <h2 class="font-bold text-blue-900 text-sm flex items-center gap-1.5">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> ${day}
-                                </h2>
-                                <span id="count-${day}" class="bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
-                            </div>
-                            <div id="col-${day}" data-day="${day}" class="kanban-col space-y-3 min-h-[350px] p-1 transition-colors">
-                            </div>
-                        </div>
-                    `);
-                });
-            </script>
+            <!-- 週一至週日動態生成欄位區 -->
+            <div id="weekColumns" class="flex gap-4"></div>
 
             <!-- 已完成欄位 -->
             <div class="w-72 bg-emerald-50/80 p-3 rounded-2xl flex-shrink-0 border border-emerald-200">
@@ -63,7 +58,7 @@
                     </h2>
                     <span id="count-completed" class="bg-emerald-200 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
                 </div>
-                <div id="col-completed" data-day="已完工" class="kanban-col space-y-3 min-h-[350px] p-1 transition-colors">
+                <div id="col-completed" data-date="已完工" class="kanban-col space-y-3 min-h-[380px] p-1 transition-colors">
                 </div>
             </div>
 
@@ -71,34 +66,106 @@
     </main>
 
     <script>
+        let currentMonday = getMonday(new Date());
         let orders = JSON.parse(localStorage.getItem('airboss_orders')) || [];
 
+        // 取得指定日期所在週的週一
+        function getMonday(d) {
+            d = new Date(d);
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(d.setDate(diff));
+        }
+
+        // 格式化日期 YYYY-MM-DD
+        function formatDate(d) {
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const date = String(d.getDate()).padStart(2, '0');
+            return `${d.getFullYear()}-${month}-${date}`;
+        }
+
+        // 格式化顯示 MM/DD
+        function formatShortDate(d) {
+            return `${d.getMonth() + 1}/${d.getDate()}`;
+        }
+
         function renderKanban() {
-            document.querySelectorAll('.kanban-col').forEach(col => col.innerHTML = '');
+            const weekContainer = document.getElementById('weekColumns');
+            weekContainer.innerHTML = '';
 
-            orders.forEach(order => {
-                const dayGroup = order.assignedDay || '待排程';
-                let colEl = document.querySelector(`[data-day="${dayGroup}"]`);
-                if (!colEl) colEl = document.getElementById('col-unassigned');
+            const dayNames = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
+            const weekDates = [];
 
-                const cardHtml = `
-                    <div data-id="${order.id}" class="kanban-card bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 cursor-grab active:cursor-grabbing hover:shadow-md transition-all space-y-2">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-slate-900 text-sm">${order.customerName}</h3>
-                            <span class="text-xs font-bold text-emerald-600">NT$ ${Number(order.price || 0).toLocaleString()}</span>
+            // 生成本週 7 天欄位
+            for (let i = 0; i < 7; i++) {
+                const dateObj = new Date(currentMonday);
+                dateObj.setDate(currentMonday.getDate() + i);
+                const dateStr = formatDate(dateObj);
+                const displayDate = formatShortDate(dateObj);
+                const dayName = dayNames[i];
+                
+                // 判斷是否為今天
+                const isToday = formatDate(new Date()) === dateStr;
+                const headerBg = isToday ? 'bg-blue-600 text-white' : 'bg-blue-100/70 text-blue-900';
+                const cardBorder = isToday ? 'border-2 border-blue-500 bg-blue-50/40' : 'border border-blue-200/60 bg-blue-50/30';
+
+                weekDates.push(dateStr);
+
+                weekContainer.innerHTML += `
+                    <div class="w-72 ${cardBorder} p-3 rounded-2xl flex-shrink-0">
+                        <div class="flex justify-between items-center mb-3 px-2 py-1.5 rounded-xl ${headerBg}">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-bold text-sm">${dayName}</span>
+                                <span class="text-xs opacity-90">(${displayDate})</span>
+                            </div>
+                            <span id="count-${dateStr}" class="bg-white/30 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
                         </div>
-                        <p class="text-xs text-blue-600 font-medium">🔧 ${order.serviceType}</p>
-                        
-                        <!-- 顯眼的時間與日期區塊 -->
-                        <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-xs">
-                            <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md font-bold flex items-center gap-1">
-                                ⏰ ${order.time || '全天'}
-                            </span>
-                            <span class="text-slate-400 text-[11px]">${order.date || '無日期'}</span>
+                        <div id="col-${dateStr}" data-date="${dateStr}" class="kanban-col space-y-3 min-h-[380px] p-1 transition-colors">
                         </div>
                     </div>
                 `;
-                colEl.insertAdjacentHTML('beforeend', cardHtml);
+            }
+
+            // 更新日期範圍顯示
+            const sundayObj = new Date(currentMonday);
+            sundayObj.setDate(currentMonday.getDate() + 6);
+            document.getElementById('currentWeekRange').textContent = `${formatDate(currentMonday)} ~ ${formatDate(sundayObj)}`;
+
+            // 清空待排程與已完工欄位
+            document.getElementById('col-unassigned').innerHTML = '';
+            document.getElementById('col-completed').innerHTML = '';
+
+            // 將工單填入對應日期欄位
+            orders.forEach(order => {
+                let targetCol = null;
+
+                if (order.status === '已完工') {
+                    targetCol = document.getElementById('col-completed');
+                } else if (order.date && document.getElementById(`col-${order.date}`)) {
+                    targetCol = document.getElementById(`col-${order.date}`);
+                } else {
+                    targetCol = document.getElementById('col-unassigned');
+                }
+
+                if (targetCol) {
+                    const cardHtml = `
+                        <div data-id="${order.id}" class="kanban-card bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 cursor-grab active:cursor-grabbing hover:shadow-md transition-all space-y-2">
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-bold text-slate-900 text-sm">${order.customerName}</h3>
+                                <span class="text-xs font-bold text-emerald-600">NT$ ${Number(order.price || 0).toLocaleString()}</span>
+                            </div>
+                            <p class="text-xs text-blue-600 font-medium">🔧 ${order.serviceType}</p>
+                            
+                            <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-xs">
+                                <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md font-bold flex items-center gap-1">
+                                    ⏰ ${order.time || '全天'}
+                                </span>
+                                <span class="text-slate-400 text-[11px]">${order.date || '無日期'}</span>
+                            </div>
+                        </div>
+                    `;
+                    targetCol.insertAdjacentHTML('beforeend', cardHtml);
+                }
             });
 
             updateCounts();
@@ -107,9 +174,9 @@
 
         function updateCounts() {
             document.querySelectorAll('.kanban-col').forEach(col => {
-                const day = col.getAttribute('data-day');
+                const dateKey = col.getAttribute('data-date');
                 const count = col.children.length;
-                const countEl = document.getElementById(`count-${day === '待排程' ? 'unassigned' : day === '已完工' ? 'completed' : day}`);
+                const countEl = document.getElementById(`count-${dateKey}`);
                 if (countEl) countEl.textContent = count;
             });
         }
@@ -123,21 +190,31 @@
 
             document.querySelectorAll('.kanban-col').forEach(col => {
                 col.addEventListener('sortupdate', function(e) {
-                    const targetDay = e.target.getAttribute('data-day');
+                    const targetDate = e.target.getAttribute('data-date');
                     const cardEl = e.detail.item;
                     const orderId = Number(cardEl.getAttribute('data-id'));
 
                     let order = orders.find(o => o.id === orderId);
                     if (order) {
-                        order.assignedDay = targetDay;
-                        if (targetDay === '已完工') {
+                        if (targetDate === '已完工') {
                             order.status = '已完工';
+                        } else if (targetDate === '待排程') {
+                            order.status = '待處理';
+                            order.date = '';
+                        } else {
+                            order.status = '待處理';
+                            order.date = targetDate; // 拖動到該日期，自動更新工單預約日期！
                         }
                         localStorage.setItem('airboss_orders', JSON.stringify(orders));
                     }
                     updateCounts();
                 });
             });
+        }
+
+        function changeWeek(offset) {
+            currentMonday.setDate(currentMonday.getDate() + (offset * 7));
+            renderKanban();
         }
 
         document.addEventListener('DOMContentLoaded', renderKanban);

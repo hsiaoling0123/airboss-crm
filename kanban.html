@@ -3,98 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>派工行程看板 - AirBoss CRM</title>
+    <title>派工行程與地圖導航 - AirBoss CRM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=MOPLUS+Rounded+1c:wght@500;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
-    <style> 
-        body { font-family: 'MOPLUS Rounded 1c', 'Noto Sans TC', sans-serif; letter-spacing: 0.02em; } 
-        .kanban-col { min-height: 250px; }
-    </style>
+    <style> body { font-family: 'MOPLUS Rounded 1c', 'Noto Sans TC', sans-serif; } </style>
 </head>
 <body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-16">
 
-    <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-50 flex justify-between items-center rounded-b-2xl">
-        <a href="index.html" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full font-bold transition-all">‹ 首頁</a>
-        <h1 class="text-base font-black">📅 派工行程與完工回報 🌸</h1>
-        <button onclick="requestNotificationPermission()" class="text-[10px] bg-amber-300 text-amber-900 px-2.5 py-1 rounded-full font-black shadow-sm">🔔 推播</button>
+    <!-- 頂部標頭 -->
+    <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-40 flex justify-between items-center rounded-b-2xl">
+        <div class="flex items-center gap-2">
+            <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
+            <div>
+                <h1 class="text-base font-black">📅 派工行程與地圖導航</h1>
+                <p class="text-[10px] opacity-90 font-bold">點擊工單一鍵預覽地圖與完工回報</p>
+            </div>
+        </div>
     </header>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
-        <!-- 統計面板 -->
-        <div class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 space-y-2">
-            <div class="flex justify-between items-center">
-                <span class="font-black text-xs text-slate-800">📈 營收統計</span>
-                <span id="rangeLabel" class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-bold">全部期間</span>
+
+        <!-- 🗺️ 看板連動地圖預覽區塊 -->
+        <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                <h2 class="font-black text-xs text-slate-800 flex items-center gap-1.5">
+                    <span>🗺️</span> 派工目標即時地圖
+                </h2>
+                <span id="mapTargetName" class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-bold">點擊下方工單載入地點</span>
             </div>
-            <div class="grid grid-cols-3 gap-2 text-center">
-                <div class="bg-amber-50/50 p-2 rounded-2xl"><p class="text-[9px] text-slate-400 font-bold">總工單</p><p id="statTotalOrders" class="text-sm font-black text-slate-800">0</p></div>
-                <div class="bg-sky-50/50 p-2 rounded-2xl"><p class="text-[9px] text-slate-400 font-bold">預估營收</p><p id="statTotalRev" class="text-xs font-black text-sky-600 mt-0.5">$0</p></div>
-                <div class="bg-emerald-50/50 p-2 rounded-2xl"><p class="text-[9px] text-slate-400 font-bold">實收金額</p><p id="statDoneRev" class="text-xs font-black text-emerald-600 mt-0.5">$0</p></div>
+
+            <!-- 地圖元件 -->
+            <div class="w-full h-48 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 relative">
+                <iframe 
+                    id="kanbanMap"
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    loading="lazy" 
+                    allowfullscreen
+                    src="https://maps.google.com/maps?q=新北市三重區正義北路100號&t=&z=15&ie=UTF8&iwloc=&output=embed">
+                </iframe>
             </div>
+
+            <button id="btnGoogleNav" onclick="openDirectNav()" class="w-full bg-gradient-to-r from-sky-400 to-indigo-400 text-white font-black py-2.5 rounded-2xl text-xs shadow-sm hover:opacity-90 flex items-center justify-center gap-1.5">
+                🚀 開啟 Google 地圖 App 語音導航
+            </button>
         </div>
 
-        <!-- 時間過濾 -->
-        <div class="flex bg-slate-100 p-1 rounded-2xl text-[11px] font-bold text-slate-500">
-            <button onclick="setTimeFilter('today')" id="time-today" class="flex-1 py-1 rounded-xl">今日</button>
-            <button onclick="setTimeFilter('week')" id="time-week" class="flex-1 py-1 rounded-xl">本週</button>
-            <button onclick="setTimeFilter('month')" id="time-month" class="flex-1 py-1 rounded-xl">本月</button>
-            <button onclick="setTimeFilter('all')" id="time-all" class="flex-1 py-1 rounded-xl bg-white text-sky-600 shadow-sm">全部</button>
-        </div>
+        <!-- 派工行程卡片列表 -->
+        <div class="space-y-3">
+            <h2 class="font-black text-xs text-slate-400 px-1">今日預約行程 (2 件)：</h2>
 
-        <!-- 看板雙欄 (點擊卡片填寫完工) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="space-y-2">
-                <div class="flex justify-between px-2 font-black text-xs text-rose-600">
-                    <span>⏳ 待處理工單 (點擊進入回報完工)</span>
-                    <span id="countPending" class="bg-rose-100 text-rose-800 text-[10px] px-2 py-0.5 rounded-full">0</span>
+            <!-- 工單 1 -->
+            <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-2">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">10:30 上午</span>
+                            <h3 class="font-black text-sm text-slate-800">張先生</h3>
+                        </div>
+                        <p class="text-xs text-slate-500 font-bold mt-1">📞 0933-123-456</p>
+                    </div>
+                    <span class="text-[10px] bg-sky-100 text-sky-700 font-bold px-2 py-0.5 rounded-full">施工中</span>
                 </div>
-                <div id="colPending" class="kanban-col bg-slate-50 p-3 rounded-3xl border-2 border-dashed border-slate-200 space-y-3"></div>
+
+                <div class="p-2.5 bg-slate-50 rounded-2xl text-xs space-y-1 text-slate-600">
+                    <p>📍 <strong>地址：</strong>新北市三重區正義北路 100 號 5 樓</p>
+                    <p>❄️ <strong>項目：</strong>分離式清洗保養 x 2 台</p>
+                    <p>💰 <strong>預估金額：</strong>$5,000 元</p>
+                </div>
+
+                <div class="flex gap-2 pt-1">
+                    <button onclick="loadMap('張先生', '新北市三重區正義北路 100 號')" class="flex-1 bg-sky-50 hover:bg-sky-100 text-sky-600 font-black py-2 rounded-xl text-xs">
+                        🗺️ 切換地圖
+                    </button>
+                    <button onclick="openCompleteModal('張先生', '5000')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black py-2 rounded-xl text-xs shadow-sm">
+                        ✅ 完工與發送收據
+                    </button>
+                </div>
             </div>
 
-            <div class="space-y-2">
-                <div class="flex justify-between px-2 font-black text-xs text-emerald-600">
-                    <span>✅ 已完工結案</span>
-                    <span id="countDone" class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full">0</span>
+            <!-- 工單 2 -->
+            <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-2">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">14:00 下午</span>
+                            <h3 class="font-black text-sm text-slate-800">王小姐</h3>
+                        </div>
+                        <p class="text-xs text-slate-500 font-bold mt-1">📞 0955-666-777</p>
+                    </div>
+                    <span class="text-[10px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full">等待前往</span>
                 </div>
-                <div id="colDone" class="kanban-col bg-slate-50 p-3 rounded-3xl border-2 border-dashed border-slate-200 space-y-3"></div>
+
+                <div class="p-2.5 bg-slate-50 rounded-2xl text-xs space-y-1 text-slate-600">
+                    <p>📍 <strong>地址：</strong>台北市大安區忠孝東路四段 200 號</p>
+                    <p>❄️ <strong>項目：</strong>冷氣不冷檢測 + 補冷媒 R32</p>
+                    <p>💰 <strong>預估金額：</strong>$3,500 元</p>
+                </div>
+
+                <div class="flex gap-2 pt-1">
+                    <button onclick="loadMap('王小姐', '台北市大安區忠孝東路四段 200 號')" class="flex-1 bg-sky-50 hover:bg-sky-100 text-sky-600 font-black py-2 rounded-xl text-xs">
+                        🗺️ 切換地圖
+                    </button>
+                    <button onclick="openCompleteModal('王小姐', '3500')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black py-2 rounded-xl text-xs shadow-sm">
+                        ✅ 完工與發送收據
+                    </button>
+                </div>
             </div>
+
         </div>
+
     </main>
 
-    <!-- 師傅完工資訊填寫彈窗 (Modal) -->
-    <div id="finishModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 shadow-2xl">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-black text-xs text-slate-800">🛠️ 師傅完工資訊填寫</h3>
-                <button onclick="closeModal()" class="text-slate-400 font-bold text-xs">✕</button>
+    <!-- 完工回報彈窗 (Completion Modal) -->
+    <div id="completeModal" class="fixed inset-0 bg-slate-900/40 opacity-0 pointer-events-none transition-opacity duration-300 z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-xs rounded-3xl p-5 space-y-3 shadow-2xl">
+            <h3 class="font-black text-sm text-slate-800">🎉 完工回報與發送收據</h3>
+            <p class="text-xs text-slate-400">客戶：<span id="modalCustName" class="font-bold text-slate-700"></span></p>
+
+            <div>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1">實際實收金額 ($)</label>
+                <input type="number" id="finalPrice" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-emerald-600">
             </div>
 
-            <div class="space-y-2 text-xs">
-                <p>👤 <strong>客戶：</strong><span id="modalCustomer"></span></p>
-                <div>
-                    <label class="block font-bold text-slate-400 mb-1">實際實收金額 (NT$)</label>
-                    <input type="number" id="finalPrice" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-emerald-600">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-400 mb-1">施工備註 / 現場狀況</label>
-                    <textarea id="workNotes" rows="2" placeholder="例：散熱片清洗完畢、更換 35uF 電容" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl"></textarea>
-                </div>
-            </div>
-
-            <div class="space-y-2 pt-2">
-                <button onclick="submitFinish()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-2.5 rounded-xl text-xs shadow-sm transition-all">
-                    ✅ 完工結案並移動至已完工
-                </button>
-                <button onclick="sendLineReceipt()" class="w-full bg-sky-50 text-sky-700 font-bold py-2 rounded-xl text-xs hover:bg-sky-100 transition-all flex justify-center items-center gap-1">
-                    💬 發送 LINE 完工收據與維護提醒
-                </button>
-            </div>
+            <button onclick="sendReceipt()" class="w-full bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs shadow-sm">
+                💬 複製 LINE 電子收據並完成
+            </button>
+            <button onclick="closeCompleteModal()" class="w-full bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-xs">
+                取消
+            </button>
         </div>
     </div>
 
+    <script>
+        let currentNavAddress = "新北市三重區正義北路 100 號";
+
+        // 動態更新看板地圖
+        function loadMap(name, address) {
+            currentNavAddress = address;
+            document.getElementById('mapTargetName').innerText = `${name} (${address})`;
+            document.getElementById('kanbanMap').src = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 開啟 Google Maps 導航
+        function openDirectNav() {
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(currentNavAddress)}`, '_blank');
+        }
+
+        // 完工彈窗控制
+        function openCompleteModal(name, price) {
+            document.getElementById('modalCustName').innerText = name;
+            document.getElementById('finalPrice').value = price;
+            const modal = document.getElementById('completeModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeCompleteModal() {
+            const modal = document.getElementById('completeModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function sendReceipt() {
+            const name = document.getElementById('modalCustName').innerText;
+            const price = document.getElementById('finalPrice').value;
+            const receiptText = `感謝使用 AirBoss！\n【電子服務收據】\n客戶：${name} 先生/小姐\n本次服務實收金額：NT$ ${price} 元\n施工項目已驗收完成，提供 90 天保固服務，有任何問題隨時聯繫我們！😊`;
+            navigator.clipboard.writeText(receiptText);
+            alert('✅ 已完成派工，並已自動複製 LINE 電子收據！文字可以直接貼給客戶。');
+            closeCompleteModal();
+        }
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCfy9ARrE9wp-bCrABsFVb-qM8_sp9_wqs",
@@ -107,117 +190,11 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        let currentTimeFilter = 'all';
-        let allOrders = [];
-        let currentActiveOrder = null;
-
-        onSnapshot(collection(db, "orders"), (snapshot) => {
-            allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderKanban();
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = 'login.html';
         });
-
-        window.renderKanban = function() {
-            const now = new Date();
-            let filtered = allOrders.filter(order => {
-                if (!order.date) return true;
-                const orderDate = new Date(order.date);
-                if (currentTimeFilter === 'today') return orderDate.toDateString() === now.toDateString();
-                if (currentTimeFilter === 'week') return (now - orderDate) <= (7 * 24 * 60 * 60 * 1000);
-                if (currentTimeFilter === 'month') return orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear();
-                return true;
-            });
-
-            let totalRev = 0, doneRev = 0;
-            filtered.forEach(o => {
-                totalRev += Number(o.price || 0);
-                if (o.status === '已完工') doneRev += Number(o.finalPrice || o.price || 0);
-            });
-
-            document.getElementById('statTotalOrders').innerText = filtered.length;
-            document.getElementById('statTotalRev').innerText = `$${totalRev.toLocaleString()}`;
-            document.getElementById('statDoneRev').innerText = `$${doneRev.toLocaleString()}`;
-
-            const pending = filtered.filter(o => o.status !== '已完工');
-            const done = filtered.filter(o => o.status === '已完工');
-
-            document.getElementById('countPending').innerText = pending.length;
-            document.getElementById('countDone').innerText = done.length;
-
-            document.getElementById('colPending').innerHTML = pending.map(o => createCardHtml(o)).join('');
-            document.getElementById('colDone').innerHTML = done.map(o => createCardHtml(o)).join('');
-        };
-
-        function createCardHtml(order) {
-            return `
-                <div onclick="openFinishModal('${order.id}')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-amber-100/80 space-y-2 cursor-pointer hover:border-sky-400 transition-all">
-                    <div class="flex justify-between items-center border-b border-slate-50 pb-1.5">
-                        <span class="font-black text-xs text-slate-800">👤 ${order.customerName || '未名客戶'}</span>
-                        <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${order.status === '已完工' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
-                            ${order.status || '待處理'}
-                        </span>
-                    </div>
-
-                    <div class="text-[11px] space-y-0.5 text-slate-600">
-                        <p>🗓️ <strong>時間：</strong>${order.date || ''} ${order.time || ''}</p>
-                        <p>📍 <strong>地址：</strong>${order.address || '未填寫'}</p>
-                        <p>🛠️ <strong>項目：</strong>${order.serviceType || '保養'}</p>
-                        <p>💰 <strong>預估/實收：</strong>NT$ ${Number(order.finalPrice || order.price || 0).toLocaleString()}</p>
-                    </div>
-
-                    <div class="pt-1 text-[10px] text-sky-600 font-bold text-right">
-                        ${order.status === '已完工' ? '✅ 已結案 (點擊查看)' : '👉 點擊開啟完工回報 modal'}
-                    </div>
-                </div>
-            `;
-        }
-
-        window.openFinishModal = function(id) {
-            currentActiveOrder = allOrders.find(o => o.id === id);
-            if (!currentActiveOrder) return;
-
-            document.getElementById('modalCustomer').innerText = currentActiveOrder.customerName;
-            document.getElementById('finalPrice').value = currentActiveOrder.finalPrice || currentActiveOrder.price || 0;
-            document.getElementById('workNotes').value = currentActiveOrder.workNotes || '';
-            document.getElementById('finishModal').classList.remove('hidden');
-        };
-
-        window.closeModal = function() {
-            document.getElementById('finishModal').classList.add('hidden');
-        };
-
-        window.submitFinish = async function() {
-            if (!currentActiveOrder) return;
-            const finalPrice = Number(document.getElementById('finalPrice').value || 0);
-            const workNotes = document.getElementById('workNotes').value;
-
-            await updateDoc(doc(db, "orders", currentActiveOrder.id), {
-                status: '已完工',
-                finalPrice: finalPrice,
-                workNotes: workNotes,
-                finishedAt: new Date().toISOString()
-            });
-
-            alert('🎉 已完成結案並移至已完工區！');
-            closeModal();
-        };
-
-        window.sendLineReceipt = function() {
-            if (!currentActiveOrder) return;
-            const finalPrice = document.getElementById('finalPrice').value || 0;
-            const workNotes = document.getElementById('workNotes').value || '無';
-
-            const msg = `🌸 AirBoss 冷氣保養/維修完工收據 🌸\n------------------\n${currentActiveOrder.customerName} 先生/小姐您好：\n今日冷氣保養維護服務已順利完成！\n\n🛠️ 服務項目：${currentActiveOrder.serviceType}\n📝 施工狀況：${workNotes}\n💰 實收金額：NT$ ${Number(finalPrice).toLocaleString()} 元\n\n💡 貼心提醒：定期清洗冷氣能維持良好冷房效果與省電！感謝您的支持，祝您有舒適愉快的一天！🐻❄️`;
-            window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`, '_blank');
-        };
-
-        window.setTimeFilter = function(time) {
-            currentTimeFilter = time;
-            ['today', 'week', 'month', 'all'].forEach(t => document.getElementById(`time-${t}`).className = 'flex-1 py-1 rounded-xl text-slate-500');
-            document.getElementById(`time-${time}`).className = 'flex-1 py-1 rounded-xl bg-white text-sky-600 shadow-sm font-bold';
-            renderKanban();
-        };
     </script>
 </body>
 </html>

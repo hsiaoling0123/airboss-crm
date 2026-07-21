@@ -41,10 +41,16 @@
                 </select>
             </div>
 
-            <!-- 預約日期 -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">預約日期 *</label>
-                <input type="date" id="orderDate" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+            <!-- 日期與時間 (並排) -->
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">預約日期 *</label>
+                    <input type="date" id="orderDate" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">預約時間</label>
+                    <input type="time" id="orderTime" value="09:00" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+                </div>
             </div>
 
             <!-- 預估金額 -->
@@ -69,10 +75,8 @@
 
     <!-- JavaScript 邏輯 -->
     <script>
-        // 預設將日期設定為今天
         document.getElementById('orderDate').valueAsDate = new Date();
 
-        // 讀取 LocalStorage 客戶名單並填入下拉選單
         function loadCustomerOptions() {
             const selectEl = document.getElementById('customerSelect');
             const customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
@@ -86,7 +90,6 @@
                 customers.map(c => `<option value="${c.name}">${c.name} (${c.phone})</option>`).join('');
         }
 
-        // 處理工單儲存
         document.getElementById('orderForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -101,6 +104,7 @@
                 customerName: customerName,
                 serviceType: document.getElementById('serviceType').value,
                 date: document.getElementById('orderDate').value,
+                time: document.getElementById('orderTime').value || '全天',
                 price: document.getElementById('price').value || '0',
                 note: document.getElementById('orderNote').value || '',
                 status: '待處理'
@@ -111,10 +115,9 @@
             localStorage.setItem('airboss_orders', JSON.stringify(orders));
 
             alert('🎉 工單建立成功！');
-            window.location.href = 'index.html'; // 建立完成跳轉回首頁
+            window.location.href = 'kanban.html'; // 建立完成跳轉到派工看板
         });
 
-        // 頁面載入時填入選單
         document.addEventListener('DOMContentLoaded', loadCustomerOptions);
     </script>
 

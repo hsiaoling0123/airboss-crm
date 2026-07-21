@@ -3,101 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新增工單 - AirBoss CRM</title>
+    <title>建立派工單 - AirBoss CRM</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Zen Maru Gothic', sans-serif; } </style>
+    <link href="https://fonts.googleapis.com/css2?family=MOPLUS+Rounded+1c:wght@500;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    <style> 
+        body { 
+            font-family: 'MOPLUS Rounded 1c', 'Noto Sans TC', sans-serif; 
+            letter-spacing: 0.02em;
+        } 
+    </style>
 </head>
-<body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-12">
+<body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-16">
 
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-50 flex justify-between items-center rounded-b-2xl">
-        <button type="button" onclick="goBack()" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full font-bold transition-all">
-            ‹ 返回
-        </button>
-        <h1 class="text-base font-black">快速建立工單 📝</h1>
+        <a href="index.html" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full font-bold transition-all">
+            ‹ 首頁
+        </a>
+        <h1 class="text-base font-black">📝 新增派工與 LINE 通知 🌸</h1>
         <div class="w-10"></div>
     </header>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
-        <form id="orderForm" class="bg-white p-4.5 rounded-3xl shadow-sm border border-amber-100 space-y-3.5">
-            <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-1">客戶姓名 *</label>
-                <input type="text" id="customerName" required placeholder="例：陳先生" class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
-            </div>
+
+        <form id="orderForm" class="bg-white p-5 rounded-3xl shadow-sm border border-amber-100 space-y-4">
+            <h2 class="font-black text-sm text-slate-800 flex items-center gap-1.5">
+                <span class="text-sky-500">❄️</span> 派工工單基本資訊
+            </h2>
 
             <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-1">服務項目 *</label>
-                <input type="text" id="serviceType" required placeholder="例：分離式冷氣深度清洗 x2" class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
+                <label class="block text-[11px] font-bold text-slate-400 mb-1">客戶姓名 *</label>
+                <input type="text" id="custName" required placeholder="例：王小明" class="w-full p-2.5 bg-amber-50/20 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
             </div>
 
-            <div class="grid grid-cols-2 gap-2.5">
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-500 mb-1">預估金額 (NT$) *</label>
-                    <input type="number" id="price" required placeholder="3500" class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
-                </div>
-                <div>
-                    <!-- 💡 亮點：新增客源選擇欄位 -->
-                    <label class="block text-[11px] font-bold text-slate-500 mb-1">工單客源來源 *</label>
-                    <select id="source" required class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400 font-bold text-sky-800">
-                        <option value="Google搜尋">Google搜尋</option>
-                        <option value="LINE官方帳號">LINE官方帳號</option>
-                        <option value="FB社團/粉專">FB社團/粉專</option>
-                        <option value="IG/Threads">IG/Threads</option>
-                        <option value="舊客介紹/回訪">舊客介紹/回訪</option>
-                        <option value="社區住戶">社區住戶</option>
-                        <option value="傳單/廣告">傳單/廣告</option>
-                        <option value="其他">其他</option>
-                    </select>
-                </div>
+            <div>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1">聯絡電話 *</label>
+                <input type="tel" id="custPhone" required placeholder="0912-345-678" class="w-full p-2.5 bg-amber-50/20 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
             </div>
 
-            <div class="grid grid-cols-2 gap-2.5">
+            <div>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1">施工地址 *</label>
+                <input type="text" id="custAddress" required placeholder="台北市中山區民生東路..." class="w-full p-2.5 bg-amber-50/20 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-500 mb-1">施工日期</label>
-                    <input type="date" id="date" class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
+                    <label class="block text-[11px] font-bold text-slate-400 mb-1">預約日期 *</label>
+                    <input type="date" id="orderDate" required class="w-full p-2.5 bg-amber-50/20 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-500 mb-1">預約時間</label>
-                    <input type="time" id="time" class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
+                    <label class="block text-[11px] font-bold text-slate-400 mb-1">預約時間 *</label>
+                    <input type="time" id="orderTime" required value="14:00" class="w-full p-2.5 bg-amber-50/20 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
                 </div>
             </div>
 
             <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-1">備註說明</label>
-                <textarea id="note" rows="2" placeholder="特殊指示或施工注意事項..." class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400"></textarea>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1">服務項目與冷氣台數 *</label>
+                <input type="text" id="serviceType" required placeholder="例：分離式冷氣清洗 x2台 + 補冷媒" class="w-full p-2.5 bg-amber-50/20 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
             </div>
 
-            <button type="submit" class="w-full bg-gradient-to-r from-emerald-400 to-teal-400 text-white font-black py-3 rounded-2xl text-xs shadow-sm hover:opacity-90 transition-all">
-                ✨ 儲存並建立工單
+            <div>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1">預估金額 (NT$)</label>
+                <input type="number" id="orderPrice" placeholder="4500" class="w-full p-2.5 bg-amber-50/20 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-sky-400 to-indigo-300 text-white font-black py-3 rounded-2xl text-xs shadow-sm hover:opacity-90 transition-all">
+                ✨ 儲存派工單並同步至雲端
             </button>
         </form>
+
+        <div class="bg-emerald-50/60 p-4 rounded-3xl border border-emerald-100 space-y-3">
+            <h3 class="font-bold text-xs text-emerald-900 flex items-center gap-1.5">
+                <span>💬</span> 一鍵傳送 LINE 訊息給客戶
+            </h3>
+            
+            <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="sendLineNotice('arrival')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-2 rounded-2xl text-[11px] shadow-sm transition-all flex items-center justify-center gap-1">
+                    <span>🚗 出勤抵達通知</span>
+                </button>
+                <button type="button" onclick="sendLineNotice('complete')" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2.5 px-2 rounded-2xl text-[11px] shadow-sm transition-all flex items-center justify-center gap-1">
+                    <span>🎉 完工收據通知</span>
+                </button>
+            </div>
+        </div>
+
     </main>
 
-    <script>
-        function goBack() { window.location.href = document.referrer || 'index.html'; }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        document.getElementById('orderForm').addEventListener('submit', function(e) {
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfy9ARrE9wp-bCrABsFVb-qM8_sp9_wqs",
+            authDomain: "airboss-4f084.firebaseapp.com",
+            projectId: "airboss-4f084",
+            storageBucket: "airboss-4f084.firebasestorage.app",
+            messagingSenderId: "1067344741307",
+            appId: "1:1067344741307:web:15a54741a5bdb26e897a9e",
+            measurementId: "G-P9ZGJH366L"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 初始化預設日期為今天
+        document.getElementById('orderDate').valueAsDate = new Date();
+
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const newOrder = {
-                id: Date.now(),
-                customerName: document.getElementById('customerName').value,
+
+            const orderData = {
+                customerName: document.getElementById('custName').value,
+                phone: document.getElementById('custPhone').value,
+                address: document.getElementById('custAddress').value,
+                date: document.getElementById('orderDate').value,
+                time: document.getElementById('orderTime').value,
                 serviceType: document.getElementById('serviceType').value,
-                price: Number(document.getElementById('price').value || 0),
-                source: document.getElementById('source').value,
-                date: document.getElementById('date').value,
-                time: document.getElementById('time').value,
-                note: document.getElementById('note').value,
-                status: document.getElementById('date').value ? '待處理' : '未排程',
+                price: Number(document.getElementById('orderPrice').value || 0),
+                status: '待處理',
                 createdAt: new Date().toISOString()
             };
 
-            let orders = JSON.parse(localStorage.getItem('airboss_orders')) || [];
-            orders.unshift(newOrder);
-            localStorage.setItem('airboss_orders', JSON.stringify(orders));
+            try {
+                // 1. 寫入 Firebase 雲端
+                await addDoc(collection(db, "orders"), orderData);
 
-            alert('🎉 工單建立成功！');
-            window.location.href = 'kanban.html';
+                // 2. 同時新增客戶名冊（如果不存在）
+                await addDoc(collection(db, "customers"), {
+                    name: orderData.customerName,
+                    phone: orderData.phone,
+                    address: orderData.address
+                });
+
+                alert('✨ 派工單已成功同步至 Firebase 雲端囉！');
+                window.location.href = 'kanban.html';
+            } catch (error) {
+                console.error("寫入錯誤：", error);
+                alert("儲存失敗，請檢查網路狀態喔！");
+            }
         });
     </script>
-</body>
-</html>
+
+    <script>
+        // 發送 LINE 訊息
+        function sendLineNotice(type) {
+            const name = document.getElementById('custName').value || '客戶';
+            const date = document.getElementById('orderDate').value;
+            const time = document.getElementById('orderTime').value;
+            const service = document.getElementById('serviceType').value || '冷氣保養維修';
+            const price = document.getElementById('orderPrice').value || '0';
+
+            let msg = '';
+
+            if (type === 'arrival') {
+                msg = `🌸 AirBoss 冷氣服務抵達提醒 🌸\n------------------\n${name} 先生/小姐您好：\n我們的專業團隊預計將於：\n🗓️ ${date} ${time}\n📍 到府進行：${service}\n\n再請您留意門鈴，如有任何異動請隨時告知我們！祝您有美好的一天 🐻❄️`;
+            } else if (type === 'complete') {
+                msg = `🌸 AirBoss 冷氣保養完工通知 🌸\n------------------\n${name} 先生/小姐您好：\n今日的服務項目【${service}】已經順利完工囉！\n\n💰 本次實收金額：NT$ ${Number(price).toLocaleString()}\n\n感您的支持，洗完冷氣建議開送風 30 分鐘讓內部吹乾喔！如有任何問題歡迎隨時聯繫我們 😊`;
+            }
+
+            window.open(`

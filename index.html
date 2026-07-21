@@ -169,12 +169,12 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // 登入狀態驗證
+        // Firebase 登入狀態監聽 (修復初始化過早跳轉問題)
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                document.getElementById('userEmailDisplay').innerText = user.email;
+                const emailElem = document.getElementById('userEmailDisplay');
+                if (emailElem) emailElem.innerText = user.email;
             } else {
-                // 若未登入，跳轉至登入頁
                 window.location.href = 'login.html';
             }
         });

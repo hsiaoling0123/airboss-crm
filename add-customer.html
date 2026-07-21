@@ -6,89 +6,203 @@
     <title>新增客戶 - AirBoss CRM</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800">
+<body class="bg-slate-100 min-h-screen text-slate-800 pb-12">
 
     <!-- 頂部導覽列 -->
-    <header class="bg-blue-600 text-white p-4 shadow-lg sticky top-0 z-50 flex items-center justify-between">
-        <a href="index.html" class="text-sm bg-blue-700 px-3 py-1.5 rounded-lg flex items-center gap-1 font-medium">
-            ‹ 返回首頁
+    <header class="bg-blue-600 text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
+        <a href="customers.html" class="text-sm bg-blue-700 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1">
+            ‹ 返回目錄
         </a>
-        <h1 class="text-lg font-bold">新增客戶資料</h1>
-        <div class="w-16"></div>
+        <h1 class="text-lg font-bold">新增完整客戶資料</h1>
+        <div class="w-12"></div>
     </header>
 
-    <!-- 主要表單內容 -->
-    <main class="max-w-md mx-auto p-4">
-        <form id="customerForm" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
-            
-            <!-- 客戶姓名 -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">客戶姓名 *</label>
-                <input type="text" id="name" placeholder="例：張先生 / 鼎泰豐" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+    <main class="max-w-xl mx-auto p-4 space-y-6">
+        <form id="customerForm" class="space-y-5">
+
+            <!-- 1. 基本聯絡資料 -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <h2 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2">
+                    <span class="text-blue-600">👤</span> 基本資料
+                </h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">姓名 *</label>
+                        <input type="text" id="name" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">電話 *</label>
+                        <input type="tel" id="phone" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">LINE ID</label>
+                        <input type="text" id="lineId" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Email</label>
+                        <input type="email" id="email" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">生日</label>
+                        <input type="date" id="birthday" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                    </div>
+                </div>
             </div>
 
-            <!-- 聯絡電話 -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">聯絡電話 *</label>
-                <input type="tel" id="phone" placeholder="例：0912345678" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+            <!-- 2. 地址與現場入場資訊 -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <h2 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2">
+                    <span class="text-blue-600">📍</span> 地址與現場資訊
+                </h2>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">完整地址 *</label>
+                        <input type="text" id="address" required placeholder="例：新北市板橋區文化路一段100號" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">停車資訊</label>
+                            <input type="text" id="parkingNote" placeholder="例：地下室B2-15號位 / 門口可暫停" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">管理員電話</label>
+                            <input type="tel" id="guardPhone" placeholder="例：02-22500000" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- 客戶類別 -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">客戶類別</label>
-                <select id="category" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-500">
-                    <option value="一般客戶">一般客戶 (住家)</option>
-                    <option value="VIP客戶">VIP客戶</option>
-                    <option value="商業客戶">商業客戶 (餐廳/公司)</option>
-                </select>
+            <!-- 3. 客戶標籤與來源 -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <h2 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2">
+                    <span class="text-blue-600">🏷️</span> 分類與來源
+                </h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">客戶來源</label>
+                        <select id="source" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                            <option value="Google搜尋">Google搜尋</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="LINE官方帳號">LINE官方帳號</option>
+                            <option value="舊客介紹">舊客介紹</option>
+                            <option value="社區住戶">社區住戶</option>
+                            <option value="發傳單/廣告">發傳單/廣告</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">介紹人</label>
+                        <input type="text" id="referrer" placeholder="若有介紹人請填寫" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">客戶標籤 (多選/自訂逗號隔開)</label>
+                        <input type="text" id="tags" placeholder="例：VIP, 社區客, 愛殺價, 怕狗要脫鞋" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">特殊注意事項</label>
+                        <textarea id="notice" rows="2" placeholder="例：家中有大狗、需要帶腳踏墊、社區需先向管理室換證" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm"></textarea>
+                    </div>
+                </div>
             </div>
 
-            <!-- 地址 -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">服務地址</label>
-                <input type="text" id="address" placeholder="例：新北市板橋區文化路..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+            <!-- 4. 冷氣設備資料 (不限台數動態新增) -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <span class="text-blue-600">❄️</span> 冷氣設備資料
+                    </h2>
+                    <button type="button" onclick="addACRow()" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold px-2.5 py-1 rounded-lg">
+                        + 新增一台冷氣
+                    </button>
+                </div>
+
+                <div id="acContainer" class="space-y-4">
+                    <!-- 動態冷氣表單放置處 -->
+                </div>
             </div>
 
-            <!-- 備註 -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">備註/冷氣機型紀錄</label>
-                <textarea id="note" rows="3" placeholder="例：客廳日立分離式 1 台、房間大金 2 台" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"></textarea>
-            </div>
-
-            <!-- 按鈕 -->
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg text-sm transition-colors shadow-md mt-2 flex justify-center items-center gap-1">
+            <!-- 提交按鈕 -->
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm shadow-md transition-all">
                 💾 儲存客戶資料
             </button>
 
         </form>
     </main>
 
-    <!-- 自動儲存資料的 JavaScript -->
     <script>
+        let acCount = 0;
+
+        function addACRow() {
+            acCount++;
+            const container = document.getElementById('acContainer');
+            const acHtml = `
+                <div id="ac-card-${acCount}" class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3 relative">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-xs text-blue-800">冷氣 #${acCount}</span>
+                        <button type="button" onclick="removeACRow(${acCount})" class="text-xs text-red-500 font-bold hover:underline">刪除台數</button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" placeholder="品牌 (例: 日立/大金)" class="ac-brand p-2 text-xs border rounded bg-white">
+                        <input type="text" placeholder="型號 (例: RAS-28YB)" class="ac-model p-2 text-xs border rounded bg-white">
+                        <input type="text" placeholder="匹數 (例: 2.8kW / 1.2匹)" class="ac-power p-2 text-xs border rounded bg-white">
+                        <input type="text" placeholder="冷媒種類 (例: R32 / R410A)" class="ac-gas p-2 text-xs border rounded bg-white">
+                        <input type="text" placeholder="保固期限 (例: 2028-12)" class="ac-warranty p-2 text-xs border rounded bg-white col-span-2">
+                        <textarea placeholder="保養歷史紀錄備註" class="ac-maintenanceHistory p-2 text-xs border rounded bg-white col-span-2" rows="1"></textarea>
+                        <textarea placeholder="維修歷史紀錄備註" class="ac-repairHistory p-2 text-xs border rounded bg-white col-span-2" rows="1"></textarea>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', acHtml);
+        }
+
+        function removeACRow(id) {
+            document.getElementById(`ac-card-${id}`).remove();
+        }
+
+        // 預設先加一台冷氣
+        document.addEventListener('DOMContentLoaded', addACRow);
+
         document.getElementById('customerForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const nameInput = document.getElementById('name');
-            const phoneInput = document.getElementById('phone');
-            const categoryInput = document.getElementById('category');
-            const addressInput = document.getElementById('address');
-            const noteInput = document.getElementById('note');
+            // 收集冷氣資料
+            const acList = [];
+            document.querySelectorAll('#acContainer > div').forEach(card => {
+                acList.push({
+                    brand: card.querySelector('.ac-brand').value || '',
+                    model: card.querySelector('.ac-model').value || '',
+                    power: card.querySelector('.ac-power').value || '',
+                    gas: card.querySelector('.ac-gas').value || '',
+                    warranty: card.querySelector('.ac-warranty').value || '',
+                    maintenanceHistory: card.querySelector('.ac-maintenanceHistory').value || '',
+                    repairHistory: card.querySelector('.ac-repairHistory').value || ''
+                });
+            });
 
             const newCustomer = {
                 id: Date.now(),
-                name: nameInput ? nameInput.value : '',
-                phone: phoneInput ? phoneInput.value : '',
-                category: categoryInput ? categoryInput.value : '一般客戶',
-                address: addressInput ? addressInput.value : '',
-                note: noteInput ? noteInput.value : '',
-                date: new Date().toISOString().split('T')[0]
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                lineId: document.getElementById('lineId').value,
+                email: document.getElementById('email').value,
+                birthday: document.getElementById('birthday').value,
+                address: document.getElementById('address').value,
+                parkingNote: document.getElementById('parkingNote').value,
+                guardPhone: document.getElementById('guardPhone').value,
+                source: document.getElementById('source').value,
+                referrer: document.getElementById('referrer').value,
+                tags: document.getElementById('tags').value,
+                notice: document.getElementById('notice').value,
+                acList: acList,
+                createdAt: new Date().toISOString()
             };
 
             let customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
             customers.unshift(newCustomer);
             localStorage.setItem('airboss_customers', JSON.stringify(customers));
 
-            alert('🎉 客戶資料已成功儲存！');
+            alert('🎉 客戶資料建立成功！');
             window.location.href = 'customers.html';
         });
     </script>

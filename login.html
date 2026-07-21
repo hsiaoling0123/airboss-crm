@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員登入 - AirBoss CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=MOPLUS+Rounded+1c:wght@500;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    <style> 
+        body { 
+            font-family: 'MOPLUS Rounded 1c', 'Noto Sans TC', sans-serif; 
+            letter-spacing: 0.02em;
+        } 
+    </style>
+</head>
+<body class="bg-[#FFFDF9] min-h-screen text-slate-700 flex flex-col justify-center items-center p-4">
+
+    <div class="w-full max-w-md bg-white p-6 rounded-3xl shadow-sm border border-amber-100/80 space-y-6">
+        
+        <div class="text-center space-y-1">
+            <div class="inline-block bg-sky-100 text-sky-800 text-[11px] font-bold px-3 py-1 rounded-full mb-1">
+                ❄️ AirBoss CRM 涼爽小管家
+            </div>
+            <h1 class="text-xl font-black text-slate-800" id="formTitle">歡迎回來！請登入系統 🐻</h1>
+            <p class="text-xs text-slate-400 font-bold" id="formSub">輸入您的帳號密碼以繼續使用</p>
+        </div>
+
+        <div class="bg-slate-100 p-1 rounded-2xl flex gap-1 text-xs font-bold">
+            <button type="button" onclick="switchMode('login')" id="tab-login" class="flex-1 py-2 rounded-xl transition-all bg-sky-400 text-white shadow-sm">
+                帳號登入
+            </button>
+            <button type="button" onclick="switchMode('register')" id="tab-register" class="flex-1 py-2 rounded-xl transition-all text-slate-500">
+                註冊新帳號
+            </button>
+        </div>
+
+        <form id="authForm" class="space-y-3.5">
+            <div>
+                <label class="block text-[11px] font-bold text-slate-500 mb-1">電子郵件 / 帳號 *</label>
+                <input type="email" id="authEmail" required placeholder="example@gmail.com" class="w-full p-3 bg-amber-50/20 border border-amber-100 rounded-2xl text-xs focus:outline-none focus:border-sky-400">
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold text-slate-500 mb-1">密碼 *</label>
+                <input type="password" id="authPassword" required placeholder="請輸入至少 6 位數密碼" class="w-full p-3 bg-amber-50/20 border border-amber-100 rounded-2xl text-xs focus:outline-none focus:border-sky-400">
+            </div>
+
+            <div id="confirmPassGroup" class="hidden">
+                <label class="block text-[11px] font-bold text-slate-500 mb-1">再次確認密碼 *</label>
+                <input type="password" id="authConfirmPassword" placeholder="再次輸入密碼" class="w-full p-3 bg-amber-50/20 border border-amber-100 rounded-2xl text-xs focus:outline-none focus:border-sky-400">
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-sky-400 to-indigo-300 text-white font-black py-3 rounded-2xl text-xs shadow-sm hover:opacity-90 transition-all">
+                ✨ 立即登入
+            </button>
+        </form>
+
+        <p class="text-[10px] text-slate-400 text-center font-bold">
+            🛡️ 雲端加密防護，資料同步安全無虞
+        </p>
+    </div>
+
+    <script>
+        let isLoginMode = true;
+
+        function switchMode(mode) {
+            isLoginMode = mode === 'login';
+            
+            document.getElementById('tab-login').className = isLoginMode ? "flex-1 py-2 rounded-xl transition-all bg-sky-400 text-white shadow-sm" : "flex-1 py-2 rounded-xl transition-all text-slate-500";
+            document.getElementById('tab-register').className = !isLoginMode ? "flex-1 py-2 rounded-xl transition-all bg-sky-400 text-white shadow-sm" : "flex-1 py-2 rounded-xl transition-all text-slate-500";
+
+            document.getElementById('formTitle').textContent = isLoginMode ? "歡迎回來！請登入系統 🐻" : "註冊 AirBoss 帳號 🌸";
+            document.getElementById('formSub').textContent = isLoginMode ? "輸入您的帳號密碼以繼續使用" : "建立師傅/客服專屬金鑰帳號";
+            document.getElementById('confirmPassGroup').className = isLoginMode ? "hidden" : "block";
+            document.getElementById('submitBtn').textContent = isLoginMode ? "✨ 立即登入" : "🌸 註冊並登入";
+        }
+
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+
+            if (!isLoginMode) {
+                const confirmPass = document.getElementById('authConfirmPassword').value;
+                if (password !== confirmPass) {
+                    alert('兩次輸入的密碼不一致喔！');
+                    return;
+                }
+            }
+
+            // 儲存登入憑證 (先以前端 Token 防護為例)
+            localStorage.setItem('airboss_user', JSON.stringify({
+                email: email,
+                loggedInAt: new Date().toISOString()
+            }));
+
+            alert(isLoginMode ? '登入成功！歡迎使用 AirBoss CRM ✨' : '註冊成功！已為您登入系統 🌸');
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

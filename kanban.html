@@ -15,10 +15,7 @@
             transform: scale(1.03);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
         }
-        /* 確保點擊按鈕不被拖曳手勢影響 */
-        .no-drag {
-            touch-action: manipulation;
-        }
+        .no-drag { touch-action: manipulation; }
     </style>
 </head>
 <body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-16">
@@ -29,7 +26,7 @@
             <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
             <div>
                 <h1 class="text-base font-black">📅 派工行程看板</h1>
-                <p class="text-[10px] opacity-90 font-bold">點擊「完工」看派工單、長按 0.3 秒拖曳改期</p>
+                <p class="text-[10px] opacity-90 font-bold">點卡片或按鍵開單、長按 0.3 秒拖曳改期</p>
             </div>
         </div>
     </header>
@@ -87,12 +84,12 @@
             <div class="bg-sky-50/60 p-3 rounded-3xl border border-sky-100">
                 <div class="flex justify-between items-center mb-2 px-1">
                     <span class="font-black text-xs text-sky-800 flex items-center gap-1">📌 今天行程 (7/22) (<span id="countToday">2</span>)</span>
-                    <span class="text-[10px] text-sky-600 font-bold">長按 0.3 秒拖曳改期</span>
+                    <span class="text-[10px] text-sky-600 font-bold">👆 點卡片/按鍵開單</span>
                 </div>
                 <div id="colToday" class="space-y-2.5 min-h-[90px]">
                     
-                    <!-- 工單 1 -->
-                    <div class="kanban-card bg-white p-3.5 rounded-2xl border border-sky-100 shadow-sm space-y-2 select-none">
+                    <!-- 工單 1 (卡片整體可點擊，綠鈕也可點擊) -->
+                    <div onclick="clickOpenModal(event, '張先生', '0912-345-678', '新北市三重區正義北路 100 號 5 樓', '日立變頻分離式 x 2 台', '定期清洗保養 + 濾網更換', '5000', this)" class="kanban-card bg-white p-3.5 rounded-2xl border border-sky-100 shadow-sm space-y-2 select-none cursor-pointer hover:border-sky-300 transition-all">
                         <div class="flex justify-between items-start">
                             <div>
                                 <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-full">10:30 上午</span>
@@ -103,19 +100,18 @@
                         <p class="text-[11px] text-slate-500 font-bold">📍 新北市三重區正義北路 100 號 5 樓</p>
                         <p class="text-[11px] text-slate-500">❄️ 分離式清洗保養 x 2 台</p>
                         
-                        <!-- 功能按鈕區 (改用 div 防止事件衝突) -->
                         <div class="flex gap-1.5 pt-1">
-                            <div onclick="clickLoadMap(event, '張先生', '新北市三重區正義北路 100 號')" class="no-drag flex-1 bg-sky-50 text-sky-600 font-bold py-2 rounded-xl text-[10px] text-center cursor-pointer active:scale-95 transition-transform">
+                            <div onclick="clickLoadMap(event, '張先生', '新北市三重區正義北路 100 號')" class="no-drag flex-1 bg-sky-50 active:bg-sky-100 text-sky-600 font-bold py-2 rounded-xl text-[10px] text-center cursor-pointer transition-transform">
                                 🗺️ 載入地圖
                             </div>
-                            <div onclick="clickOpenModal(event, '張先生', '0912-345-678', '新北市三重區正義北路 100 號 5 樓', '日立變頻分離式 x 2 台', '定期清洗保養 + 濾網更換', '5000', this)" class="no-drag flex-1 bg-emerald-500 active:bg-emerald-600 text-white font-black py-2 rounded-xl text-[10px] text-center cursor-pointer active:scale-95 transition-transform shadow-sm">
+                            <div onclick="clickOpenModal(event, '張先生', '0912-345-678', '新北市三重區正義北路 100 號 5 樓', '日立變頻分離式 x 2 台', '定期清洗保養 + 濾網更換', '5000', this.closest('.kanban-card'))" class="no-drag flex-1 bg-emerald-500 active:bg-emerald-600 text-white font-black py-2 rounded-xl text-[10px] text-center cursor-pointer shadow-sm transition-transform">
                                 ✅ 完工
                             </div>
                         </div>
                     </div>
 
                     <!-- 工單 2 -->
-                    <div class="kanban-card bg-white p-3.5 rounded-2xl border border-sky-100 shadow-sm space-y-2 select-none">
+                    <div onclick="clickOpenModal(event, '王小姐', '0955-666-777', '台北市大安區忠孝東路四段 200 號', '大安一對一冷氣', '冷氣不冷檢測 + 補冷媒 R32', '3500', this)" class="kanban-card bg-white p-3.5 rounded-2xl border border-sky-100 shadow-sm space-y-2 select-none cursor-pointer hover:border-sky-300 transition-all">
                         <div class="flex justify-between items-start">
                             <div>
                                 <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-full">14:00 下午</span>
@@ -126,12 +122,11 @@
                         <p class="text-[11px] text-slate-500 font-bold">📍 台北市大安區忠孝東路四段 200 號</p>
                         <p class="text-[11px] text-slate-500">❄️ 冷氣不冷檢測 + 補冷媒 R32</p>
 
-                        <!-- 功能按鈕區 -->
                         <div class="flex gap-1.5 pt-1">
-                            <div onclick="clickLoadMap(event, '王小姐', '台北市大安區忠孝東路四段 200 號')" class="no-drag flex-1 bg-sky-50 text-sky-600 font-bold py-2 rounded-xl text-[10px] text-center cursor-pointer active:scale-95 transition-transform">
+                            <div onclick="clickLoadMap(event, '王小姐', '台北市大安區忠孝東路四段 200 號')" class="no-drag flex-1 bg-sky-50 active:bg-sky-100 text-sky-600 font-bold py-2 rounded-xl text-[10px] text-center cursor-pointer transition-transform">
                                 🗺️ 載入地圖
                             </div>
-                            <div onclick="clickOpenModal(event, '王小姐', '0955-666-777', '台北市大安區忠孝東路四段 200 號', '大安一對一冷氣', '冷氣不冷檢測 + 補冷媒 R32', '3500', this)" class="no-drag flex-1 bg-emerald-500 active:bg-emerald-600 text-white font-black py-2 rounded-xl text-[10px] text-center cursor-pointer active:scale-95 transition-transform shadow-sm">
+                            <div onclick="clickOpenModal(event, '王小姐', '0955-666-777', '台北市大安區忠孝東路四段 200 號', '大安一對一冷氣', '冷氣不冷檢測 + 補冷媒 R32', '3500', this.closest('.kanban-card'))" class="no-drag flex-1 bg-emerald-500 active:bg-emerald-600 text-white font-black py-2 rounded-xl text-[10px] text-center cursor-pointer shadow-sm transition-transform">
                                 ✅ 完工
                             </div>
                         </div>
@@ -147,7 +142,7 @@
                     <span class="text-[10px] text-indigo-600 font-bold">長按至此改期</span>
                 </div>
                 <div id="colTomorrow" class="space-y-2.5 min-h-[90px]">
-                    <div class="kanban-card bg-white p-3.5 rounded-2xl border border-indigo-100 shadow-sm space-y-2 select-none">
+                    <div onclick="clickOpenModal(event, '陳先生', '0933-888-999', '新北市板橋區文化路一段 50 號', '大金吊隱式主機', '吊隱式冷氣保養維修', '4200', this)" class="kanban-card bg-white p-3.5 rounded-2xl border border-indigo-100 shadow-sm space-y-2 select-none cursor-pointer hover:border-indigo-300 transition-all">
                         <div class="flex justify-between items-start">
                             <div>
                                 <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">09:00 上午</span>
@@ -158,10 +153,10 @@
                         <p class="text-[11px] text-slate-500 font-bold">📍 新北市板橋區文化路一段 50 號</p>
                         <p class="text-[11px] text-slate-500">❄️ 吊隱式冷氣保養維修</p>
                         <div class="flex gap-1.5 pt-1">
-                            <div onclick="clickLoadMap(event, '陳先生', '新北市板橋區文化路一段 50 號')" class="no-drag flex-1 bg-sky-50 text-sky-600 font-bold py-2 rounded-xl text-[10px] text-center cursor-pointer active:scale-95 transition-transform">
+                            <div onclick="clickLoadMap(event, '陳先生', '新北市板橋區文化路一段 50 號')" class="no-drag flex-1 bg-sky-50 active:bg-sky-100 text-sky-600 font-bold py-2 rounded-xl text-[10px] text-center cursor-pointer transition-transform">
                                 🗺️ 載入地圖
                             </div>
-                            <div onclick="clickOpenModal(event, '陳先生', '0933-888-999', '新北市板橋區文化路一段 50 號', '大金吊隱式主機', '吊隱式冷氣保養維修', '4200', this)" class="no-drag flex-1 bg-emerald-500 active:bg-emerald-600 text-white font-black py-2 rounded-xl text-[10px] text-center cursor-pointer active:scale-95 transition-transform shadow-sm">
+                            <div onclick="clickOpenModal(event, '陳先生', '0933-888-999', '新北市板橋區文化路一段 50 號', '大金吊隱式主機', '吊隱式冷氣保養維修', '4200', this.closest('.kanban-card'))" class="no-drag flex-1 bg-emerald-500 active:bg-emerald-600 text-white font-black py-2 rounded-xl text-[10px] text-center cursor-pointer shadow-sm transition-transform">
                                 ✅ 完工
                             </div>
                         </div>
@@ -211,11 +206,11 @@
                 <div class="bg-sky-50/70 p-2.5 rounded-2xl border border-sky-100 space-y-1.5">
                     <p class="text-xs font-black text-sky-800">週三 (7/22 今天)</p>
                     <div id="weekWed" class="space-y-1.5 min-h-[40px]">
-                        <div class="kanban-card bg-white p-2.5 rounded-xl border border-sky-200 text-xs flex justify-between items-center select-none">
+                        <div onclick="clickOpenModal(event, '張先生', '0912-345-678', '新北市三重區正義北路 100 號 5 樓', '日立變頻分離式 x 2 台', '定期清洗保養 + 濾網更換', '5000', this)" class="kanban-card bg-white p-2.5 rounded-xl border border-sky-200 text-xs flex justify-between items-center select-none cursor-pointer hover:bg-sky-50 transition-all">
                             <span class="font-bold text-slate-800">張先生 - 10:30 AM 📄</span>
                             <span class="font-black text-emerald-600">$5,000</span>
                         </div>
-                        <div class="kanban-card bg-white p-2.5 rounded-xl border border-sky-200 text-xs flex justify-between items-center select-none">
+                        <div onclick="clickOpenModal(event, '王小姐', '0955-666-777', '台北市大安區忠孝東路四段 200 號', '大安一對一冷氣', '冷氣不冷檢測 + 補冷媒 R32', '3500', this)" class="kanban-card bg-white p-2.5 rounded-xl border border-sky-200 text-xs flex justify-between items-center select-none cursor-pointer hover:bg-sky-50 transition-all">
                             <span class="font-bold text-slate-800">王小姐 - 02:00 PM 📄</span>
                             <span class="font-black text-amber-600">$3,500</span>
                         </div>
@@ -226,7 +221,7 @@
                 <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
                     <p class="text-xs font-black text-slate-700">週四 (7/23 明天)</p>
                     <div id="weekThu" class="space-y-1.5 min-h-[40px]">
-                        <div class="kanban-card bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex justify-between items-center select-none">
+                        <div onclick="clickOpenModal(event, '陳先生', '0933-888-999', '新北市板橋區文化路一段 50 號', '大金吊隱式主機', '吊隱式冷氣保養維修', '4200', this)" class="kanban-card bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex justify-between items-center select-none cursor-pointer hover:bg-slate-100 transition-all">
                             <span class="font-bold text-slate-800">陳先生 - 09:00 AM 📄</span>
                             <span class="font-black text-indigo-600">$4,200</span>
                         </div>
@@ -362,14 +357,13 @@
         let currentNavAddress = "新北市三重區正義北路 100 號";
         let currentActiveCard = null;
 
-        // 🔥 SortableJS 長按拖曳設定 (加強不攔截 .no-drag 按鈕元素)
+        // 🔥 SortableJS 長按拖曳設定
         const dragConfig = {
             animation: 150,
             delay: 300,
             delayOnTouchOnly: true,
             touchStartThreshold: 5,
-            filter: '.is-completed, .no-drag', // 🚫 完工卡片與功能按鈕絕不觸發拖曳
-            preventOnFilter: false,
+            filter: '.is-completed', // 🚫 已完工卡片不可拖曳
             ghostClass: 'opacity-40',
             dragClass: 'sortable-drag'
         };
@@ -395,13 +389,13 @@
             document.getElementById('countFuture').innerText = document.getElementById('colFuture').children.length;
         }
 
-        // 🎯 點擊開啟完工彈窗點擊事件（防觸發拖曳與冒泡）
-        function clickOpenModal(e, name, phone, address, device, serviceNote, price, btnElement) {
+        // 🎯 點擊卡片任何區域或按鈕均可打開 Modal
+        function clickOpenModal(e, name, phone, address, device, serviceNote, price, targetElement) {
             if (e) {
                 e.stopPropagation();
-                e.preventDefault();
             }
-            const card = btnElement.closest('.kanban-card');
+            
+            const card = targetElement.closest('.kanban-card') || targetElement;
             if (card && card.classList.contains('is-completed')) return;
 
             currentActiveCard = card;
@@ -421,7 +415,6 @@
         function clickLoadMap(e, name, address) {
             if (e) {
                 e.stopPropagation();
-                e.preventDefault();
             }
             loadMap(name, address);
         }

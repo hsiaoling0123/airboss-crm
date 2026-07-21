@@ -5,184 +5,192 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>行銷中心 - AirBoss CRM</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Zen Maru Gothic', sans-serif; } </style>
+    <link href="https://fonts.googleapis.com/css2?family=MOPLUS+Rounded+1c:wght@500;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    <style> 
+        body { 
+            font-family: 'MOPLUS Rounded 1c', 'Noto Sans TC', sans-serif; 
+            letter-spacing: 0.02em;
+        } 
+    </style>
 </head>
-<body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-12">
+<body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-16">
 
-    <!-- 頂部導覽列 -->
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-50 flex justify-between items-center rounded-b-2xl">
         <a href="index.html" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full font-bold transition-all">
             ‹ 首頁
         </a>
-        <h1 class="text-base font-black">📢 行銷推廣中心 🌸</h1>
+        <h1 class="text-base font-black">📢 每日行銷中心 🌸</h1>
         <div class="w-10"></div>
     </header>
 
-    <main class="max-w-md mx-auto p-4 space-y-5">
+    <main class="max-w-md mx-auto p-4 space-y-4">
 
-        <!-- 頂部提醒與追蹤卡片 -->
-        <div class="bg-gradient-to-br from-amber-100/90 via-orange-50 to-rose-100/70 p-4.5 rounded-3xl shadow-sm border border-amber-200/50 space-y-3">
+        <div class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 space-y-3">
             <div class="flex justify-between items-center">
-                <span class="text-xs font-bold bg-amber-200/80 text-amber-900 px-3 py-1 rounded-full flex items-center gap-1">
-                    ⏰ 每天打卡累積客源！
-                </span>
-                <span id="todayDate" class="text-xs font-bold text-slate-500"></span>
-            </div>
-
-            <!-- 完成率數據統計 -->
-            <div class="grid grid-cols-3 gap-2 text-center pt-1">
-                <div class="bg-white/80 backdrop-blur-sm p-2.5 rounded-2xl">
-                    <p class="text-[10px] font-bold text-slate-400">今日打卡</p>
-                    <p id="stat-today" class="text-base font-black text-sky-600 mt-0.5">0 / 6</p>
-                </div>
-                <div class="bg-white/80 backdrop-blur-sm p-2.5 rounded-2xl">
-                    <p class="text-[10px] font-bold text-slate-400">本週完成</p>
-                    <p id="stat-week" class="text-base font-black text-amber-600 mt-0.5">0 次</p>
-                </div>
-                <div class="bg-white/80 backdrop-blur-sm p-2.5 rounded-2xl">
-                    <p class="text-[10px] font-bold text-slate-400">本月完成</p>
-                    <p id="stat-month" class="text-base font-black text-rose-500 mt-0.5">0 次</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 每日提醒任務清單 -->
-        <div class="bg-white p-4.5 rounded-3xl shadow-sm border border-amber-100 space-y-3">
-            <div class="flex justify-between items-center border-b border-amber-50 pb-2">
-                <h2 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
-                    <span class="text-sky-400 text-sm">✅</span> 今日行銷清單 (完成請打勾)
+                <h2 class="font-black text-xs text-slate-800 flex items-center gap-1.5">
+                    <span>📈</span> 行銷執行度追蹤
                 </h2>
-                <span id="progressPercent" class="text-[10px] bg-sky-100 text-sky-700 font-bold px-2.5 py-0.5 rounded-full">完成率 0%</span>
+                <span id="statRangeLabel" class="text-[10px] bg-sky-100 text-sky-700 px-2.5 py-0.5 rounded-full font-bold">今日統計</span>
             </div>
 
-            <div id="taskList" class="space-y-2.5">
-                <!-- 動態繪製任務卡片 -->
+            <div class="flex bg-slate-100 p-1 rounded-2xl text-[11px] font-bold text-slate-500">
+                <button onclick="setRange('today')" id="range-today" class="flex-1 py-1.5 rounded-xl bg-white text-sky-600 shadow-sm transition-all">每日</button>
+                <button onclick="setRange('week')" id="range-week" class="flex-1 py-1.5 rounded-xl transition-all">每週</button>
+                <button onclick="setRange('month')" id="range-month" class="flex-1 py-1.5 rounded-xl transition-all">每月</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-center pt-1">
+                <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100/50">
+                    <p class="text-[10px] text-slate-400 font-bold">已完成行銷任務</p>
+                    <p id="completedTasksCount" class="text-base font-black text-amber-600 mt-0.5">0 / 7</p>
+                </div>
+                <div class="bg-sky-50/50 p-3 rounded-2xl border border-sky-100/50">
+                    <p class="text-[10px] text-slate-400 font-bold">總達成率</p>
+                    <p id="completionRate" class="text-base font-black text-sky-600 mt-0.5">0%</p>
+                </div>
             </div>
         </div>
 
-        <!-- 社區/現場曝光小提醒 -->
-        <div class="bg-sky-50/60 p-4 rounded-3xl border border-sky-100/80 space-y-2 text-xs text-sky-900">
-            <p class="font-bold flex items-center gap-1">
-                💡 <b>小技巧：現場完工行銷法</b>
-            </p>
-            <p class="text-slate-600 text-[11px] leading-relaxed">
-                完工後主動拍一張「洗前/洗後對比照」，邀請客戶幫忙點 **Google 評論 5 星**，並隨手將短影片發到 **Threads 與 IG**，舊客轉介紹與新客詢問度會飆升哦！
-            </p>
+        <div class="bg-white p-4 rounded-3xl shadow-sm border border-amber-100 space-y-3">
+            <div class="flex justify-between items-center border-b border-slate-50 pb-2">
+                <h3 class="font-black text-xs text-slate-800 flex items-center gap-1.5">
+                    <span>⏰</span> 每天提醒：今日行銷打勾清單
+                </h3>
+                <span id="todayDateStr" class="text-[10px] font-bold text-slate-400"></span>
+            </div>
+
+            <p class="text-[10px] text-slate-400 font-bold">每天花 10 分鐘完成以下曝光，讓客戶源源不絕！完成請打勾：</p>
+
+            <div id="marketingChecklist" class="space-y-2 text-xs font-bold">
+                </div>
         </div>
 
     </main>
 
-    <script>
-        // 定義每日行銷的 6 大平台
-        const marketingChannels = [
-            { id: 'ig', name: 'IG 貼文 / 限時動態', icon: '📸', desc: '分享清洗前後對比照或日常工作照', color: 'bg-rose-50 text-rose-700' },
-            { id: 'fb', name: 'FB 粉專 / 社區社團', icon: '藍', desc: '發布洗冷氣小知識或社區優惠', color: 'bg-blue-50 text-blue-700' },
-            { id: 'line', name: 'LINE 官方帳號', icon: '💬', desc: '發送保養提醒推播或優惠券', color: 'bg-emerald-50 text-emerald-700' },
-            { id: 'threads', name: 'Threads 脆', icon: '🧵', desc: '分享師傅碎碎唸、洗冷氣奇聞趣事', color: 'bg-stone-100 text-stone-800' },
-            { id: 'google', name: 'Google 商家評論', icon: '⭐', desc: '邀請今日完工客戶留下 5 星好評', color: 'bg-amber-50 text-amber-800' },
-            { id: 'video', name: '短影片 (Reels / Shorts / TikTok)', icon: '🎥', desc: '15秒清洗污垢療癒過程影片', color: 'bg-purple-50 text-purple-700' }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfy9ARrE9wp-bCrABsFVb-qM8_sp9_wqs",
+            authDomain: "airboss-4f084.firebaseapp.com",
+            projectId: "airboss-4f084",
+            storageBucket: "airboss-4f084.firebasestorage.app",
+            messagingSenderId: "1067344741307",
+            appId: "1:1067344741307:web:15a54741a5bdb26e897a9e",
+            measurementId: "G-P9ZGJH366L"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 社群與行銷平台清單
+        const platforms = [
+            { id: 'ig', name: '📸 IG (Instagram) 動態 / 限動發佈', color: 'text-pink-600 bg-pink-50 border-pink-100' },
+            { id: 'fb', name: '藍色 FB 粉專 / 社團貼文更新', color: 'text-blue-600 bg-blue-50 border-blue-100' },
+            { id: 'line', name: '💬 LINE 官方帳號群發 / 貼文串', color: 'text-emerald-600 bg-emerald-50 border-emerald-100' },
+            { id: 'threads', name: '🧵 Threads 串文討論與互動', color: 'text-slate-800 bg-slate-100 border-slate-200' },
+            { id: 'google', name: '⭐ Google 商家評論回覆與更新', color: 'text-amber-600 bg-amber-50 border-amber-100' },
+            { id: 'reels', name: '🎥 短影片 (Reels / TikTok / Shorts)', color: 'text-purple-600 bg-purple-50 border-purple-100' },
+            { id: 'crm', name: '💌 舊客保養關懷與訊息發送', color: 'text-sky-600 bg-sky-50 border-sky-100' }
         ];
 
-        function getTodayStr() {
-            const d = new Date();
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const date = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${date}`;
-        }
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('todayDateStr').innerText = `📅 ${today}`;
 
-        function renderMarketingHub() {
-            const todayStr = getTodayStr();
-            document.getElementById('todayDate').textContent = new Date().toLocaleDateString('zh-TW', { month: 'short', day: 'numeric', weekday: 'short' });
+        let currentRange = 'today';
+        let marketingData = {};
 
-            // 讀取行銷紀錄資料 (結構: { "YYYY-MM-DD": ["ig", "fb", ...] })
-            let history = JSON.parse(localStorage.getItem('airboss_marketing_history')) || {};
-            let todayCompleted = history[todayStr] || [];
+        // 即時同步雲端的行銷紀錄
+        onSnapshot(doc(db, "marketing_logs", "daily_records"), (snapshot) => {
+            if (snapshot.exists()) {
+                marketingData = snapshot.data();
+            } else {
+                marketingData = {};
+            }
+            renderChecklist();
+            calculateStats();
+        });
 
-            // 1. 繪製任務列表
-            const container = document.getElementById('taskList');
-            container.innerHTML = marketingChannels.map(item => {
-                const isChecked = todayCompleted.includes(item.id);
+        // 渲染打勾清單
+        function renderChecklist() {
+            const listEl = document.getElementById('marketingChecklist');
+            const todayRecord = marketingData[today] || {};
+
+            listEl.innerHTML = platforms.map(p => {
+                const isChecked = !!todayRecord[p.id];
                 return `
-                    <label class="flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer ${isChecked ? 'bg-emerald-50/60 border-emerald-200' : 'bg-slate-50/50 border-slate-100 hover:bg-slate-100/50'}">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" onchange="toggleTask('${item.id}')" ${isChecked ? 'checked' : ''} class="w-5 h-5 rounded-lg text-emerald-500 focus:ring-emerald-400 accent-emerald-500">
-                            <div>
-                                <div class="font-bold text-xs ${isChecked ? 'line-through text-slate-400' : 'text-slate-800'} flex items-center gap-1.5">
-                                    <span>${item.icon}</span> ${item.name}
-                                </div>
-                                <div class="text-[10px] text-slate-400 mt-0.5">${item.desc}</div>
-                            </div>
+                    <label class="flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer ${p.color} ${isChecked ? 'opacity-50 line-through' : ''}">
+                        <div class="flex items-center gap-2.5">
+                            <input type="checkbox" onchange="toggleTask('${p.id}')" ${isChecked ? 'checked' : ''} class="w-4 h-4 rounded-md border-slate-300 text-sky-500 focus:ring-sky-400">
+                            <span>${p.name}</span>
                         </div>
-                        <span class="text-[9px] px-2 py-0.5 rounded-full font-bold ${item.color}">${item.id.toUpperCase()}</span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isChecked ? 'bg-emerald-500 text-white' : 'bg-white/80 text-slate-400'}">
+                            ${isChecked ? '✓ 已完成' : '待執行'}
+                        </span>
                     </label>
                 `;
             }).join('');
-
-            // 2. 更新統計數據
-            const doneCount = todayCompleted.length;
-            const percent = Math.round((doneCount / marketingChannels.length) * 100);
-            document.getElementById('stat-today').textContent = `${doneCount} / ${marketingChannels.length}`;
-            document.getElementById('progressPercent').textContent = `完成率 ${percent}%`;
-
-            // 計算本週與本月總打卡次數
-            calculateWeeklyAndMonthlyStats(history);
         }
 
-        function toggleTask(taskId) {
-            const todayStr = getTodayStr();
-            let history = JSON.parse(localStorage.getItem('airboss_marketing_history')) || {};
-            let todayCompleted = history[todayStr] || [];
+        // 切換勾選狀態並儲存到 Firebase
+        window.toggleTask = async function(platformId) {
+            if (!marketingData[today]) {
+                marketingData[today] = {};
+            }
+            marketingData[today][platformId] = !marketingData[today][platformId];
 
-            if (todayCompleted.includes(taskId)) {
-                todayCompleted = todayCompleted.filter(id => id !== taskId);
-            } else {
-                todayCompleted.push(taskId);
+            await setDoc(doc(db, "marketing_logs", "daily_records"), marketingData, { merge: true });
+        };
+
+        // 計算每日 / 每週 / 每月完成度
+        function calculateStats() {
+            const now = new Date();
+            let targetDates = [today];
+
+            if (currentRange === 'week') {
+                targetDates = [];
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+                    targetDates.push(d.toISOString().split('T')[0]);
+                }
+            } else if (currentRange === 'month') {
+                targetDates = [];
+                for (let i = 0; i < 30; i++) {
+                    const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+                    targetDates.push(d.toISOString().split('T')[0]);
+                }
             }
 
-            history[todayStr] = todayCompleted;
-            localStorage.setItem('airboss_marketing_history', JSON.stringify(history));
-            renderMarketingHub();
-        }
+            let totalPossibleTasks = targetDates.length * platforms.length;
+            let totalCompletedTasks = 0;
 
-        function calculateWeeklyAndMonthlyStats(history) {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth();
-
-            // 本月起止
-            const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
-            let monthTotal = 0;
-
-            // 本週起止
-            const dayOfWeek = now.getDay();
-            const monday = new Date(now);
-            monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-            monday.setHours(0,0,0,0);
-
-            const sunday = new Date(monday);
-            sunday.setDate(monday.getDate() + 6);
-            sunday.setHours(23,59,59,999);
-
-            let weekTotal = 0;
-
-            Object.keys(history).forEach(dateKey => {
-                const count = (history[dateKey] || []).length;
-                if (dateKey.startsWith(monthPrefix)) {
-                    monthTotal += count;
-                }
-                const cardDate = new Date(dateKey);
-                if (cardDate >= monday && cardDate <= sunday) {
-                    weekTotal += count;
-                }
+            targetDates.forEach(dateStr => {
+                const record = marketingData[dateStr] || {};
+                platforms.forEach(p => {
+                    if (record[p.id]) totalCompletedTasks++;
+                });
             });
 
-            document.getElementById('stat-week').textContent = `${weekTotal} 次`;
-            document.getElementById('stat-month').textContent = `${monthTotal} 次`;
+            const rate = totalPossibleTasks > 0 ? Math.round((totalCompletedTasks / totalPossibleTasks) * 100) : 0;
+
+            document.getElementById('completedTasksCount').innerText = `${totalCompletedTasks} / ${totalPossibleTasks}`;
+            document.getElementById('completionRate').innerText = `${rate}%`;
         }
 
-        document.addEventListener('DOMContentLoaded', renderMarketingHub);
+        // 時間範圍切換
+        window.setRange = function(range) {
+            currentRange = range;
+            ['today', 'week', 'month'].forEach(r => {
+                document.getElementById(`range-${r}`).className = 'flex-1 py-1.5 rounded-xl transition-all text-slate-500';
+            });
+            document.getElementById(`range-${range}`).className = 'flex-1 py-1.5 rounded-xl bg-white text-sky-600 shadow-sm font-bold';
+
+            const labels = { 'today': '今日統計', 'week': '近 7 天統計', 'month': '近 30 天統計' };
+            document.getElementById('statRangeLabel').innerText = labels[range];
+
+            calculateStats();
+        };
     </script>
 </body>
 </html>

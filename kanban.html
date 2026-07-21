@@ -3,123 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>派工行程與地圖導航 - AirBoss CRM</title>
+    <title>派工行程看板 - AirBoss CRM</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=MOPLUS+Rounded+1c:wght@500;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style> body { font-family: 'MOPLUS Rounded 1c', 'Noto Sans TC', sans-serif; } </style>
 </head>
 <body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-16">
 
-    <!-- 頂部標頭 -->
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-40 flex justify-between items-center rounded-b-2xl">
         <div class="flex items-center gap-2">
             <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
             <div>
-                <h1 class="text-base font-black">📅 派工行程與地圖導航</h1>
-                <p class="text-[10px] opacity-90 font-bold">點擊工單一鍵預覽地圖與完工回報</p>
+                <h1 class="text-base font-black">📅 派工行程看板</h1>
+                <p class="text-[10px] opacity-90 font-bold">拖曳移至別天改期、點擊按鈕回報完工</p>
             </div>
         </div>
     </header>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
 
-        <!-- 🗺️ 看板連動地圖預覽區塊 -->
-        <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
+        <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-2">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                <h2 class="font-black text-xs text-slate-800 flex items-center gap-1.5">
-                    <span>🗺️</span> 派工目標即時地圖
-                </h2>
-                <span id="mapTargetName" class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-bold">點擊下方工單載入地點</span>
+                <span class="text-xs font-black text-slate-800">💵 派工營業額統計</span>
+                <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">即時更新</span>
             </div>
-
-            <!-- 地圖元件 -->
-            <div class="w-full h-48 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 relative">
-                <iframe 
-                    id="kanbanMap"
-                    width="100%" 
-                    height="100%" 
-                    style="border:0;" 
-                    loading="lazy" 
-                    allowfullscreen
-                    src="https://maps.google.com/maps?q=新北市三重區正義北路100號&t=&z=15&ie=UTF8&iwloc=&output=embed">
-                </iframe>
+            <div class="grid grid-cols-3 gap-2 text-center pt-1">
+                <div class="p-2 bg-slate-50 rounded-2xl">
+                    <p class="text-[10px] text-slate-400 font-bold">今日預估營業額</p>
+                    <p class="text-sm font-black text-sky-600" id="statToday">$8,500</p>
+                </div>
+                <div class="p-2 bg-slate-50 rounded-2xl">
+                    <p class="text-[10px] text-slate-400 font-bold">本週累積營業額</p>
+                    <p class="text-sm font-black text-indigo-600" id="statWeek">$42,000</p>
+                </div>
+                <div class="p-2 bg-slate-50 rounded-2xl">
+                    <p class="text-[10px] text-slate-400 font-bold">本月實收營業額</p>
+                    <p class="text-sm font-black text-emerald-600" id="statMonth">$185,000</p>
+                </div>
             </div>
-
-            <button id="btnGoogleNav" onclick="openDirectNav()" class="w-full bg-gradient-to-r from-sky-400 to-indigo-400 text-white font-black py-2.5 rounded-2xl text-xs shadow-sm hover:opacity-90 flex items-center justify-center gap-1.5">
-                🚀 開啟 Google 地圖 App 語音導航
-            </button>
         </div>
 
-        <!-- 派工行程卡片列表 -->
-        <div class="space-y-3">
-            <h2 class="font-black text-xs text-slate-400 px-1">今日預約行程 (2 件)：</h2>
+        <div class="flex bg-slate-100 p-1 rounded-2xl text-xs font-black">
+            <button onclick="switchPeriod('day')" id="btnPeriodDay" class="flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all">📅 每日視角</button>
+            <button onclick="switchPeriod('week')" id="btnPeriodWeek" class="flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all">🗓️ 每週總覽</button>
+            <button onclick="switchPeriod('month')" id="btnPeriodMonth" class="flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all">📊 每月月曆</button>
+        </div>
 
-            <!-- 工單 1 -->
-            <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-2">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">10:30 上午</span>
-                            <h3 class="font-black text-sm text-slate-800">張先生</h3>
+        <div class="bg-white rounded-3xl border border-amber-100 shadow-sm overflow-hidden">
+            <button onclick="toggleMap()" class="w-full p-3 bg-sky-50 flex justify-between items-center text-xs font-black text-sky-700">
+                <span>🗺️ 點擊展開/收合客戶地點地圖導航</span>
+                <span id="mapIcon">▼</span>
+            </button>
+            <div id="mapContainer" class="hidden p-3 space-y-2 border-t border-sky-100">
+                <div class="w-full h-44 rounded-2xl overflow-hidden border border-slate-200">
+                    <iframe id="kanbanMap" width="100%" height="100%" style="border:0;" loading="lazy" src="https://maps.google.com/maps?q=台北市&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
+                </div>
+                <button onclick="openDirectNav()" class="w-full bg-sky-400 text-white font-black py-2 rounded-xl text-xs shadow-sm hover:bg-sky-500">
+                    🚀 一鍵開啟 Google 地圖 App 語音導航
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+
+            <div class="bg-sky-50/60 p-3 rounded-3xl border border-sky-100">
+                <div class="flex justify-between items-center mb-2 px-1">
+                    <span class="font-black text-xs text-sky-800 flex items-center gap-1">📌 今天行程 (7/22) (<span id="countToday">2</span>)</span>
+                    <span class="text-[10px] text-sky-600 font-bold">可拖曳改期 ➔</span>
+                </div>
+                <div id="colToday" class="space-y-2.5 min-h-[90px]">
+                    
+                    <div class="kanban-card bg-white p-3.5 rounded-2xl border border-sky-100 shadow-sm space-y-2 cursor-grab active:cursor-grabbing" data-id="1">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-full">10:30 上午</span>
+                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">張先生</h3>
+                            </div>
+                            <span class="text-xs font-black text-emerald-600">$5,000</span>
                         </div>
-                        <p class="text-xs text-slate-500 font-bold mt-1">📞 0933-123-456</p>
+                        <p class="text-[11px] text-slate-500 font-bold">📍 新北市三重區正義北路 100 號 5 樓</p>
+                        <p class="text-[11px] text-slate-500">❄️ 分離式清洗保養 x 2 台</p>
+                        <div class="flex gap-1.5 pt-1">
+                            <button onclick="loadMap('張先生', '新北市三重區正義北路 100 號')" class="flex-1 bg-sky-50 text-sky-600 font-bold py-1.5 rounded-xl text-[10px]">🗺️ 載入地圖</button>
+                            <button onclick="openCompleteModal('張先生', '5000')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-xl text-[10px]">✅ 完工回報</button>
+                        </div>
                     </div>
-                    <span class="text-[10px] bg-sky-100 text-sky-700 font-bold px-2 py-0.5 rounded-full">施工中</span>
-                </div>
 
-                <div class="p-2.5 bg-slate-50 rounded-2xl text-xs space-y-1 text-slate-600">
-                    <p>📍 <strong>地址：</strong>新北市三重區正義北路 100 號 5 樓</p>
-                    <p>❄️ <strong>項目：</strong>分離式清洗保養 x 2 台</p>
-                    <p>💰 <strong>預估金額：</strong>$5,000 元</p>
-                </div>
+                    <div class="kanban-card bg-white p-3.5 rounded-2xl border border-sky-100 shadow-sm space-y-2 cursor-grab active:cursor-grabbing" data-id="2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-full">14:00 下午</span>
+                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">王小姐</h3>
+                            </div>
+                            <span class="text-xs font-black text-amber-600">$3,500</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-bold">📍 台北市大安區忠孝東路四段 200 號</p>
+                        <p class="text-[11px] text-slate-500">❄️ 冷氣不冷檢測 + 補冷媒 R32</p>
+                        <div class="flex gap-1.5 pt-1">
+                            <button onclick="loadMap('王小姐', '台北市大安區忠孝東路四段 200 號')" class="flex-1 bg-sky-50 text-sky-600 font-bold py-1.5 rounded-xl text-[10px]">🗺️ 載入地圖</button>
+                            <button onclick="openCompleteModal('王小姐', '3500')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-xl text-[10px]">✅ 完工回報</button>
+                        </div>
+                    </div>
 
-                <div class="flex gap-2 pt-1">
-                    <button onclick="loadMap('張先生', '新北市三重區正義北路 100 號')" class="flex-1 bg-sky-50 hover:bg-sky-100 text-sky-600 font-black py-2 rounded-xl text-xs">
-                        🗺️ 切換地圖
-                    </button>
-                    <button onclick="openCompleteModal('張先生', '5000')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black py-2 rounded-xl text-xs shadow-sm">
-                        ✅ 完工與發送收據
-                    </button>
                 </div>
             </div>
 
-            <!-- 工單 2 -->
-            <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-2">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">14:00 下午</span>
-                            <h3 class="font-black text-sm text-slate-800">王小姐</h3>
+            <div class="bg-indigo-50/60 p-3 rounded-3xl border border-indigo-100">
+                <div class="flex justify-between items-center mb-2 px-1">
+                    <span class="font-black text-xs text-indigo-800 flex items-center gap-1">🗓️ 明天行程 (7/23) (<span id="countTomorrow">1</span>)</span>
+                    <span class="text-[10px] text-indigo-600 font-bold">可拖曳至此改期</span>
+                </div>
+                <div id="colTomorrow" class="space-y-2.5 min-h-[90px]">
+
+                    <div class="kanban-card bg-white p-3.5 rounded-2xl border border-indigo-100 shadow-sm space-y-2 cursor-grab active:cursor-grabbing" data-id="3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">09:00 上午</span>
+                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">陳先生</h3>
+                            </div>
+                            <span class="text-xs font-black text-indigo-600">$4,200</span>
                         </div>
-                        <p class="text-xs text-slate-500 font-bold mt-1">📞 0955-666-777</p>
+                        <p class="text-[11px] text-slate-500 font-bold">📍 新北市板橋區文化路一段 50 號</p>
+                        <p class="text-[11px] text-slate-500">❄️ 吊隱式冷氣保養維修</p>
+                        <div class="flex gap-1.5 pt-1">
+                            <button onclick="loadMap('陳先生', '新北市板橋區文化路一段 50 號')" class="flex-1 bg-sky-50 text-sky-600 font-bold py-1.5 rounded-xl text-[10px]">🗺️ 載入地圖</button>
+                            <button onclick="openCompleteModal('陳先生', '4200')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-xl text-[10px]">✅ 完工回報</button>
+                        </div>
                     </div>
-                    <span class="text-[10px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full">等待前往</span>
-                </div>
 
-                <div class="p-2.5 bg-slate-50 rounded-2xl text-xs space-y-1 text-slate-600">
-                    <p>📍 <strong>地址：</strong>台北市大安區忠孝東路四段 200 號</p>
-                    <p>❄️ <strong>項目：</strong>冷氣不冷檢測 + 補冷媒 R32</p>
-                    <p>💰 <strong>預估金額：</strong>$3,500 元</p>
                 </div>
+            </div>
 
-                <div class="flex gap-2 pt-1">
-                    <button onclick="loadMap('王小姐', '台北市大安區忠孝東路四段 200 號')" class="flex-1 bg-sky-50 hover:bg-sky-100 text-sky-600 font-black py-2 rounded-xl text-xs">
-                        🗺️ 切換地圖
-                    </button>
-                    <button onclick="openCompleteModal('王小姐', '3500')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black py-2 rounded-xl text-xs shadow-sm">
-                        ✅ 完工與發送收據
-                    </button>
+            <div class="bg-amber-50/60 p-3 rounded-3xl border border-amber-100">
+                <div class="flex justify-between items-center mb-2 px-1">
+                    <span class="font-black text-xs text-amber-800 flex items-center gap-1">📅 本週其他預約 (<span id="countFuture">0</span>)</span>
+                    <span class="text-[10px] text-amber-600 font-bold">延期放置處</span>
                 </div>
+                <div id="colFuture" class="space-y-2.5 min-h-[90px]">
+                    </div>
             </div>
 
         </div>
 
     </main>
 
-    <!-- 完工回報彈窗 (Completion Modal) -->
     <div id="completeModal" class="fixed inset-0 bg-slate-900/40 opacity-0 pointer-events-none transition-opacity duration-300 z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-xs rounded-3xl p-5 space-y-3 shadow-2xl">
-            <h3 class="font-black text-sm text-slate-800">🎉 完工回報與發送收據</h3>
+            <h3 class="font-black text-sm text-slate-800">🎉 師傅完工回報與結案</h3>
             <p class="text-xs text-slate-400">客戶：<span id="modalCustName" class="font-bold text-slate-700"></span></p>
 
             <div>
@@ -127,8 +158,8 @@
                 <input type="number" id="finalPrice" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-emerald-600">
             </div>
 
-            <button onclick="sendReceipt()" class="w-full bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs shadow-sm">
-                💬 複製 LINE 電子收據並完成
+            <button onclick="sendReceipt()" class="w-full bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs shadow-sm hover:bg-emerald-600">
+                💬 複製 LINE 電子收據並完成結案
             </button>
             <button onclick="closeCompleteModal()" class="w-full bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-xs">
                 取消
@@ -139,15 +170,65 @@
     <script>
         let currentNavAddress = "新北市三重區正義北路 100 號";
 
-        // 動態更新看板地圖
-        function loadMap(name, address) {
-            currentNavAddress = address;
-            document.getElementById('mapTargetName').innerText = `${name} (${address})`;
-            document.getElementById('kanbanMap').src = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // 初始化 SortableJS：卡片可以在「今天」、「明天」、「未來預約」之間互相拖曳改期！
+        ['colToday', 'colTomorrow', 'colFuture'].forEach(colId => {
+            new Sortable(document.getElementById(colId), {
+                group: 'kanban_dates',
+                animation: 150,
+                ghostClass: 'opacity-50',
+                onEnd: function (evt) {
+                    updateCounts();
+                    const targetCol = evt.to.id;
+                    let targetDateName = "今天";
+                    if(targetCol === "colTomorrow") targetDateName = "明天";
+                    if(targetCol === "colFuture") targetDateName = "其他預約日";
+                    
+                    alert(`✅ 已成功將工單改期移至【${targetDateName}】！`);
+                }
+            });
+        });
+
+        function updateCounts() {
+            document.getElementById('countToday').innerText = document.getElementById('colToday').children.length;
+            document.getElementById('countTomorrow').innerText = document.getElementById('colTomorrow').children.length;
+            document.getElementById('countFuture').innerText = document.getElementById('colFuture').children.length;
         }
 
-        // 開啟 Google Maps 導航
+        // 時間週期視角切換
+        function switchPeriod(period) {
+            const btnDay = document.getElementById('btnPeriodDay');
+            const btnWeek = document.getElementById('btnPeriodWeek');
+            const btnMonth = document.getElementById('btnPeriodMonth');
+
+            [btnDay, btnWeek, btnMonth].forEach(b => {
+                b.className = "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all";
+            });
+
+            if(period === 'day') {
+                btnDay.className = "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all";
+            } else if(period === 'week') {
+                btnWeek.className = "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all";
+            } else {
+                btnMonth.className = "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all";
+            }
+        }
+
+        // 地圖展開/收合
+        function toggleMap() {
+            const container = document.getElementById('mapContainer');
+            const icon = document.getElementById('mapIcon');
+            container.classList.toggle('hidden');
+            icon.innerText = container.classList.contains('hidden') ? '▼' : '▲';
+        }
+
+        function loadMap(name, address) {
+            currentNavAddress = address;
+            document.getElementById('mapContainer').classList.remove('hidden');
+            document.getElementById('mapIcon').innerText = '▲';
+            document.getElementById('kanbanMap').src = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+            window.scrollTo({ top: 120, behavior: 'smooth' });
+        }
+
         function openDirectNav() {
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(currentNavAddress)}`, '_blank');
         }
@@ -170,7 +251,7 @@
             const price = document.getElementById('finalPrice').value;
             const receiptText = `感謝使用 AirBoss！\n【電子服務收據】\n客戶：${name} 先生/小姐\n本次服務實收金額：NT$ ${price} 元\n施工項目已驗收完成，提供 90 天保固服務，有任何問題隨時聯繫我們！😊`;
             navigator.clipboard.writeText(receiptText);
-            alert('✅ 已完成派工，並已自動複製 LINE 電子收據！文字可以直接貼給客戶。');
+            alert('✅ 師傅已完成結案，並已自動複製 LINE 電子收據！');
             closeCompleteModal();
         }
     </script>

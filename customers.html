@@ -28,7 +28,8 @@
         </div>
 
         <div id="customerList" class="space-y-3">
-            </div>
+            <!-- 動態載入雲端客戶列表 -->
+        </div>
 
     </main>
 
@@ -39,7 +40,7 @@
                 <button onclick="closeCustomerModal()" class="text-slate-400 font-black text-lg p-1">✕</button>
             </div>
 
-            <input type="hidden" id="editIndex" value="-1">
+            <input type="hidden" id="editCustomerId" value="">
 
             <div class="space-y-3 text-xs">
                 <div>
@@ -77,4 +78,115 @@
                 <button onclick="saveCustomerData()" class="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-black py-2.5 rounded-xl text-xs shadow-md">
                     💾 儲存客戶
                 </button>
-                <button onclick="closeCustomerModal()" class="flex-1 bg-slate-100 text-slate-600
+                <button onclick="closeCustomerModal()" class="flex-1 bg-slate-100 text-slate-600 font-black py-2.5 rounded-xl text-xs">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 Firebase 邏輯與頁面互動控制 -->
+    <script type="module">
+        import { subscribeCustomers, addCustomerToCloud } from './firebase-config.js';
+
+        let allCustomers = [];
+
+        // 1. 頁面載入時即時監聽雲端資料庫
+        subscribeCustomers((customers) => {
+            allCustomers = customers;
+            renderCustomers(allCustomers);
+        });
+
+        // 2. 渲染客戶列表畫面
+        window.renderCustomers = function(customers) {
+            const listEl = document.getElementById('customerList');
+            if (customers.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-10 text-slate-400 font-bold text-xs">目前沒有客戶資料，請點擊右上角新增！</div>`;
+                return;
+            }
+
+            listEl.innerHTML = customers.map(c => `
+                <div class="bg-white p-4 rounded-2xl border border-sky-100 shadow-sm space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-black text-sm text-slate-800">${escapeHtml(c.name || '')}</h3>
+                            <p class="text-xs font-bold text-sky-600">📞 ${escapeHtml(c.phone || '')}</p>
+                        </div>
+                        <span class="bg-sky-50 text-sky-600 text-[10px] font-black px-2 py-1 rounded-lg">${escapeHtml(c.source || '其他')}</span>
+                    </div>
+                    <p class="text-xs font-medium text-slate-600">📍 ${escapeHtml(c.address || '')}</p>
+                    ${c.notes ? `<p class="text-[11px] bg-amber-50 text-amber-800 p-2 rounded-xl font-medium">📝 ${escapeHtml(c.notes)}</p>` : ''}
+                </div>
+            `).join('');
+        };
+
+        // 3. 搜尋過濾功能
+        window.filterCustomers = function() {
+            const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+            const filtered = allCustomers.filter(c => 
+                (c.name && c.name.toLowerCase().includes(keyword)) ||
+                (c.phone && c.phone.includes(keyword)) ||
+                (c.address && c.address.toLowerCase().includes(keyword))
+            );
+            renderCustomers(filtered);
+        };
+
+        // 4. Modal 控制函式
+        window.openAddCustomerModal = function() {
+            document.getElementById('modalTitle').innerText = '新增客戶資料';
+            document.getElementById('editCustomerId').value = '';
+            document.getElementById('inputName').value = '';
+            document.getElementById('inputPhone').value = '';
+            document.getElementById('inputAddress').value = '';
+            document.getElementById('inputNotes').value = '';
+            document.getElementById('inputSource').selectedIndex = 0;
+
+            const modal = document.getElementById('customerModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        };
+
+        window.closeCustomerModal = function() {
+            const modal = document.getElementById('customerModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        };
+
+        // 5. 儲存客戶到雲端 Firestore
+        window.saveCustomerData = async function() {
+            const name = document.getElementById('inputName').value.trim();
+            const phone = document.getElementById('inputPhone').value.trim();
+            const source = document.getElementById('inputSource').value;
+            const address = document.getElementById('inputAddress').value.trim();
+            const notes = document.getElementById('inputNotes').value.trim();
+
+            if (!name || !phone || !address) {
+                alert('請完整填寫客戶姓名、主要電話與施工地址！');
+                return;
+            }
+
+            try {
+                await addCustomerToCloud({
+                    name,
+                    phone,
+                    source,
+                    address,
+                    notes,
+                    createdAt: new Date().toISOString()
+                });
+
+                closeCustomerModal();
+                // 雲端監聽會自動更新畫面，不需要手動重刷
+            } catch (error) {
+                console.error("儲存失敗：", error);
+                alert("儲存至雲端失敗，請檢查網路連線。");
+            }
+        };
+
+        // 簡單防 XSS 函式
+        function escapeHtml(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>

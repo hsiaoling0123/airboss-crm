@@ -36,14 +36,14 @@
               </tr>
             </thead>
             <tbody id="customer-table-body" class="divide-y divide-gray-100 text-sm text-gray-700">
-              <!-- 範例資料列（無刪除按鈕） -->
+              <!-- 範例資料列 -->
               <tr class="hover:bg-gray-50 transition">
                 <td class="p-4 font-medium text-gray-900">王小明</td>
                 <td class="p-4">0912-345-678</td>
                 <td class="p-4">新北市板橋區文化路一段 100 號</td>
                 <td class="p-4"><span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-xs font-semibold">VIP</span></td>
                 <td class="p-4 text-center">
-                  <button onclick="viewCustomerDetail('cust_001')" class="bg-gray-100 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-medium">查看詳情</button>
+                  <button type="button" onclick="viewCustomerDetail('cust_001')" class="bg-gray-100 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-medium cursor-pointer relative z-10">查看詳情</button>
                 </td>
               </tr>
             </tbody>
@@ -55,22 +55,22 @@
     <!-- ==================== 2. 客戶詳細資料頁面 (Detail View - 預設隱藏) ==================== -->
     <div id="customer-detail-view" class="hidden space-y-6">
       
-      <!-- 頂部返回與操作列（保留刪除按鈕） -->
+      <!-- 頂部返回與操作列 -->
       <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-        <button onclick="backToCustomerList()" class="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-medium text-sm">
+        <button type="button" onclick="backToCustomerList()" class="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-medium text-sm cursor-pointer relative z-10">
           ← 返回客戶列表
         </button>
         <div class="flex gap-2">
-          <button class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition">編輯基本資料</button>
-          <button onclick="deleteCustomer('cust_001')" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition">刪除客戶</button>
+          <button type="button" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition cursor-pointer relative z-10">編輯基本資料</button>
+          <button type="button" onclick="deleteCustomer('cust_001')" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer relative z-10">刪除客戶</button>
         </div>
       </div>
 
       <!-- 分頁籤切換按鈕 -->
       <div class="flex border-b border-gray-200 gap-8 text-sm font-medium bg-white px-4 rounded-xl shadow-sm border border-gray-100">
-        <button onclick="switchTab('info')" id="tab-btn-info" class="py-3 border-b-2 border-blue-600 text-blue-600 transition">基本與現場資訊</button>
-        <button onclick="switchTab('equipment')" id="tab-btn-equipment" class="py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition">冷氣設備履歷</button>
-        <button onclick="switchTab('history')" id="tab-btn-history" class="py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition">施工歷程與照片</button>
+        <button type="button" onclick="switchTab('info')" id="tab-btn-info" class="py-3 border-b-2 border-blue-600 text-blue-600 transition cursor-pointer relative z-10">基本與現場資訊</button>
+        <button type="button" onclick="switchTab('equipment')" id="tab-btn-equipment" class="py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition cursor-pointer relative z-10">冷氣設備履歷</button>
+        <button type="button" onclick="switchTab('history')" id="tab-btn-history" class="py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition cursor-pointer relative z-10">施工歷程與照片</button>
       </div>
 
       <!-- 標籤內容區塊 1：基本與現場資訊 -->
@@ -101,7 +101,7 @@
       <div id="tab-content-equipment" class="hidden space-y-4">
         <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100">
           <h3 class="font-bold text-gray-800 text-base">設備清單管理</h3>
-          <button onclick="openAddEquipmentModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">+ 新增冷氣設備</button>
+          <button type="button" onclick="openAddEquipmentModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition cursor-pointer relative z-10">+ 新增冷氣設備</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="equipment-grid">
           <!-- 設備卡片範例 -->
@@ -123,7 +123,7 @@
       <div id="tab-content-history" class="hidden space-y-4">
         <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100">
           <h3 class="font-bold text-gray-800 text-base">歷次服務與施工照片</h3>
-          <button onclick="openAddServiceLogModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">+ 新增施工紀錄</button>
+          <button type="button" onclick="openAddServiceLogModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition cursor-pointer relative z-10">+ 新增施工紀錄</button>
         </div>
         
         <div class="space-y-4" id="service-history-list">
@@ -171,13 +171,13 @@
     function switchTab(tabName) {
       ['info', 'equipment', 'history'].forEach(t => {
         document.getElementById(`tab-content-${t}`).classList.add('hidden');
-        document.getElementById(`tab-btn-${t}`).className = "py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium transition";
+        document.getElementById(`tab-btn-${t}`).className = "py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium transition cursor-pointer relative z-10";
       });
       document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
-      document.getElementById(`tab-btn-${tabName}`).className = "py-3 border-b-2 border-blue-600 text-blue-600 font-medium transition";
+      document.getElementById(`tab-btn-${tabName}`).className = "py-3 border-b-2 border-blue-600 text-blue-600 font-medium transition cursor-pointer relative z-10";
     }
 
-    // 刪除客戶資料函式（保留在詳細頁供內部觸發）
+    // 刪除客戶資料函式
     async function deleteCustomer(customerId) {
       if (!confirm("確定要刪除這位客戶嗎？此操作將會一併移除該客戶底下的設備與施工履歷紀錄！")) {
         return;

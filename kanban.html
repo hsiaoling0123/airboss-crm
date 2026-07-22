@@ -26,7 +26,7 @@
             <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
             <div>
                 <h1 class="text-base font-black">📅 派工行程看板 (CRM 即時同步)</h1>
-                <p class="text-[10px] opacity-90 font-bold">點卡片或按鍵開單、自動帶入新增派工資料</p>
+                <p class="text-[10px] opacity-90 font-bold">點卡片開單結案、長按 0.3 秒可拖曳改期</p>
             </div>
         </div>
     </header>
@@ -37,20 +37,20 @@
         <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-2">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                 <span class="text-xs font-black text-slate-800">💵 派工營業額統計</span>
-                <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">CRM 聯動</span>
+                <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">即時聯動</span>
             </div>
             <div class="grid grid-cols-3 gap-2 text-center pt-1">
                 <div class="p-2 bg-slate-50 rounded-2xl">
                     <p class="text-[10px] text-slate-400 font-bold">今日預估</p>
-                    <p id="statToday" class="text-sm font-black text-sky-600">$8,500</p>
+                    <p id="statToday" class="text-sm font-black text-sky-600">$0</p>
                 </div>
                 <div class="p-2 bg-slate-50 rounded-2xl">
                     <p class="text-[10px] text-slate-400 font-bold">本週累積</p>
-                    <p id="statWeek" class="text-sm font-black text-indigo-600">$42,000</p>
+                    <p id="statWeek" class="text-sm font-black text-indigo-600">$0</p>
                 </div>
                 <div class="p-2 bg-slate-50 rounded-2xl">
                     <p class="text-[10px] text-slate-400 font-bold">本月實收</p>
-                    <p id="statMonth" class="text-sm font-black text-emerald-600">$185,000</p>
+                    <p id="statMonth" class="text-sm font-black text-emerald-600">$0</p>
                 </div>
             </div>
         </div>
@@ -80,21 +80,29 @@
 
         <!-- ==================== 檢視內容區 1：每日視角 ==================== -->
         <div id="viewDay" class="space-y-4">
-            <!-- 今天 (動態載入) -->
+            <!-- 今天 -->
             <div class="bg-sky-50/60 p-3 rounded-3xl border border-sky-100">
                 <div class="flex justify-between items-center mb-2 px-1">
                     <span class="font-black text-xs text-sky-800 flex items-center gap-1">📌 今日行程 (<span id="countToday">0</span>)</span>
-                    <span class="text-[10px] text-sky-600 font-bold">👆 點卡片結案回報</span>
+                    <span class="text-[10px] text-sky-600 font-bold">👆 長按卡片可拖曳改期</span>
                 </div>
                 <div id="colToday" class="space-y-2.5 min-h-[90px]"></div>
             </div>
 
-            <!-- 明天 / 後續預約 -->
+            <!-- 明天 -->
             <div class="bg-indigo-50/60 p-3 rounded-3xl border border-indigo-100">
                 <div class="flex justify-between items-center mb-2 px-1">
-                    <span class="font-black text-xs text-indigo-800 flex items-center gap-1">🗓️ 待命與後續預約行程 (<span id="countFuture">0</span>)</span>
+                    <span class="font-black text-xs text-indigo-800 flex items-center gap-1">🗓️ 明天行程 (<span id="countTomorrow">0</span>)</span>
                 </div>
-                <div id="colFuture" class="space-y-2.5 min-h-[90px]"></div>
+                <div id="colTomorrow" class="space-y-2.5 min-h-[90px]"></div>
+            </div>
+
+            <!-- 本週其他預約 / 未來行程 -->
+            <div class="bg-amber-50/60 p-3 rounded-3xl border border-amber-100">
+                <div class="flex justify-between items-center mb-2 px-1">
+                    <span class="font-black text-xs text-amber-800 flex items-center gap-1">📅 本週其他預約 (<span id="countFuture">0</span>)</span>
+                </div>
+                <div id="colFuture" class="space-y-2.5 min-h-[80px]"></div>
             </div>
         </div>
 
@@ -102,10 +110,28 @@
         <div id="viewWeek" class="hidden space-y-3">
             <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
                 <div class="flex justify-between items-center border-b pb-2">
-                    <h3 class="font-black text-xs text-slate-800">🗓️ 本週派工總覽清單</h3>
+                    <h3 class="font-black text-xs text-slate-800">🗓️ 本週派工總覽 (長按可跨日拖曳)</h3>
                 </div>
-                <div id="weekListContainer" class="space-y-2">
-                    <!-- 動態渲染本週行程 -->
+                
+                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
+                    <p class="text-xs font-black text-slate-700">週一</p>
+                    <div id="weekMon" class="space-y-1.5 min-h-[40px]"></div>
+                </div>
+                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
+                    <p class="text-xs font-black text-slate-700">週二</p>
+                    <div id="weekTue" class="space-y-1.5 min-h-[40px]"></div>
+                </div>
+                <div class="bg-sky-50/70 p-2.5 rounded-2xl border border-sky-100 space-y-1.5">
+                    <p class="text-xs font-black text-sky-800">週三 (今天)</p>
+                    <div id="weekWed" class="space-y-1.5 min-h-[40px]"></div>
+                </div>
+                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
+                    <p class="text-xs font-black text-slate-700">週四 (明天)</p>
+                    <div id="weekThu" class="space-y-1.5 min-h-[40px]"></div>
+                </div>
+                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
+                    <p class="text-xs font-black text-slate-700">週五 / 其他</p>
+                    <div id="weekFri" class="space-y-1.5 min-h-[40px]"></div>
                 </div>
             </div>
         </div>
@@ -115,13 +141,15 @@
             <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
                 <div class="flex justify-between items-center border-b pb-2">
                     <h3 class="font-black text-xs text-slate-800">📊 2026 年 7 月份完整日曆</h3>
-                    <span class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">CRM 同步</span>
+                    <span id="monthTotalBadge" class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">動態同步</span>
                 </div>
+
                 <div class="grid grid-cols-7 text-center font-black text-[10px] text-slate-400 py-1 border-b">
                     <span class="text-red-400">日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span class="text-sky-500">六</span>
                 </div>
-                <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold pt-1" id="monthGrid">
-                    <!-- 動態月曆 -->
+
+                <div id="monthGrid" class="grid grid-cols-7 gap-1 text-center text-xs font-bold pt-1">
+                    <!-- 動態渲染 7 月日曆格 -->
                 </div>
             </div>
         </div>
@@ -143,8 +171,7 @@
             <div class="space-y-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-2xl">
                 <p>📞 <strong>電話：</strong><a id="detailPhoneCall" href="#" class="text-sky-600 font-bold underline"></a></p>
                 <p>📍 <strong>施工地址：</strong><span id="detailAddress" class="font-bold text-slate-800"></span></p>
-                <p>❄️ <strong>設備項目：</strong><span id="detailDevice" class="font-bold text-indigo-700"></span></p>
-                <p>📝 <strong>派工內容：</strong><span id="detailServiceNote"></span></p>
+                <p>❄️ <strong>派工主旨：</strong><span id="detailDevice" class="font-bold text-indigo-700"></span></p>
             </div>
 
             <hr class="border-slate-100">
@@ -155,7 +182,7 @@
                 </h4>
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 mb-1">施工與更換零件備註</label>
-                    <textarea id="workNotes" rows="2" placeholder="例：已完成深層清洗..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:bg-white focus:outline-sky-400"></textarea>
+                    <textarea id="workNotes" rows="2" placeholder="例：已完成清洗保養..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:bg-white focus:outline-sky-400"></textarea>
                 </div>
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 mb-1">現場實收金額 ($)</label>
@@ -180,65 +207,189 @@
         let currentActivePhone = null;
         let currentActiveLogId = null;
 
-        // 當頁面載入時，從 LocalStorage 讀取並渲染 CRM 派工行程
+        // 初始化所有看板渲染與拖曳功能
         window.addEventListener('DOMContentLoaded', () => {
-            renderKanbanFromCRM();
+            renderAllKanbanViews();
+            initSortableBoards();
         });
 
-        function renderKanbanFromCRM() {
-            const customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
-            const colToday = document.getElementById('colToday');
-            const colFuture = document.getElementById('colFuture');
-            
-            colToday.innerHTML = '';
-            colFuture.innerHTML = '';
+        // 綁定 SortableJS 長按拖曳功能
+        function initSortableBoards() {
+            const dragConfig = {
+                animation: 150,
+                delay: 300,
+                delayOnTouchOnly: true,
+                touchStartThreshold: 5,
+                filter: '.is-completed',
+                ghostClass: 'opacity-40',
+                dragClass: 'sortable-drag',
+                onEnd: function () {
+                    updateCounts();
+                }
+            };
 
-            let todayCount = 0;
-            let futureCount = 0;
-            const todayStr = new Date().toISOString().split('T')[0]; // 取得 YYYY-MM-DD
+            // 每日視角欄位
+            ['colToday', 'colTomorrow', 'colFuture'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) new Sortable(el, { ...dragConfig, group: 'kanban_days' });
+            });
+
+            // 每週視角欄位
+            ['weekMon', 'weekTue', 'weekWed', 'weekThu', 'weekFri'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) new Sortable(el, { ...dragConfig, group: 'kanban_weeks' });
+            });
+        }
+
+        // 從 CRM 讀取資料並全面渲染三種視角與總金額
+        function renderAllKanbanViews() {
+            const customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
+            
+            const colToday = document.getElementById('colToday');
+            const colTomorrow = document.getElementById('colTomorrow');
+            const colFuture = document.getElementById('colFuture');
+
+            const weekMon = document.getElementById('weekMon');
+            const weekTue = document.getElementById('weekTue');
+            const weekWed = document.getElementById('weekWed');
+            const weekThu = document.getElementById('weekThu');
+            const weekFri = document.getElementById('weekFri');
+
+            colToday.innerHTML = '';
+            colTomorrow.innerHTML = '';
+            colFuture.innerHTML = '';
+            weekMon.innerHTML = '';
+            weekTue.innerHTML = '';
+            weekWed.innerHTML = '';
+            weekThu.innerHTML = '';
+            weekFri.innerHTML = '';
+
+            let todayCount = 0, tomorrowCount = 0, futureCount = 0;
+            let todayRevenue = 0, weekRevenue = 0, monthRevenue = 0;
+            let dateCardCounts = {}; // 用於每月月曆小標籤
+
+            const todayStr = new Date().toISOString().split('T')[0]; // 例如 2026-07-23
 
             customers.forEach(cust => {
                 if (cust.logs && cust.logs.length > 0) {
                     cust.logs.forEach(log => {
-                        const isToday = log.date === todayStr || log.date.includes('2026-07-22'); // 預設對應今天或模擬日期
+                        const isCompleted = log.desc && log.desc.includes('[已完工結案]');
+                        
+                        // 計算金額
+                        let priceVal = 3500;
+                        const matchPrice = log.title.match(/\$(\d+)/);
+                        if (matchPrice) priceVal = parseInt(matchPrice[1]);
+                        const matchDescPrice = log.desc && log.desc.match(/實收 \$(\d+)/);
+                        if (matchDescPrice) priceVal = parseInt(matchDescPrice[1]);
+
+                        if (isCompleted) monthRevenue += priceVal;
+
+                        // 統計月曆日期件數
+                        const logDate = log.date || todayStr;
+                        dateCardCounts[logDate] = (dateCardCounts[logDate] || 0) + 1;
+
+                        // 建立卡片 HTML
                         const cardHtml = `
-                            <div onclick="clickOpenModal('${cust.name}', '${cust.phone}', '${cust.address}', '${cust.notes}', '${log.title}', '${log.id}', this)" class="kanban-card bg-white p-3.5 rounded-2xl border ${isToday ? 'border-sky-200' : 'border-indigo-100'} shadow-sm space-y-2 select-none cursor-pointer hover:border-sky-400 transition-all">
+                            <div onclick="clickOpenModal('${cust.name}', '${cust.phone}', '${cust.address}', '${log.title}', '${log.id}', this)" 
+                                 class="kanban-card bg-white p-3.5 rounded-2xl border ${isCompleted ? 'is-completed locked-card bg-emerald-50/80 border-emerald-200' : 'border-sky-100'} shadow-sm space-y-2 select-none cursor-pointer hover:border-sky-300 transition-all">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-full">${log.date}</span>
-                                        <h3 class="font-black text-xs text-slate-800 inline-block ml-1">${cust.name} 📄</h3>
+                                        <span class="text-[10px] ${isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800'} font-bold px-2 py-0.5 rounded-full">${log.date}</span>
+                                        <h3 class="font-black text-xs text-slate-800 inline-block ml-1">${cust.name} ${isCompleted ? '🔒' : '📄'}</h3>
                                     </div>
-                                    <span class="text-xs font-black text-emerald-600">${log.title}</span>
+                                    <span class="text-xs font-black ${isCompleted ? 'text-emerald-600' : 'text-sky-600'}">$${priceVal}</span>
                                 </div>
                                 <p class="text-[11px] text-slate-500 font-bold">📍 ${cust.address}</p>
-                                <p class="text-[11px] text-slate-500">🔧 ${log.desc}</p>
+                                <p class="text-[11px] text-slate-500">❄️ ${log.title}</p>
                                 <div class="flex gap-1.5 pt-1">
                                     <div onclick="event.stopPropagation(); loadMap('${cust.name}', '${cust.address}')" class="no-drag flex-1 bg-sky-50 active:bg-sky-100 text-sky-600 font-bold py-2 rounded-xl text-[10px] text-center cursor-pointer">
-                                        🗺️ 載入地圖
+                                        🗺️ 導航
                                     </div>
-                                    <div onclick="event.stopPropagation(); clickOpenModal('${cust.name}', '${cust.phone}', '${cust.address}', '${cust.notes}', '${log.title}', '${log.id}', this.closest('.kanban-card'))" class="no-drag flex-1 bg-emerald-500 active:bg-emerald-600 text-white font-black py-2 rounded-xl text-[10px] text-center shadow-sm">
-                                        ✅ 完工結案
+                                    <div class="no-drag flex-1 ${isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-emerald-500 text-white'} font-black py-2 rounded-xl text-[10px] text-center shadow-sm">
+                                        ${isCompleted ? '已結案' : '✅ 完工結案'}
                                     </div>
                                 </div>
                             </div>
                         `;
 
-                        if (isToday) {
+                        // 依日期派發至每日視角
+                        if (log.date === '2026-07-22' || log.date === todayStr) {
                             colToday.innerHTML += cardHtml;
                             todayCount++;
+                            todayRevenue += priceVal;
+                            weekRevenue += priceVal;
+                            weekWed.innerHTML += cardHtml;
+                        } else if (log.date === '2026-07-23' || log.date > todayStr) {
+                            colTomorrow.innerHTML += cardHtml;
+                            tomorrowCount++;
+                            weekRevenue += priceVal;
+                            weekThu.innerHTML += cardHtml;
                         } else {
                             colFuture.innerHTML += cardHtml;
                             futureCount++;
+                            weekRevenue += priceVal;
+                            weekMon.innerHTML += cardHtml;
                         }
                     });
                 }
             });
 
+            // 更新統計數字
             document.getElementById('countToday').innerText = todayCount;
+            document.getElementById('countTomorrow').innerText = tomorrowCount;
             document.getElementById('countFuture').innerText = futureCount;
+
+            document.getElementById('statToday').innerText = '$' + todayRevenue.toLocaleString();
+            document.getElementById('statWeek').innerText = '$' + weekRevenue.toLocaleString();
+            document.getElementById('statMonth').innerText = '$' + monthRevenue.toLocaleString();
+
+            // 渲染每月月曆網格
+            renderMonthCalendarGrid(dateCardCounts);
         }
 
-        function clickOpenModal(name, phone, address, device, serviceNote, logId, targetElement) {
+        // 動態渲染 2026 年 7 月月曆
+        function renderMonthCalendarGrid(counts) {
+            const grid = document.getElementById('monthGrid');
+            grid.innerHTML = '';
+
+            // 7月前空白日 (2026年7月1日是星期三)
+            for (let i = 0; i < 3; i++) {
+                grid.innerHTML += `<div class="p-2 opacity-20 text-slate-300">--</div>`;
+            }
+
+            for (let day = 1; day <= 31; day++) {
+                const dayStr = `2026-07-${day < 10 ? '0' + day : day}`;
+                const hasEvent = counts[dayStr] > 0;
+                const isToday = day === 22; // 假設今天為7/22或依實際
+
+                let bgClass = "hover:bg-slate-50";
+                let textClass = "text-slate-700";
+
+                if (isToday) {
+                    bgClass = "bg-amber-400 text-white font-black shadow-md";
+                    textClass = "text-white";
+                } else if (hasEvent) {
+                    bgClass = "bg-sky-50 text-sky-700 font-bold";
+                }
+
+                grid.innerHTML += `
+                    <div class="p-1.5 rounded-xl ${bgClass} ${textClass} transition-all">
+                        ${day}
+                        ${hasEvent ? `<span class="block text-[8px] text-sky-600 font-bold">${counts[dayStr]}件</span>` : ''}
+                    </div>
+                `;
+            }
+        }
+
+        function updateCounts() {
+            document.getElementById('countToday').innerText = document.getElementById('colToday').children.length;
+            document.getElementById('countTomorrow').innerText = document.getElementById('colTomorrow').children.length;
+            document.getElementById('countFuture').innerText = document.getElementById('colFuture').children.length;
+        }
+
+        function clickOpenModal(name, phone, address, device, logId, targetElement) {
+            if (targetElement.classList.contains('is-completed')) return;
+
             currentActivePhone = phone;
             currentActiveLogId = logId;
 
@@ -247,7 +398,6 @@
             document.getElementById('detailPhoneCall').href = "tel:" + phone;
             document.getElementById('detailAddress').innerText = address;
             document.getElementById('detailDevice').innerText = device || '標準分離式冷氣';
-            document.getElementById('detailServiceNote').innerText = serviceNote;
             document.getElementById('workNotes').value = "";
             document.getElementById('detailFinalPrice').value = "3500";
 
@@ -258,7 +408,7 @@
             document.getElementById('orderDetailModal').classList.add('opacity-0', 'pointer-events-none');
         }
 
-        // 完工後回寫 CRM 資料庫
+        // 完工結案並回寫 CRM
         function submitJobCompletion() {
             const price = document.getElementById('detailFinalPrice').value;
             const notes = document.getElementById('workNotes').value;
@@ -276,9 +426,10 @@
 
             alert('✅ 完工結案成功！資料已同步回寫至 CRM 客戶歷程！');
             closeOrderDetailModal();
-            renderKanbanFromCRM();
+            renderAllKanbanViews();
         }
 
+        // 視角切換
         function switchPeriod(period) {
             document.getElementById('btnPeriodDay').className = period === 'day' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all";
             document.getElementById('btnPeriodWeek').className = period === 'week' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all";

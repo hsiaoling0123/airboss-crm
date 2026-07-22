@@ -30,8 +30,8 @@
               <tr class="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm">
                 <th class="p-4 font-semibold">客戶姓名</th>
                 <th class="p-4 font-semibold">主要電話</th>
-                <th class="p-4 font-semibold">施工地址</th>
-                <th class="p-4 font-semibold">標籤</th>
+                <th class="p-4 font-semibold">客戶來源</th>
+                <th class="p-4 font-semibold">客戶類型</th>
                 <th class="p-4 font-semibold text-center">操作</th>
               </tr>
             </thead>
@@ -76,6 +76,8 @@
               <p><strong>LINE ID：</strong> <span id="detail-line" class="text-gray-600"></span></p>
               <p><strong>電子郵件 (Email)：</strong> <span id="detail-email" class="text-gray-600"></span></p>
               <p><strong>客戶生日：</strong> <span id="detail-birthday" class="text-gray-600"></span></p>
+              <p><strong>客戶來源：</strong> <span id="detail-source" class="text-gray-600"></span></p>
+              <p><strong>客戶類型：</strong> <span id="detail-type" class="text-gray-600"></span></p>
             </div>
           </div>
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4">
@@ -142,8 +144,9 @@
         lineId: 'ming123',
         email: 'ming@example.com',
         birthday: '1988-08-16',
+        source: '網路搜尋',
+        customerType: 'VIP',
         address: '新北市板橋區文化路一段 100 號',
-        tag: 'VIP',
         equipment: [
           { id: 'eq_01', location: '客廳 (AC-01)', model: '日立 RAS-63HK', capacity: '6.3 kW (2.8 匹 / R32)', date: '2023-05-15' }
         ],
@@ -171,8 +174,8 @@
         tr.innerHTML = `
           <td class="p-4 font-medium text-gray-900">${cust.name}</td>
           <td class="p-4">${cust.phone}</td>
-          <td class="p-4">${cust.address}</td>
-          <td class="p-4"><span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-xs font-semibold">${cust.tag || '一般'}</span></td>
+          <td class="p-4">${cust.source || '未指定'}</td>
+          <td class="p-4"><span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-xs font-semibold">${cust.customerType || '一般'}</span></td>
           <td class="p-4 text-center">
             <button type="button" onclick="viewCustomerDetail('${cust.id}')" class="bg-gray-100 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-medium cursor-pointer">查看詳情</button>
           </td>
@@ -194,6 +197,8 @@
       document.getElementById('detail-line').innerText = cust.lineId || '未填寫';
       document.getElementById('detail-email').innerText = cust.email || '未填寫';
       document.getElementById('detail-birthday').innerText = cust.birthday || '未填寫';
+      document.getElementById('detail-source').innerText = cust.source || '未指定';
+      document.getElementById('detail-type').innerText = cust.customerType || '一般';
       document.getElementById('detail-address').innerText = cust.address || '未填寫';
 
       // 渲染設備列表
@@ -284,7 +289,7 @@
       document.getElementById('action-modal').classList.add('hidden');
     }
 
-    // 1. 開啟新增客戶 Modal（包含完整基本聯絡資料欄位）
+    // 1. 開啟新增客戶 Modal（包含客戶來源與客戶類型下拉選單）
     function openAddCustomerModal() {
       document.getElementById('modal-title').innerText = '新增客戶資料';
       document.getElementById('modal-body').innerHTML = `
@@ -310,8 +315,27 @@
             <input type="email" id="input-c-email" placeholder="例如：example@domain.com" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
           <div>
-            <label class="block font-medium text-gray-700 mb-1">客戶生日（用於生日關懷或專屬折扣通知）</label>
+            <label class="block font-medium text-gray-700 mb-1">客戶生日</label>
             <input type="date" id="input-c-birthday" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">客戶來源</label>
+            <select id="input-c-source" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+              <option value="網路搜尋">網路搜尋</option>
+              <option value="親友推薦">親友推薦</option>
+              <option value="社群媒體 (FB/IG)">社群媒體 (FB/IG)</option>
+              <option value="路過或傳單">路過或傳單</option>
+              <option value="其他">其他</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">客戶類型</label>
+            <select id="input-c-type" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+              <option value="一般">一般</option>
+              <option value="VIP">VIP</option>
+              <option value="企業合作">企業合作</option>
+              <option value="設計師案場">設計師案場</option>
+            </select>
           </div>
           <div>
             <label class="block font-medium text-gray-700 mb-1">施工地址</label>
@@ -333,6 +357,8 @@
       const lineId = document.getElementById('input-c-line').value.trim();
       const email = document.getElementById('input-c-email').value.trim();
       const birthday = document.getElementById('input-c-birthday').value;
+      const source = document.getElementById('input-c-source').value;
+      const customerType = document.getElementById('input-c-type').value;
       const address = document.getElementById('input-c-address').value.trim();
 
       if (!name || !phone) {
@@ -348,8 +374,9 @@
         lineId,
         email,
         birthday,
+        source,
+        customerType,
         address: address || '未填寫地址',
-        tag: '一般',
         equipment: [],
         logs: []
       };
@@ -360,7 +387,7 @@
       alert('成功新增客戶！');
     }
 
-    // 2. 開啟編輯客戶 Modal（支援完整欄位修改）
+    // 2. 開啟編輯客戶 Modal（支援來源與類型選單）
     function openEditCustomerModal() {
       const cust = customersData.find(c => c.id === currentActiveCustomerId);
       if (!cust) return;
@@ -393,6 +420,25 @@
             <input type="date" id="edit-c-birthday" value="${cust.birthday || ''}" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
           <div>
+            <label class="block font-medium text-gray-700 mb-1">客戶來源</label>
+            <select id="edit-c-source" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+              <option value="網路搜尋" ${cust.source === '網路搜尋' ? 'selected' : ''}>網路搜尋</option>
+              <option value="親友推薦" ${cust.source === '親友推薦' ? 'selected' : ''}>親友推薦</option>
+              <option value="社群媒體 (FB/IG)" ${cust.source === '社群媒體 (FB/IG)' ? 'selected' : ''}>社群媒體 (FB/IG)</option>
+              <option value="路過或傳單" ${cust.source === '路過或傳單' ? 'selected' : ''}>路過或傳單</option>
+              <option value="其他" ${cust.source === '其他' ? 'selected' : ''}>其他</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">客戶類型</label>
+            <select id="edit-c-type" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+              <option value="一般" ${cust.customerType === '一般' ? 'selected' : ''}>一般</option>
+              <option value="VIP" ${cust.customerType === 'VIP' ? 'selected' : ''}>VIP</option>
+              <option value="企業合作" ${cust.customerType === '企業合作' ? 'selected' : ''}>企業合作</option>
+              <option value="設計師案場" ${cust.customerType === '設計師案場' ? 'selected' : ''}>設計師案場</option>
+            </select>
+          </div>
+          <div>
             <label class="block font-medium text-gray-700 mb-1">施工地址</label>
             <input type="text" id="edit-c-address" value="${cust.address || ''}" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
@@ -415,6 +461,8 @@
       cust.lineId = document.getElementById('edit-c-line').value.trim();
       cust.email = document.getElementById('edit-c-email').value.trim();
       cust.birthday = document.getElementById('edit-c-birthday').value;
+      cust.source = document.getElementById('edit-c-source').value;
+      cust.customerType = document.getElementById('edit-c-type').value;
       cust.address = document.getElementById('edit-c-address').value.trim();
 
       // 更新畫面上顯示的文字
@@ -424,6 +472,8 @@
       document.getElementById('detail-line').innerText = cust.lineId;
       document.getElementById('detail-email').innerText = cust.email;
       document.getElementById('detail-birthday').innerText = cust.birthday;
+      document.getElementById('detail-source').innerText = cust.source;
+      document.getElementById('detail-type').innerText = cust.customerType;
       document.getElementById('detail-address').innerText = cust.address;
 
       closeActionModal();

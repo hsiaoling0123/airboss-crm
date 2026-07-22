@@ -61,7 +61,7 @@
           ← 返回客戶列表
         </button>
         <div class="flex gap-2">
-          <button type="button" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition cursor-pointer">編輯基本資料</button>
+          <button type="button" onclick="editCustomer('cust_001')" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition cursor-pointer">編輯基本資料</button>
           <button type="button" onclick="deleteCustomer('cust_001')" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer">刪除客戶</button>
         </div>
       </div>
@@ -153,8 +153,8 @@
 
   <!-- ==================== JavaScript 切換與互動邏輯 ==================== -->
   <script>
-    // 確保全域可以呼叫
-    window.viewCustomerDetail = function(customerId) {
+    // 切換至詳細資料頁
+    function viewCustomerDetail(customerId) {
       const listView = document.getElementById('customer-list-view');
       const detailView = document.getElementById('customer-detail-view');
       if (listView && detailView) {
@@ -162,9 +162,10 @@
         detailView.classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    };
+    }
 
-    window.backToCustomerList = function() {
+    // 返回列表頁
+    function backToCustomerList() {
       const listView = document.getElementById('customer-list-view');
       const detailView = document.getElementById('customer-detail-view');
       if (listView && detailView) {
@@ -172,9 +173,10 @@
         listView.classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    };
+    }
 
-    window.switchTab = function(tabName) {
+    // 詳細頁內部分頁籤切換
+    function switchTab(tabName) {
       ['info', 'equipment', 'history'].forEach(t => {
         const content = document.getElementById(`tab-content-${t}`);
         const btn = document.getElementById(`tab-btn-${t}`);
@@ -188,27 +190,37 @@
           }
         }
       });
-    };
+    }
 
-    window.deleteCustomer = function(customerId) {
+    // 各項實際業務互動函式（預留給您的專案邏輯對接）
+    function editCustomer(customerId) {
+      console.log("準備編輯客戶:", customerId);
+      // 這裡未來可改為開啟您的編輯客戶 Modal 或跳轉編輯頁
+      alert("開啟編輯客戶資料功能");
+    }
+
+    function openAddCustomerModal() {
+      console.log("開啟新增客戶");
+      alert("開啟新增客戶視窗");
+    }
+
+    function openAddEquipmentModal() {
+      console.log("開啟新增冷氣設備");
+      alert("開啟新增冷氣設備視窗");
+    }
+
+    function openAddServiceLogModal() {
+      console.log("開啟新增施工紀錄");
+      alert("開啟新增施工紀錄視窗");
+    }
+
+    function deleteCustomer(customerId) {
       if (!confirm("確定要刪除這位客戶嗎？此操作將會一併移除該客戶底下的設備與施工履歷紀錄！")) {
         return;
       }
       alert("客戶資料已成功刪除！");
-      window.backToCustomerList();
-    };
-
-    window.openAddCustomerModal = function() {
-      alert("開啟新增客戶視窗");
-    };
-
-    window.openAddEquipmentModal = function() {
-      alert("開啟新增冷氣設備視窗");
-    };
-
-    window.openAddServiceLogModal = function() {
-      alert("開啟新增施工紀錄視窗");
-    };
+      backToCustomerList();
+    }
   </script>
 </body>
 </html>

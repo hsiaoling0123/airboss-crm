@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AirBoss 智慧派工與報價</title>
-  <!-- 載入 Tailwind CSS 樣式庫 -->
+  <title>AirBoss 智慧派工與一鍵報價</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-50 text-gray-800 pb-12">
 
   <!-- 頂部導航列 -->
   <header class="bg-white border-b sticky top-0 z-40 shadow-sm">
@@ -15,8 +14,8 @@
       <a href="index.html" class="text-sm font-bold text-gray-600 hover:text-blue-600 flex items-center gap-1">
         ← 返回首頁
       </a>
-      <h1 class="text-base font-bold text-gray-900">新增派工與報價單</h1>
-      <span class="text-xs text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-semibold">自動同步 CRM</span>
+      <h1 class="text-base font-bold text-gray-900">新增派工與一鍵報價</h1>
+      <span class="text-xs text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-semibold">CRM 智慧同步</span>
     </div>
   </header>
 
@@ -25,8 +24,8 @@
     
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6">
       <div class="border-b pb-3">
-        <h2 class="text-lg font-bold text-gray-900">填寫派工單與客戶資訊</h2>
-        <p class="text-xs text-gray-500 mt-1">送出後將自動同步至「客戶與資源管理」及「派工行程」中，實現資料互通。</p>
+        <h2 class="text-lg font-bold text-gray-900">填寫派工單與報價內容</h2>
+        <p class="text-xs text-gray-500 mt-1">送出後將自動同步至「客戶管理」與「行程看板」，並可一鍵生成報價單預覽。</p>
       </div>
 
       <div class="space-y-4 text-sm">
@@ -63,7 +62,7 @@
             <input type="text" id="order-title" placeholder="例如：日立冷氣定期深層清洗" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
           <div>
-            <label class="block font-medium text-gray-700 mb-1">預估報價金額 (NTD)</label>
+            <label class="block font-medium text-gray-700 mb-1">報價金額 (NTD) *</label>
             <input type="number" id="order-amount" placeholder="例如：3500" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
         </div>
@@ -73,8 +72,9 @@
           <textarea id="order-desc" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="3" placeholder="例如：進屋需穿鞋套，社區地下室可停訪客車位..."></textarea>
         </div>
 
-        <div class="pt-4 flex justify-end gap-3 border-t">
-          <a href="index.html" class="px-5 py-2.5 bg-gray-100 rounded-xl text-gray-600 hover:bg-gray-200 font-medium transition">取消返回</a>
+        <div class="pt-4 flex flex-col md:flex-row justify-end gap-3 border-t">
+          <a href="index.html" class="px-5 py-2.5 bg-gray-100 rounded-xl text-gray-600 hover:bg-gray-200 font-medium text-center transition">取消返回</a>
+          <button type="button" onclick="previewQuotation()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium shadow-sm transition cursor-pointer">📄 一鍵預覽報價單</button>
           <button type="button" onclick="submitOrderAndSync()" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium shadow-sm transition cursor-pointer">確認送出並同步 CRM</button>
         </div>
       </div>
@@ -82,92 +82,132 @@
 
   </main>
 
-  <!-- 邏輯腳本：負責將派工單寫入 localStorage 供各模組串接 -->
+  <!-- 📄 報價單預覽 Modal -->
+  <div id="quoteModal" class="fixed inset-0 bg-slate-900/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-black text-lg text-slate-800">❄️ AirBoss 專業冷氣空調報價單</h3>
+        <button onclick="closeQuoteModal()" class="text-slate-400 font-black text-lg p-1">✕</button>
+      </div>
+
+      <div id="quoteContent" class="space-y-3 text-xs bg-slate-50 p-4 rounded-2xl border text-slate-700 font-medium">
+        <!-- 動態帶入報價單內容 -->
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="copyQuoteText()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-black py-2.5 rounded-xl text-xs shadow-sm">
+          📋 複製報價單文字 (傳送 LINE)
+        </button>
+        <button onclick="closeQuoteModal()" class="flex-1 bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs">
+          關閉預覽
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 邏輯腳本 -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      // 自動填入今天的日期
       document.getElementById('order-date').value = new Date().toISOString().split('T')[0];
     });
 
-    function submitOrderAndSync() {
-      const name = document.getElementById('order-name').value.trim();
-      const phone = document.getElementById('order-phone').value.trim();
-      const date = document.getElementById('order-date').value;
-      const tech = document.getElementById('order-tech').value.trim();
-      const address = document.getElementById('order-address').value.trim();
-      const title = document.getElementById('order-title').value.trim();
-      const amount = document.getElementById('order-amount').value.trim();
-      const desc = document.getElementById('order-desc').value.trim();
+    function getFormData() {
+      return {
+        name: document.getElementById('order-name').value.trim(),
+        phone: document.getElementById('order-phone').value.trim(),
+        date: document.getElementById('order-date').value,
+        tech: document.getElementById('order-tech').value.trim(),
+        address: document.getElementById('order-address').value.trim(),
+        title: document.getElementById('order-title').value.trim(),
+        amount: document.getElementById('order-amount').value.trim(),
+        desc: document.getElementById('order-desc').value.trim()
+      };
+    }
 
-      if (!name || !phone || !address || !title) {
-        alert('請填寫必要的客戶姓名、電話、地址與服務項目！');
+    // 預覽報價單
+    function previewQuotation() {
+      const data = getFormData();
+      if (!data.name || !data.phone || !data.title || !data.amount) {
+        alert('請先填寫客戶姓名、電話、服務項目與報價金額，才能產生報價單！');
         return;
       }
 
-      // 1. 讀取或初始化共用資料庫 (LocalStorage)
-      let sharedCustomers = JSON.parse(localStorage.getItem('airboss_customers')) || [
-        {
-          id: 'cust_001',
-          name: '王小明',
-          phone: '0912-345-678',
-          altPhone: '02-22501234',
-          lineId: 'ming123',
-          email: 'ming@example.com',
-          birthday: '1988-08-16',
-          source: '網路搜尋',
-          customerType: 'VIP',
-          address: '新北市板橋區文化路一段 100 號',
-          parking: '社區地下室可停客訪車位',
-          adminPhone: '02-22509999',
-          notes: '進屋需穿鞋套，假日禁止施工',
-          equipment: [
-            { id: 'eq_01', location: '客廳 (AC-01)', model: '日立 RAS-63HK', capacity: '6.3 kW', date: '2023-05-15', warranty: '保固中', photos: [] }
-          ],
-          logs: [
-            { id: 'log_01', date: '2026-06-10', title: '定期深層清洗', tech: '大師傅', desc: '濾網及風輪清洗完畢。', photos: [] }
-          ]
-        }
-      ];
+      const quoteHtml = `
+        <div class="space-y-2">
+          <p><strong>客戶大名：</strong>${data.name} 先生/小姐</p>
+          <p><strong>連絡電話：</strong>${data.phone}</p>
+          <p><strong>施工地址：</strong>${data.address || '未填寫'}</p>
+          <p><strong>預定日期：</strong>${data.date}</p>
+          <hr class="border-slate-200 my-2">
+          <p><strong>服務項目：</strong>${data.title}</p>
+          <p><strong>施工備註：</strong>${data.desc || '無'}</p>
+          <hr class="border-slate-200 my-2">
+          <p class="text-sm font-black text-emerald-600">總報價金額：NT$ ${Number(data.amount).toLocaleString()} 元</p>
+        </div>
+      `;
 
-      // 2. 以電話號碼核對是否已存在於客戶名單中
-      let existingCustomer = sharedCustomers.find(c => c.phone === phone);
+      document.getElementById('quoteContent').innerHTML = quoteHtml;
+      document.getElementById('quoteModal').classList.remove('hidden');
+    }
+
+    function closeQuoteModal() {
+      document.getElementById('quoteModal').classList.add('hidden');
+    }
+
+    function copyQuoteText() {
+      const data = getFormData();
+      const text = `【AirBoss 專業冷氣空調報價單】\n客戶：${data.name}\n預定日期：${data.date}\n施工項目：${data.title}\n報價金額：NT$ ${Number(data.amount).toLocaleString()} 元\n備註：${data.desc || '無'}\n\n感謝您的信賴與支持！😊`;
+      navigator.clipboard.writeText(text);
+      alert('✅ 報價單文字已複製！可直接貼上至 LINE 傳給客戶。');
+    }
+
+    // 送出並同步 CRM
+    function submitOrderAndSync() {
+      const data = getFormData();
+
+      if (!data.name || !data.phone || !data.address || !data.title || !data.amount) {
+        alert('請填寫完整的派工與報價必要欄位！');
+        return;
+      }
+
+      let sharedCustomers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
+      let existingCustomer = sharedCustomers.find(c => c.phone === data.phone);
 
       const newLogItem = {
         id: 'log_' + Date.now(),
-        date: date,
-        title: title + (amount ? ` (報價: $${amount})` : ''),
-        tech: tech || '派工技師',
-        desc: desc || '由派工單自動同步建立',
+        date: data.date,
+        title: `${data.title} (報價: $${data.amount})`,
+        tech: data.tech || '派工技師',
+        desc: data.desc || '由派工單自動同步建立',
         photos: []
       };
 
       if (existingCustomer) {
         existingCustomer.logs.unshift(newLogItem);
-        if (address && existingCustomer.address === '未填寫地址') {
-          existingCustomer.address = address;
+        if (data.address && existingCustomer.address === '未填寫地址') {
+          existingCustomer.address = data.address;
         }
       } else {
         const newCust = {
           id: 'cust_' + Date.now(),
-          name,
-          phone,
+          name: data.name,
+          phone: data.phone,
           altPhone: '',
           lineId: '',
           email: '',
           birthday: '',
           source: '派工單匯入',
           customerType: '一般',
-          address: address,
+          address: data.address,
           parking: '無',
           adminPhone: '無',
-          notes: desc || '無',
+          notes: data.desc || '無',
           equipment: [],
           logs: [newLogItem]
         };
         sharedCustomers.push(newCust);
       }
 
-      // 3. 儲存回 LocalStorage 供 customers.html 與其他頁面讀取
       localStorage.setItem('airboss_customers', JSON.stringify(sharedCustomers));
 
       alert('派工單已成功建立，並已自動同步至客戶與行程資料庫！');

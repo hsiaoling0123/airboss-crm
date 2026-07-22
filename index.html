@@ -20,11 +20,11 @@
             <span class="text-2xl">❄️</span>
             <div>
                 <h1 class="text-base font-black tracking-wide">AirBoss CRM</h1>
-                <p class="text-[10px] opacity-90 font-bold">冷氣空調智慧管理系統</p>
+                <p class="text-[10px] opacity-90 font-bold">冷氣空調智慧管理系統 (雲端同步)</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <button onclick="toggleDrawer()" class="p-2 bg-white/20 hover:bg-white/30 rounded-xl transition-all">
+            <button onclick="toggleDrawer()" class="p-2 bg-white/20 hover:bg-white/30 rounded-xl transition-all cursor-pointer">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
@@ -35,7 +35,7 @@
         <div class="space-y-4">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100">
                 <span class="font-black text-sm text-slate-800">🌸 系統功能選單</span>
-                <button onclick="toggleDrawer()" class="text-slate-400 font-bold text-xs">✕ 關閉</button>
+                <button onclick="toggleDrawer()" class="text-slate-400 font-bold text-xs cursor-pointer">✕ 關閉</button>
             </div>
             <nav class="space-y-1 text-xs font-bold">
                 <a href="index.html" class="flex items-center gap-2.5 p-3 rounded-2xl bg-sky-50 text-sky-600">
@@ -70,7 +70,7 @@
                 <p class="text-slate-400 font-bold">🔑 目前登入者</p>
                 <p id="userEmailDisplay" class="font-black text-slate-700 truncate">載入中...</p>
             </div>
-            <button onclick="handleLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-black py-2.5 rounded-xl text-xs transition-all">
+            <button onclick="handleLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-black py-2.5 rounded-xl text-xs transition-all cursor-pointer">
                 🚪 安全登出系統
             </button>
         </div>
@@ -84,6 +84,18 @@
                 <p class="text-xs text-amber-700 font-bold mt-1">智慧派工、施工照片、客源與營業分析一站整合</p>
             </div>
             <div class="text-3xl">🐻❄️</div>
+        </div>
+
+        <!-- 雲端即時摘要卡片 -->
+        <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm grid grid-cols-2 gap-3 text-center">
+            <div class="bg-sky-50/70 p-3 rounded-2xl">
+                <p class="text-[10px] text-slate-400 font-bold">今日派工總數</p>
+                <p id="homeTodayCount" class="text-base font-black text-sky-600">0 件</p>
+            </div>
+            <div class="bg-emerald-50/70 p-3 rounded-2xl">
+                <p class="text-[10px] text-slate-400 font-bold">雲端連線狀態</p>
+                <p class="text-base font-black text-emerald-600">🟢 已連線</p>
+            </div>
         </div>
 
         <a href="analytics.html" class="block bg-gradient-to-r from-indigo-500 to-sky-500 text-white p-4 rounded-3xl shadow-sm hover:shadow-md transition-all">
@@ -136,21 +148,8 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCfy9ARrE9wp-bCrABsFVb-qM8_sp9_wqs",
-            authDomain: "airboss-4f084.firebaseapp.com",
-            projectId: "airboss-4f084",
-            storageBucket: "airboss-4f084.firebasestorage.app",
-            messagingSenderId: "1067344741307",
-            appId: "1:1067344741307:web:15a54741a5bdb26e897a9e",
-            measurementId: "G-P9ZGJH366L"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        import { auth, subscribeOrders } from './firebase-config.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -158,6 +157,16 @@
                 if (emailElem) emailElem.innerText = user.email;
             } else {
                 window.location.href = 'login.html';
+            }
+        });
+
+        // 即時監聽訂單，計算今日派工總數顯示於首頁
+        subscribeOrders((orders) => {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const todayOrders = orders.filter(o => o.date === todayStr);
+            const countElem = document.getElementById('homeTodayCount');
+            if (countElem) {
+                countElem.innerText = `${todayOrders.length} 件`;
             }
         });
 

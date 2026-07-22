@@ -24,18 +24,18 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <button onclick="toggleDrawer()" class="p-2 bg-white/20 hover:bg-white/30 rounded-xl transition-all cursor-pointer">
+            <button onclick="window.toggleDrawer()" class="p-2 bg-white/20 hover:bg-white/30 rounded-xl transition-all cursor-pointer">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
     </header>
 
-    <div id="drawerOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-slate-900/40 opacity-0 pointer-events-none transition-opacity duration-300 z-50"></div>
+    <div id="drawerOverlay" onclick="window.toggleDrawer()" class="fixed inset-0 bg-slate-900/40 opacity-0 pointer-events-none transition-opacity duration-300 z-50"></div>
     <aside id="drawer" class="fixed top-0 right-0 w-64 h-full bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50 p-5 flex flex-col justify-between">
         <div class="space-y-4">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100">
                 <span class="font-black text-sm text-slate-800">🌸 系統功能選單</span>
-                <button onclick="toggleDrawer()" class="text-slate-400 font-bold text-xs cursor-pointer">✕ 關閉</button>
+                <button onclick="window.toggleDrawer()" class="text-slate-400 font-bold text-xs cursor-pointer">✕ 關閉</button>
             </div>
             <nav class="space-y-1 text-xs font-bold">
                 <a href="index.html" class="flex items-center gap-2.5 p-3 rounded-2xl bg-sky-50 text-sky-600">
@@ -70,7 +70,7 @@
                 <p class="text-slate-400 font-bold">🔑 目前登入者</p>
                 <p id="userEmailDisplay" class="font-black text-slate-700 truncate">載入中...</p>
             </div>
-            <button onclick="handleLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-black py-2.5 rounded-xl text-xs transition-all cursor-pointer">
+            <button onclick="window.handleLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-black py-2.5 rounded-xl text-xs transition-all cursor-pointer">
                 🚪 安全登出系統
             </button>
         </div>

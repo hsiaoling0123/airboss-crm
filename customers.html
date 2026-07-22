@@ -86,7 +86,7 @@
               <p><strong>施工地址：</strong> <span id="detail-address" class="text-gray-900"></span> <a href="#" class="text-blue-600 text-xs ml-1 underline hover:text-blue-800 font-medium">Google 導航</a></p>
               <p><strong>停車資訊：</strong> <span id="detail-parking" class="text-gray-600">社區地下室可停客訪車位</span></p>
               <p><strong>管理員電話：</strong> <span id="detail-admin-phone" class="text-gray-600">02-22509999</span></p>
-              <p><strong>注意事項：</strong> <span id="detail-notes" class="text-red-600 font-semibold bg-red-50 px-2 py-1 rounded inline-block mt-1">進屋需穿鞋套，假日禁止施工</span></p>
+              <p><strong>注意事項：</strong> <span id="detail-notes" class="text-red-600 font-semibold bg-red-50 px-2 py-1 rounded inline-block mt-1"></span></p>
             </div>
           </div>
         </div>
@@ -147,6 +147,7 @@
         source: '網路搜尋',
         customerType: 'VIP',
         address: '新北市板橋區文化路一段 100 號',
+        notes: '進屋需穿鞋套，假日禁止施工',
         equipment: [
           { id: 'eq_01', location: '客廳 (AC-01)', model: '日立 RAS-63HK', capacity: '6.3 kW (2.8 匹 / R32)', date: '2023-05-15' }
         ],
@@ -190,7 +191,7 @@
       const cust = customersData.find(c => c.id === customerId);
       if (!cust) return;
 
-      // 填入完整基本資料
+      // 填入完整基本資料與注意事項
       document.getElementById('detail-name').innerText = cust.name || '未填寫';
       document.getElementById('detail-phone').innerText = cust.phone || '未填寫';
       document.getElementById('detail-alt-phone').innerText = cust.altPhone || '未填寫';
@@ -200,6 +201,7 @@
       document.getElementById('detail-source').innerText = cust.source || '未指定';
       document.getElementById('detail-type').innerText = cust.customerType || '一般';
       document.getElementById('detail-address').innerText = cust.address || '未填寫';
+      document.getElementById('detail-notes').innerText = cust.notes || '無';
 
       // 渲染設備列表
       renderEquipmentList(cust.equipment);
@@ -289,7 +291,7 @@
       document.getElementById('action-modal').classList.add('hidden');
     }
 
-    // 1. 開啟新增客戶 Modal（包含客戶來源與客戶類型下拉選單）
+    // 1. 開啟新增客戶 Modal（包含注意事項輸入欄位）
     function openAddCustomerModal() {
       document.getElementById('modal-title').innerText = '新增客戶資料';
       document.getElementById('modal-body').innerHTML = `
@@ -341,6 +343,10 @@
             <label class="block font-medium text-gray-700 mb-1">施工地址</label>
             <input type="text" id="input-c-address" placeholder="請輸入施工地址" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">現場注意事項</label>
+            <textarea id="input-c-notes" placeholder="例如：進屋需穿鞋套，假日禁止施工..." class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="2"></textarea>
+          </div>
           <div class="flex justify-end gap-2 pt-2">
             <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">取消</button>
             <button type="button" onclick="saveNewCustomer()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">儲存客戶</button>
@@ -360,6 +366,7 @@
       const source = document.getElementById('input-c-source').value;
       const customerType = document.getElementById('input-c-type').value;
       const address = document.getElementById('input-c-address').value.trim();
+      const notes = document.getElementById('input-c-notes').value.trim();
 
       if (!name || !phone) {
         alert('請填寫客戶姓名與主要電話！');
@@ -377,6 +384,7 @@
         source,
         customerType,
         address: address || '未填寫地址',
+        notes: notes || '無',
         equipment: [],
         logs: []
       };
@@ -387,7 +395,7 @@
       alert('成功新增客戶！');
     }
 
-    // 2. 開啟編輯客戶 Modal（支援來源與類型選單）
+    // 2. 開啟編輯客戶 Modal（支援注意事項修改）
     function openEditCustomerModal() {
       const cust = customersData.find(c => c.id === currentActiveCustomerId);
       if (!cust) return;
@@ -442,6 +450,10 @@
             <label class="block font-medium text-gray-700 mb-1">施工地址</label>
             <input type="text" id="edit-c-address" value="${cust.address || ''}" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">現場注意事項</label>
+            <textarea id="edit-c-notes" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="2">${cust.notes || ''}</textarea>
+          </div>
           <div class="flex justify-end gap-2 pt-2">
             <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">取消</button>
             <button type="button" onclick="saveEditCustomer()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 cursor-pointer">儲存變更</button>
@@ -464,6 +476,7 @@
       cust.source = document.getElementById('edit-c-source').value;
       cust.customerType = document.getElementById('edit-c-type').value;
       cust.address = document.getElementById('edit-c-address').value.trim();
+      cust.notes = document.getElementById('edit-c-notes').value.trim();
 
       // 更新畫面上顯示的文字
       document.getElementById('detail-name').innerText = cust.name;
@@ -475,6 +488,7 @@
       document.getElementById('detail-source').innerText = cust.source;
       document.getElementById('detail-type').innerText = cust.customerType;
       document.getElementById('detail-address').innerText = cust.address;
+      document.getElementById('detail-notes').innerText = cust.notes;
 
       closeActionModal();
       alert('客戶基本資料已更新！');

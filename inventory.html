@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="w-full bg-gradient-to-r from-sky-400 to-indigo-300 text-white font-black py-2.5 rounded-2xl text-xs shadow-sm hover:opacity-90 transition-all">
+            <button type="submit" class="w-full bg-gradient-to-r from-sky-400 to-indigo-300 text-white font-black py-2.5 rounded-2xl text-xs shadow-sm hover:opacity-90 transition-all cursor-pointer">
                 ✨ 入庫 / 新增材料
             </button>
         </form>
@@ -67,21 +67,8 @@
 
     <!-- ☁️ Firestore 雲端同步庫存 -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCfy9ARrE9wp-bCrABsFVb-qM8_sp9_wqs",
-            authDomain: "airboss-4f084.firebaseapp.com",
-            projectId: "airboss-4f084",
-            storageBucket: "airboss-4f084.firebasestorage.app",
-            messagingSenderId: "1067344741307",
-            appId: "1:1067344741307:web:15a54741a5bdb26e897a9e",
-            measurementId: "G-P9ZGJH366L"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        import { db } from "./firebase-config.js";
+        import { collection, onSnapshot, addDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // 即時監聽庫存
         onSnapshot(collection(db, "inventory"), (snapshot) => {
@@ -119,9 +106,9 @@
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <button onclick="changeQty('${item.id}', ${item.qty - 1})" class="w-7 h-7 bg-rose-100 text-rose-700 font-black rounded-xl text-xs">-</button>
+                        <button onclick="changeQty('${item.id}', ${item.qty - 1})" class="w-7 h-7 bg-rose-100 text-rose-700 font-black rounded-xl text-xs cursor-pointer">-</button>
                         <span class="font-black text-sm text-sky-600 px-1">${item.qty}</span>
-                        <button onclick="changeQty('${item.id}', ${item.qty + 1})" class="w-7 h-7 bg-emerald-100 text-emerald-700 font-black rounded-xl text-xs">+</button>
+                        <button onclick="changeQty('${item.id}', ${item.qty + 1})" class="w-7 h-7 bg-emerald-100 text-emerald-700 font-black rounded-xl text-xs cursor-pointer">+</button>
                     </div>
                 </div>
             `).join('');

@@ -1,195 +1,178 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新增派工與報價 - AirBoss CRM</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- PDF 匯出庫 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=MOPLUS+Rounded+1c:wght@500;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
-    <style> body { font-family: 'MOPLUS Rounded 1c', 'Noto Sans TC', sans-serif; } </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirBoss 智慧派工與報價</title>
+  <!-- 載入 Tailwind CSS 樣式庫 -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-16">
+<body class="bg-gray-50 text-gray-800">
 
-    <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-40 flex justify-between items-center rounded-b-2xl">
-        <div class="flex items-center gap-2">
-            <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
-            <div>
-                <h1 class="text-base font-black">✍️ 新增派工與報價單</h1>
-                <p class="text-[10px] opacity-90 font-bold">記錄客戶資料、客源並下載 PDF 報價單</p>
-            </div>
-        </div>
-    </header>
+  <!-- 頂部導航列 -->
+  <header class="bg-white border-b sticky top-0 z-40 shadow-sm">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="index.html" class="text-sm font-bold text-gray-600 hover:text-blue-600 flex items-center gap-1">
+        ← 返回首頁
+      </a>
+      <h1 class="text-base font-bold text-gray-900">新增派工與報價單</h1>
+      <span class="text-xs text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-semibold">自動同步 CRM</span>
+    </div>
+  </header>
 
-    <main class="max-w-md mx-auto p-4 space-y-4">
+  <!-- 主容器 -->
+  <main class="max-w-4xl mx-auto p-4 space-y-6">
+    
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+      <div class="border-b pb-3">
+        <h2 class="text-lg font-bold text-gray-900">填寫派工單與客戶資訊</h2>
+        <p class="text-xs text-gray-500 mt-1">送出後將自動同步至「客戶與資源管理」及「派工行程」中，實現資料互通。</p>
+      </div>
 
-        <form id="orderForm" class="bg-white p-5 rounded-3xl border border-amber-100 shadow-sm space-y-3">
-            
-            <h2 class="font-black text-xs text-sky-600 border-b border-slate-100 pb-2">👤 基本客戶資料</h2>
-
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-400 mb-1">客戶姓名 *</label>
-                    <input type="text" id="custName" value="張先生" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-400 mb-1">聯絡電話 *</label>
-                    <input type="tel" id="custPhone" value="0933-123-456" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-[11px] font-bold text-slate-400 mb-1">施工/服務地址 *</label>
-                <input type="text" id="custAddress" value="新北市三重區正義北路 100 號 5 樓" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-            </div>
-
-            <!-- 客源管道選擇 -->
-            <div>
-                <label class="block text-[11px] font-bold text-slate-400 mb-1">📍 客源管道 (行銷來源分析)</label>
-                <select id="custSource" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700">
-                    <option value="Google 搜尋/地圖">Google 搜尋 / 地圖商家</option>
-                    <option value="LINE 官方帳號">LINE 官方帳號諮詢</option>
-                    <option value="FB / IG 廣告">FB / IG 社群廣告</option>
-                    <option value="親友/街坊介紹">舊客介紹 / 街坊推薦</option>
-                    <option value="過路客/傳單">過路客 / 紙本傳單</option>
-                </select>
-            </div>
-
-            <h2 class="font-black text-xs text-sky-600 border-b border-slate-100 pb-2 pt-2">❄️ 項目與預估金額</h2>
-
-            <div>
-                <label class="block text-[11px] font-bold text-slate-400 mb-1">服務項目與冷氣數量</label>
-                <input type="text" id="serviceItem" value="分離式冷氣深層清洗保養 x 2 台" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-            </div>
-
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-400 mb-1">預估報價金額 ($)</label>
-                    <input type="number" id="price" value="5000" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-emerald-600">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-400 mb-1">預定施工日期</label>
-                    <input type="date" id="serviceDate" value="2026-07-25" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                </div>
-            </div>
-
-            <div class="pt-3 space-y-2">
-                <button type="button" onclick="generatePDF()" class="w-full bg-gradient-to-r from-sky-400 to-indigo-400 text-white font-black py-3 rounded-2xl text-xs shadow-sm hover:opacity-90">
-                    📄 產生並下載 PDF 報價單
-                </button>
-                <button type="button" onclick="copyLineMsg()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-2.5 rounded-2xl text-xs">
-                    💬 複製 LINE 報價文字給客戶
-                </button>
-            </div>
-        </form>
-
-        <!-- PDF 預覽隱藏樣式區塊 -->
-        <div class="hidden">
-            <div id="pdfContent" class="p-8 bg-white text-slate-800 space-y-6" style="width: 600px;">
-                <div class="border-b-2 border-sky-400 pb-4 flex justify-between items-center">
-                    <div>
-                        <h1 class="text-2xl font-black text-sky-600">AirBoss 冷氣空調服務報價單</h1>
-                        <p class="text-xs text-slate-400">專業冷氣深層清洗、維修、安裝與保養</p>
-                    </div>
-                    <div class="text-right text-xs text-slate-500">
-                        <p>日期：<span id="pdfDate"></span></p>
-                        <p>報價單號：#AB<span id="pdfNo"></span></p>
-                    </div>
-                </div>
-
-                <div class="bg-slate-50 p-4 rounded-xl space-y-1 text-xs">
-                    <p><strong>客戶姓名：</strong><span id="pdfCustName"></span></p>
-                    <p><strong>聯絡電話：</strong><span id="pdfCustPhone"></span></p>
-                    <p><strong>施工地址：</strong><span id="pdfCustAddress"></span></p>
-                </div>
-
-                <table class="w-full text-xs border-collapse">
-                    <thead>
-                        <tr class="bg-sky-100 text-sky-800">
-                            <th class="p-2 text-left">服務內容項目</th>
-                            <th class="p-2 text-right">預估金額</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b border-slate-100">
-                            <td class="p-2" id="pdfItem"></td>
-                            <td class="p-2 text-right font-bold text-emerald-600" id="pdfPrice"></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="border-t pt-4 text-[10px] text-slate-400 space-y-1">
-                    <p>感謝您的預約！本報價單有效期限為 14 天。</p>
-                    <p>聯絡電話：0912-345-678 | AirBoss 團隊關心您</p>
-                </div>
-            </div>
+      <div class="space-y-4 text-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">客戶姓名 / 稱呼 *</label>
+            <input type="text" id="order-name" placeholder="例如：王小明" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">主要電話 (CRM對應主鍵) *</label>
+            <input type="text" id="order-phone" placeholder="例如：0912-345-678" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
         </div>
 
-    </main>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">預定施工日期 *</label>
+            <input type="date" id="order-date" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">指派施工技師</label>
+            <input type="text" id="order-tech" placeholder="例如：大師傅" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+        </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        <div>
+          <label class="block font-medium text-gray-700 mb-1">施工地址 *</label>
+          <input type="text" id="order-address" placeholder="例如：新北市板橋區文化路一段 100 號" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCfy9ARrE9wp-bCrABsFVb-qM8_sp9_wqs",
-            authDomain: "airboss-4f084.firebaseapp.com",
-            projectId: "airboss-4f084",
-            storageBucket: "airboss-4f084.firebasestorage.app",
-            messagingSenderId: "1067344741307",
-            appId: "1:1067344741307:web:15a54741a5bdb26e897a9e",
-            measurementId: "G-P9ZGJH366L"
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">服務項目 / 派工主旨 *</label>
+            <input type="text" id="order-title" placeholder="例如：日立冷氣定期深層清洗" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">預估報價金額 (NTD)</label>
+            <input type="number" id="order-amount" placeholder="例如：3500" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-medium text-gray-700 mb-1">現場備註與注意事項</label>
+          <textarea id="order-desc" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="3" placeholder="例如：進屋需穿鞋套，社區地下室可停訪客車位..."></textarea>
+        </div>
+
+        <div class="pt-4 flex justify-end gap-3 border-t">
+          <a href="index.html" class="px-5 py-2.5 bg-gray-100 rounded-xl text-gray-600 hover:bg-gray-200 font-medium transition">取消返回</a>
+          <button type="button" onclick="submitOrderAndSync()" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium shadow-sm transition cursor-pointer">確認送出並同步 CRM</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 邏輯腳本：負責將派工單寫入 localStorage 供各模組串接 -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      // 自動填入今天的日期
+      document.getElementById('order-date').value = new Date().toISOString().split('T')[0];
+    });
+
+    function submitOrderAndSync() {
+      const name = document.getElementById('order-name').value.trim();
+      const phone = document.getElementById('order-phone').value.trim();
+      const date = document.getElementById('order-date').value;
+      const tech = document.getElementById('order-tech').value.trim();
+      const address = document.getElementById('order-address').value.trim();
+      const title = document.getElementById('order-title').value.trim();
+      const amount = document.getElementById('order-amount').value.trim();
+      const desc = document.getElementById('order-desc').value.trim();
+
+      if (!name || !phone || !address || !title) {
+        alert('請填寫必要的客戶姓名、電話、地址與服務項目！');
+        return;
+      }
+
+      // 1. 讀取或初始化共用資料庫 (LocalStorage)
+      let sharedCustomers = JSON.parse(localStorage.getItem('airboss_customers')) || [
+        {
+          id: 'cust_001',
+          name: '王小明',
+          phone: '0912-345-678',
+          altPhone: '02-22501234',
+          lineId: 'ming123',
+          email: 'ming@example.com',
+          birthday: '1988-08-16',
+          source: '網路搜尋',
+          customerType: 'VIP',
+          address: '新北市板橋區文化路一段 100 號',
+          parking: '社區地下室可停客訪車位',
+          adminPhone: '02-22509999',
+          notes: '進屋需穿鞋套，假日禁止施工',
+          equipment: [
+            { id: 'eq_01', location: '客廳 (AC-01)', model: '日立 RAS-63HK', capacity: '6.3 kW', date: '2023-05-15', warranty: '保固中', photos: [] }
+          ],
+          logs: [
+            { id: 'log_01', date: '2026-06-10', title: '定期深層清洗', tech: '大師傅', desc: '濾網及風輪清洗完畢。', photos: [] }
+          ]
+        }
+      ];
+
+      // 2. 以電話號碼核對是否已存在於客戶名單中
+      let existingCustomer = sharedCustomers.find(c => c.phone === phone);
+
+      const newLogItem = {
+        id: 'log_' + Date.now(),
+        date: date,
+        title: title + (amount ? ` (報價: $${amount})` : ''),
+        tech: tech || '派工技師',
+        desc: desc || '由派工單自動同步建立',
+        photos: []
+      };
+
+      if (existingCustomer) {
+        existingCustomer.logs.unshift(newLogItem);
+        if (address && existingCustomer.address === '未填寫地址') {
+          existingCustomer.address = address;
+        }
+      } else {
+        const newCust = {
+          id: 'cust_' + Date.now(),
+          name,
+          phone,
+          altPhone: '',
+          lineId: '',
+          email: '',
+          birthday: '',
+          source: '派工單匯入',
+          customerType: '一般',
+          address: address,
+          parking: '無',
+          adminPhone: '無',
+          notes: desc || '無',
+          equipment: [],
+          logs: [newLogItem]
         };
+        sharedCustomers.push(newCust);
+      }
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+      // 3. 儲存回 LocalStorage 供 customers.html 與其他頁面讀取
+      localStorage.setItem('airboss_customers', JSON.stringify(sharedCustomers));
 
-        onAuthStateChanged(auth, (user) => {
-            if (!user) window.location.href = 'login.html';
-        });
-
-        // 產生 PDF 函數
-        window.generatePDF = function() {
-            const name = document.getElementById('custName').value;
-            const phone = document.getElementById('custPhone').value;
-            const address = document.getElementById('custAddress').value;
-            const item = document.getElementById('serviceItem').value;
-            const price = document.getElementById('price').value;
-
-            document.getElementById('pdfCustName').innerText = name;
-            document.getElementById('pdfCustPhone').innerText = phone;
-            document.getElementById('pdfCustAddress').innerText = address;
-            document.getElementById('pdfItem').innerText = item;
-            document.getElementById('pdfPrice').innerText = '$' + price;
-            document.getElementById('pdfDate').innerText = new Date().toLocaleDateString();
-            document.getElementById('pdfNo').innerText = Math.floor(Math.random() * 89999 + 10000);
-
-            const element = document.getElementById('pdfContent');
-            element.parentElement.classList.remove('hidden');
-
-            const opt = {
-                margin:       0.5,
-                filename:     `AirBoss報價單_${name}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                element.parentElement.classList.add('hidden');
-            });
-        };
-
-        // 複製 LINE 文字
-        window.copyLineMsg = function() {
-            const name = document.getElementById('custName').value;
-            const item = document.getElementById('serviceItem').value;
-            const price = document.getElementById('price').value;
-            const msg = `您好 ${name}！這是 AirBoss 為您說明的保養報價：\n項目：${item}\n預估金額：$${price} 元\n若確認無誤請回覆此訊息，我們將為您安排施工行程！😊`;
-            navigator.clipboard.writeText(msg);
-            alert('✅ 已成功複製 LINE 報價文字！可以直接貼給客戶。');
-        };
-    </script>
+      alert('派工單已成功建立，並已自動同步至客戶與行程資料庫！');
+      window.location.href = 'index.html';
+    }
+  </script>
 </body>
 </html>

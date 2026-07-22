@@ -10,150 +10,165 @@
 </head>
 <body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-16">
 
+    <!-- 頂部標頭 -->
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-40 flex justify-between items-center rounded-b-2xl">
         <div class="flex items-center gap-2">
             <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
             <div>
                 <h1 class="text-base font-black">📊 營業與客源分析</h1>
-                <p class="text-[10px] opacity-90 font-bold">營收統計、客源渠道與熱門服務分析</p>
+                <p class="text-[10px] opacity-90 font-bold">CRM 資料庫即時連動計算</p>
             </div>
         </div>
     </header>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
 
-        <div class="bg-gradient-to-br from-indigo-500 to-sky-500 text-white p-5 rounded-3xl shadow-sm space-y-3">
-            <div class="flex justify-between items-center">
-                <span class="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-full">📅 2026 年 7 月份</span>
-                <span class="text-xs font-bold opacity-80">目標達成率 85%</span>
+        <!-- 1. 💰 營收與總覽卡片 -->
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-5 rounded-3xl shadow-lg space-y-4">
+            <div class="flex justify-between items-center text-xs opacity-90 font-bold border-b border-white/20 pb-2">
+                <span>📅 2026 年 7 月份即時統計</span>
+                <span class="bg-white/20 px-2 py-0.5 rounded-full">動態同步</span>
             </div>
             <div>
-                <p class="text-xs opacity-80 font-bold">本月預估/實收總營收</p>
-                <p class="text-3xl font-black mt-0.5">NT$ 185,000</p>
+                <p class="text-xs opacity-80 font-bold">本月實收總營業額</p>
+                <h2 id="totalRevenue" class="text-3xl font-black mt-1">$0</h2>
             </div>
-            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-white/20 text-center text-xs">
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-white/20 text-center">
                 <div>
-                    <p class="text-[10px] opacity-80">完工件數</p>
-                    <p class="font-black text-sm">38 件</p>
+                    <p class="text-[10px] opacity-80 font-bold">完工件數</p>
+                    <p id="totalCount" class="text-base font-black">0 件</p>
                 </div>
                 <div>
-                    <p class="text-[10px] opacity-80">平均客單價</p>
-                    <p class="font-black text-sm">$4,868</p>
+                    <p class="text-[10px] opacity-80 font-bold">平均客單價</p>
+                    <p id="avgPrice" class="text-base font-black">$0</p>
                 </div>
                 <div>
-                    <p class="text-[10px] opacity-80">預估毛利率</p>
-                    <p class="font-black text-sm">68%</p>
+                    <p class="text-[10px] opacity-80 font-bold">狀態</p>
+                    <p class="text-base font-black text-emerald-300">正常營運</p>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl border border-amber-100 shadow-sm space-y-3">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                <h2 class="font-black text-xs text-slate-800 flex items-center gap-1.5">
-                    <span>🎯</span> 客源渠道來源與轉換率分析
-                </h2>
-                <span class="text-[10px] text-slate-400 font-bold">本月統計</span>
+        <!-- 2. 🎯 客源管道來源與佔比分析 -->
+        <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-black text-xs text-slate-800">🎯 客源管道來源與佔比分析</h3>
+                <span class="text-[10px] bg-sky-100 text-sky-700 font-bold px-2 py-0.5 rounded-full">即時統計</span>
             </div>
 
-            <div class="space-y-3 pt-1">
-
-                <div class="space-y-1">
-                    <div class="flex justify-between text-xs font-bold">
-                        <span class="text-slate-700">🔍 Google 搜尋 / 地圖商家</span>
-                        <span class="text-sky-600">38% (15 件 / $70,300)</span>
-                    </div>
-                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="bg-sky-400 h-full rounded-full" style="width: 38%"></div>
-                    </div>
-                </div>
-
-                <div class="space-y-1">
-                    <div class="flex justify-between text-xs font-bold">
-                        <span class="text-slate-700">🤝 舊客介紹 / 街坊推薦</span>
-                        <span class="text-indigo-600">30% (11 件 / $55,500)</span>
-                    </div>
-                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="bg-indigo-400 h-full rounded-full" style="width: 30%"></div>
-                    </div>
-                </div>
-
-                <div class="space-y-1">
-                    <div class="flex justify-between text-xs font-bold">
-                        <span class="text-slate-700">📣 FB / IG 社群廣告</span>
-                        <span class="text-pink-600">20% (8 件 / $37,000)</span>
-                    </div>
-                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="bg-pink-400 h-full rounded-full" style="width: 20%"></div>
-                    </div>
-                </div>
-
-                <div class="space-y-1">
-                    <div class="flex justify-between text-xs font-bold">
-                        <span class="text-slate-700">💬 LINE 官方帳號推播</span>
-                        <span class="text-emerald-600">12% (4 件 / $22,200)</span>
-                    </div>
-                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="bg-emerald-400 h-full rounded-full" style="width: 12%"></div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="p-3 bg-amber-50 rounded-2xl text-[11px] text-amber-800 font-bold space-y-1">
-                <p>💡 <strong>行銷建議：</strong>Google 地圖與舊客介紹佔總營業額約 68%，建議持續維護 Google 地圖五星好評並發送「舊客介紹折$200」優惠卷！</p>
+            <div id="sourceAnalysisList" class="space-y-3 pt-1">
+                <!-- 動態載入客源數據 -->
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl border border-amber-100 shadow-sm space-y-3">
-            <h2 class="font-black text-xs text-slate-800 border-b border-slate-100 pb-2 flex items-center gap-1.5">
-                <span>🛠️</span> 服務項目營收占比
-            </h2>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="p-3 bg-slate-50 rounded-2xl space-y-1 border border-slate-100">
-                    <p class="text-slate-400 font-bold">分離式冷氣清洗</p>
-                    <p class="font-black text-slate-700 text-sm">45%</p>
-                    <p class="text-[10px] text-slate-400">成交 22 台</p>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-2xl space-y-1 border border-slate-100">
-                    <p class="text-slate-400 font-bold">吊隱式冷氣維修保養</p>
-                    <p class="font-black text-slate-700 text-sm">28%</p>
-                    <p class="text-[10px] text-slate-400">成交 9 台</p>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-2xl space-y-1 border border-slate-100">
-                    <p class="text-slate-400 font-bold">冷媒充填與查漏</p>
-                    <p class="font-black text-slate-700 text-sm">17%</p>
-                    <p class="text-[10px] text-slate-400">成交 5 件</p>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-2xl space-y-1 border border-slate-100">
-                    <p class="text-slate-400 font-bold">新機移機安裝</p>
-                    <p class="font-black text-slate-700 text-sm">10%</p>
-                    <p class="text-[10px] text-slate-400">成交 2 件</p>
-                </div>
+        <!-- 3. 🛠️ 服務項目營收佔比 -->
+        <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-black text-xs text-slate-800">🛠️ 服務項目營收佔比</h3>
+                <span class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">即時統計</span>
+            </div>
+
+            <div id="serviceAnalysisList" class="grid grid-cols-2 gap-2 pt-1">
+                <!-- 動態載入服務項目數據 -->
             </div>
         </div>
 
     </main>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCfy9ARrE9wp-bCrABsFVb-qM8_sp9_wqs",
-            authDomain: "airboss-4f084.firebaseapp.com",
-            projectId: "airboss-4f084",
-            storageBucket: "airboss-4f084.firebasestorage.app",
-            messagingSenderId: "1067344741307",
-            appId: "1:1067344741307:web:15a54741a5bdb26e897a9e",
-            measurementId: "G-P9ZGJH366L"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        onAuthStateChanged(auth, (user) => {
-            if (!user) window.location.href = 'login.html';
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAnalytics();
         });
+
+        function renderAnalytics() {
+            const customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
+
+            let totalRevenue = 0;
+            let totalCount = 0;
+            let sourceStats = {};
+            let serviceStats = {};
+
+            customers.forEach(cust => {
+                const src = cust.source || '其他';
+                if (!sourceStats[src]) sourceStats[src] = { count: 0, revenue: 0 };
+
+                if (cust.logs && cust.logs.length > 0) {
+                    cust.logs.forEach(log => {
+                        // 檢查是否已完工結案
+                        const isCompleted = log.desc && log.desc.includes('[已完工結案]');
+                        
+                        // 解析金額
+                        let priceVal = 3500;
+                        const matchPrice = log.title.match(/\$(\d+)/);
+                        if (matchPrice) priceVal = parseInt(matchPrice[1]);
+                        const matchDescPrice = log.desc && log.desc.match(/實收 \$(\d+)/);
+                        if (matchDescPrice) priceVal = parseInt(matchDescPrice[1]);
+
+                        if (isCompleted) {
+                            totalRevenue += priceVal;
+                            totalCount++;
+                            sourceStats[src].count++;
+                            sourceStats[src].revenue += priceVal;
+
+                            // 解析服務項目分類
+                            let serviceName = log.title.split('[')[0].trim();
+                            if (!serviceName) serviceName = '標準清洗服務';
+                            serviceStats[serviceName] = (serviceStats[serviceName] || 0) + priceVal;
+                        }
+                    });
+                }
+            });
+
+            // 1. 更新頂部營收總覽
+            document.getElementById('totalRevenue').innerText = '$' + totalRevenue.toLocaleString();
+            document.getElementById('totalCount').innerText = totalCount + ' 件';
+            const avg = totalCount > 0 ? Math.round(totalRevenue / totalCount) : 0;
+            document.getElementById('avgPrice').innerText = '$' + avg.toLocaleString();
+
+            // 2. 渲染客源管道分析
+            const sourceEl = document.getElementById('sourceAnalysisList');
+            sourceEl.innerHTML = '';
+
+            if (Object.keys(sourceStats).length === 0 || totalRevenue === 0) {
+                sourceEl.innerHTML = `<p class="text-xs text-slate-400 font-bold text-center py-4">目前尚無已結案的派工資料可供分析</p>`;
+            } else {
+                for (const [source, data] of Object.entries(sourceStats)) {
+                    if (data.count > 0) {
+                        const percent = Math.round((data.revenue / totalRevenue) * 100);
+                        sourceEl.innerHTML += `
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-xs font-black">
+                                    <span class="text-slate-700">📌 ${source}</span>
+                                    <span class="text-sky-600">${percent}% (${data.count} 件 / $${data.revenue.toLocaleString()})</span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-sky-400 h-full rounded-full" style="width: ${percent}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            // 3. 渲染服務項目營收佔比
+            const serviceEl = document.getElementById('serviceAnalysisList');
+            serviceEl.innerHTML = '';
+
+            if (Object.keys(serviceStats).length === 0 || totalRevenue === 0) {
+                serviceEl.innerHTML = `<div class="col-span-2 text-center text-xs text-slate-400 font-bold py-4">尚無服務項目數據</div>`;
+            } else {
+                for (const [svcName, svcRev] of Object.entries(serviceStats)) {
+                    const svcPercent = Math.round((svcRev / totalRevenue) * 100);
+                    serviceEl.innerHTML += `
+                        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1">
+                            <p class="text-[11px] font-black text-slate-700 truncate">❄️ ${svcName}</p>
+                            <p class="text-sm font-black text-indigo-600">${svcPercent}%</p>
+                            <p class="text-[10px] text-slate-400 font-bold">營收：$${svcRev.toLocaleString()}</p>
+                        </div>
+                    `;
+                }
+            }
+        }
     </script>
 </body>
 </html>

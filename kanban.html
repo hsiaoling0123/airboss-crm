@@ -168,10 +168,12 @@
                 <button onclick="closeOrderDetailModal()" class="text-slate-400 font-black text-lg p-1">✕</button>
             </div>
 
+            <!-- 詳細資訊區 (包含新增的派工備註) -->
             <div class="space-y-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-2xl">
                 <p>📞 <strong>電話：</strong><a id="detailPhoneCall" href="#" class="text-sky-600 font-bold underline"></a></p>
                 <p>📍 <strong>施工地址：</strong><span id="detailAddress" class="font-bold text-slate-800"></span></p>
                 <p>❄️ <strong>派工主旨：</strong><span id="detailDevice" class="font-bold text-indigo-700"></span></p>
+                <p>📝 <strong>派工單備註：</strong><span id="detailOrderDesc" class="font-bold text-slate-700"></span></p>
             </div>
 
             <hr class="border-slate-100">
@@ -207,13 +209,11 @@
         let currentActivePhone = null;
         let currentActiveLogId = null;
 
-        // 初始化所有看板渲染與拖曳功能
         window.addEventListener('DOMContentLoaded', () => {
             renderAllKanbanViews();
             initSortableBoards();
         });
 
-        // 綁定 SortableJS 長按拖曳功能
         function initSortableBoards() {
             const dragConfig = {
                 animation: 150,
@@ -228,20 +228,17 @@
                 }
             };
 
-            // 每日視角欄位
             ['colToday', 'colTomorrow', 'colFuture'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) new Sortable(el, { ...dragConfig, group: 'kanban_days' });
             });
 
-            // 每週視角欄位
             ['weekMon', 'weekTue', 'weekWed', 'weekThu', 'weekFri'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) new Sortable(el, { ...dragConfig, group: 'kanban_weeks' });
             });
         }
 
-        // 從 CRM 讀取資料並全面渲染三種視角與總金額
         function renderAllKanbanViews() {
             const customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
             
@@ -266,16 +263,15 @@
 
             let todayCount = 0, tomorrowCount = 0, futureCount = 0;
             let todayRevenue = 0, weekRevenue = 0, monthRevenue = 0;
-            let dateCardCounts = {}; // 用於每月月曆小標籤
+            let dateCardCounts = {};
 
-            const todayStr = new Date().toISOString().split('T')[0]; // 例如 2026-07-23
+            const todayStr = new Date().toISOString().split('T')[0];
 
             customers.forEach(cust => {
                 if (cust.logs && cust.logs.length > 0) {
                     cust.logs.forEach(log => {
                         const isCompleted = log.desc && log.desc.includes('[已完工結案]');
                         
-                        // 計算金額
                         let priceVal = 3500;
                         const matchPrice = log.title.match(/\$(\d+)/);
                         if (matchPrice) priceVal = parseInt(matchPrice[1]);
@@ -284,13 +280,14 @@
 
                         if (isCompleted) monthRevenue += priceVal;
 
-                        // 統計月曆日期件數
                         const logDate = log.date || todayStr;
                         dateCardCounts[logDate] = (dateCardCounts[logDate] || 0) + 1;
 
-                        // 建立卡片 HTML
+                        // 將完整的 log.desc 安全地存入 dataset 傳遞
+                        const safeDesc = (log.desc || '').replace(/'/g, "&apos;");
+
                         const cardHtml = `
-                            <div onclick="clickOpenModal('${cust.name}', '${cust.phone}', '${cust.address}', '${log.title}', '${log.id}', this)" 
+                            <div onclick="clickOpenModal('${cust.name}', '${cust.phone}', '${cust.address}', '${log.title}', '${log.id}', '${safeDesc}', this)" 
                                  class="kanban-card bg-white p-3.5 rounded-2xl border ${isCompleted ? 'is-completed locked-card bg-emerald-50/80 border-emerald-200' : 'border-sky-100'} shadow-sm space-y-2 select-none cursor-pointer hover:border-sky-300 transition-all">
                                 <div class="flex justify-between items-start">
                                     <div>
@@ -312,7 +309,6 @@
                             </div>
                         `;
 
-                        // 依日期派發至每日視角
                         if (log.date === '2026-07-22' || log.date === todayStr) {
                             colToday.innerHTML += cardHtml;
                             todayCount++;
@@ -334,7 +330,6 @@
                 }
             });
 
-            // 更新統計數字
             document.getElementById('countToday').innerText = todayCount;
             document.getElementById('countTomorrow').innerText = tomorrowCount;
             document.getElementById('countFuture').innerText = futureCount;
@@ -343,16 +338,13 @@
             document.getElementById('statWeek').innerText = '$' + weekRevenue.toLocaleString();
             document.getElementById('statMonth').innerText = '$' + monthRevenue.toLocaleString();
 
-            // 渲染每月月曆網格
             renderMonthCalendarGrid(dateCardCounts);
         }
 
-        // 動態渲染 2026 年 7 月月曆
         function renderMonthCalendarGrid(counts) {
             const grid = document.getElementById('monthGrid');
             grid.innerHTML = '';
 
-            // 7月前空白日 (2026年7月1日是星期三)
             for (let i = 0; i < 3; i++) {
                 grid.innerHTML += `<div class="p-2 opacity-20 text-slate-300">--</div>`;
             }
@@ -360,7 +352,7 @@
             for (let day = 1; day <= 31; day++) {
                 const dayStr = `2026-07-${day < 10 ? '0' + day : day}`;
                 const hasEvent = counts[dayStr] > 0;
-                const isToday = day === 22; // 假設今天為7/22或依實際
+                const isToday = day === 22;
 
                 let bgClass = "hover:bg-slate-50";
                 let textClass = "text-slate-700";
@@ -387,7 +379,7 @@
             document.getElementById('countFuture').innerText = document.getElementById('colFuture').children.length;
         }
 
-        function clickOpenModal(name, phone, address, device, logId, targetElement) {
+        function clickOpenModal(name, phone, address, device, logId, desc, targetElement) {
             if (targetElement.classList.contains('is-completed')) return;
 
             currentActivePhone = phone;
@@ -398,6 +390,9 @@
             document.getElementById('detailPhoneCall').href = "tel:" + phone;
             document.getElementById('detailAddress').innerText = address;
             document.getElementById('detailDevice').innerText = device || '標準分離式冷氣';
+            // 帶入派工備註
+            document.getElementById('detailOrderDesc').innerText = desc || '無備註';
+            
             document.getElementById('workNotes').value = "";
             document.getElementById('detailFinalPrice').value = "3500";
 
@@ -408,7 +403,6 @@
             document.getElementById('orderDetailModal').classList.add('opacity-0', 'pointer-events-none');
         }
 
-        // 完工結案並回寫 CRM
         function submitJobCompletion() {
             const price = document.getElementById('detailFinalPrice').value;
             const notes = document.getElementById('workNotes').value;
@@ -429,7 +423,6 @@
             renderAllKanbanViews();
         }
 
-        // 視角切換
         function switchPeriod(period) {
             document.getElementById('btnPeriodDay').className = period === 'day' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all";
             document.getElementById('btnPeriodWeek').className = period === 'week' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all";

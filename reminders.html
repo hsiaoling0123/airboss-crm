@@ -39,7 +39,7 @@
             </p>
             <div id="reminderList" class="space-y-3">
                 <div class="text-center py-10 text-xs text-slate-400">
-                    ☁️ 正在分析歷史保養紀錄...
+                    ☁️ 正在分析雲端歷史保養紀錄...
                 </div>
             </div>
         </div>
@@ -47,25 +47,10 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { subscribeOrders } from "./firebase-config.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCfy9ARrE9wp-bCrABsFVb-qM8_sp9_wqs",
-            authDomain: "airboss-4f084.firebaseapp.com",
-            projectId: "airboss-4f084",
-            storageBucket: "airboss-4f084.firebasestorage.app",
-            messagingSenderId: "1067344741307",
-            appId: "1:1067344741307:web:15a54741a5bdb26e897a9e",
-            measurementId: "G-P9ZGJH366L"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // 即時監聽工單紀錄
-        onSnapshot(collection(db, "orders"), (snapshot) => {
-            const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // 即時監聽雲端工單紀錄
+        subscribeOrders((orders) => {
             analyzeReminders(orders);
         });
 
@@ -127,7 +112,7 @@
                         </div>
 
                         <div class="pt-2 border-t border-slate-50">
-                            <button onclick="sendRecallLine('${c.name}', '${c.dateStr}')" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs shadow-sm transition-all flex items-center justify-center gap-1">
+                            <button onclick="sendRecallLine('${c.name}', '${c.dateStr}')" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs shadow-sm transition-all flex items-center justify-center gap-1 cursor-pointer">
                                 💬 發送 LINE 舊客優惠關懷訊息
                             </button>
                         </div>

@@ -213,7 +213,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // 渲染設備
+    // 渲染設備（加上點擊修改與刪除功能）
     function renderEquipmentList(equipmentArray) {
       const grid = document.getElementById('equipment-grid');
       grid.innerHTML = '';
@@ -223,11 +223,14 @@
       }
       equipmentArray.forEach(eq => {
         const card = document.createElement('div');
-        card.className = 'bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3';
+        card.className = 'bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3 relative hover:shadow-md transition';
         card.innerHTML = `
           <div class="flex justify-between items-center font-bold text-gray-800">
             <span class="text-base">${eq.location}</span>
-            <span class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-semibold">保固中</span>
+            <div class="flex items-center gap-2">
+              <span class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-semibold">保固中</span>
+              <button type="button" onclick="openEditEquipmentModal('${eq.id}')" class="text-xs bg-gray-100 hover:bg-blue-600 hover:text-white px-2.5 py-1 rounded-lg transition cursor-pointer">修改</button>
+            </div>
           </div>
           <div class="text-sm text-gray-600 space-y-1">
             <p>品牌型號：${eq.model}</p>
@@ -239,7 +242,7 @@
       });
     }
 
-    // 渲染施工紀錄
+    // 渲染施工紀錄（加上點擊修改與刪除功能）
     function renderServiceLogs(logsArray) {
       const list = document.getElementById('service-history-list');
       list.innerHTML = '';
@@ -249,11 +252,14 @@
       }
       logsArray.forEach(log => {
         const item = document.createElement('div');
-        item.className = 'bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4';
+        item.className = 'bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4 relative hover:shadow-md transition';
         item.innerHTML = `
           <div class="flex justify-between items-center border-b pb-3">
             <span class="font-bold text-gray-900 text-base">${log.date} - ${log.title}</span>
-            <span class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium">技師：${log.tech}</span>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium">技師：${log.tech}</span>
+              <button type="button" onclick="openEditServiceLogModal('${log.id}')" class="text-xs bg-gray-100 hover:bg-blue-600 hover:text-white px-2.5 py-1.5 rounded-lg transition cursor-pointer">修改</button>
+            </div>
           </div>
           <p class="text-sm text-gray-700 leading-relaxed"><strong>施工備註：</strong>${log.desc}</p>
         `;
@@ -291,7 +297,7 @@
       document.getElementById('action-modal').classList.add('hidden');
     }
 
-    // 1. 開啟新增客戶 Modal（包含注意事項輸入欄位）
+    // 1. 開啟新增客戶 Modal
     function openAddCustomerModal() {
       document.getElementById('modal-title').innerText = '新增客戶資料';
       document.getElementById('modal-body').innerHTML = `
@@ -395,7 +401,7 @@
       alert('成功新增客戶！');
     }
 
-    // 2. 開啟編輯客戶 Modal（支援注意事項修改）
+    // 2. 開啟編輯客戶 Modal
     function openEditCustomerModal() {
       const cust = customersData.find(c => c.id === currentActiveCustomerId);
       if (!cust) return;
@@ -494,11 +500,12 @@
       alert('客戶基本資料已更新！');
     }
 
-    // 3. 開啟新增冷氣設備 Modal
+    // 3. 開啟新增或修改冷氣設備 Modal
     function openAddEquipmentModal() {
       document.getElementById('modal-title').innerText = '新增冷氣設備';
       document.getElementById('modal-body').innerHTML = `
         <div class="space-y-3">
+          <input type="hidden" id="eq-edit-id" value="">
           <div>
             <label class="block font-medium text-gray-700 mb-1">安裝位置 (例如：主臥)</label>
             <input type="text" id="eq-location" placeholder="例如：主臥 (AC-02)" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
@@ -517,14 +524,30 @@
           </div>
           <div class="flex justify-end gap-2 pt-2">
             <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">取消</button>
-            <button type="button" onclick="saveNewEquipment()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">新增設備</button>
+            <button type="button" onclick="saveEquipment()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">儲存設備</button>
           </div>
         </div>
       `;
       document.getElementById('action-modal').classList.remove('hidden');
     }
 
-    function saveNewEquipment() {
+    function openEditEquipmentModal(eqId) {
+      const cust = customersData.find(c => c.id === currentActiveCustomerId);
+      if (!cust) return;
+      const eq = cust.equipment.find(e => e.id === eqId);
+      if (!eq) return;
+
+      openAddEquipmentModal();
+      document.getElementById('modal-title').innerText = '修改冷氣設備';
+      document.getElementById('eq-edit-id').value = eq.id;
+      document.getElementById('eq-location').value = eq.location || '';
+      document.getElementById('eq-model').value = eq.model || '';
+      document.getElementById('eq-capacity').value = eq.capacity || '';
+      document.getElementById('eq-date').value = eq.date || '';
+    }
+
+    function saveEquipment() {
+      const editId = document.getElementById('eq-edit-id').value;
       const location = document.getElementById('eq-location').value.trim();
       const model = document.getElementById('eq-model').value.trim();
       const capacity = document.getElementById('eq-capacity').value.trim();
@@ -537,25 +560,39 @@
 
       const cust = customersData.find(c => c.id === currentActiveCustomerId);
       if (cust) {
-        cust.equipment.push({
-          id: 'eq_' + Date.now(),
-          location,
-          model: model || '未填寫型號',
-          capacity: capacity || '未填寫規格',
-          date: date || new Date().toISOString().split('T')[0]
-        });
+        if (editId) {
+          // 修改現有設備
+          const eq = cust.equipment.find(e => e.id === editId);
+          if (eq) {
+            eq.location = location;
+            eq.model = model || '未填寫型號';
+            eq.capacity = capacity || '未填寫規格';
+            eq.date = date || new Date().toISOString().split('T')[0];
+          }
+          alert('冷氣設備已更新！');
+        } else {
+          // 新增設備
+          cust.equipment.push({
+            id: 'eq_' + Date.now(),
+            location,
+            model: model || '未填寫型號',
+            capacity: capacity || '未填寫規格',
+            date: date || new Date().toISOString().split('T')[0]
+          });
+          alert('成功新增冷氣設備！');
+        }
         renderEquipmentList(cust.equipment);
       }
 
       closeActionModal();
-      alert('成功新增冷氣設備！');
     }
 
-    // 4. 開啟新增施工紀錄 Modal
+    // 4. 開啟新增或修改施工紀錄 Modal
     function openAddServiceLogModal() {
       document.getElementById('modal-title').innerText = '新增施工與服務紀錄';
       document.getElementById('modal-body').innerHTML = `
         <div class="space-y-3">
+          <input type="hidden" id="log-edit-id" value="">
           <div>
             <label class="block font-medium text-gray-700 mb-1">服務日期</label>
             <input type="date" id="log-date" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
@@ -574,14 +611,30 @@
           </div>
           <div class="flex justify-end gap-2 pt-2">
             <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">取消</button>
-            <button type="button" onclick="saveNewServiceLog()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">儲存紀錄</button>
+            <button type="button" onclick="saveServiceLog()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">儲存紀錄</button>
           </div>
         </div>
       `;
       document.getElementById('action-modal').classList.remove('hidden');
     }
 
-    function saveNewServiceLog() {
+    function openEditServiceLogModal(logId) {
+      const cust = customersData.find(c => c.id === currentActiveCustomerId);
+      if (!cust) return;
+      const log = cust.logs.find(l => l.id === logId);
+      if (!log) return;
+
+      openAddServiceLogModal();
+      document.getElementById('modal-title').innerText = '修改施工與服務紀錄';
+      document.getElementById('log-edit-id').value = log.id;
+      document.getElementById('log-date').value = log.date || '';
+      document.getElementById('log-title').value = log.title || '';
+      document.getElementById('log-tech').value = log.tech || '';
+      document.getElementById('log-desc').value = log.desc || '';
+    }
+
+    function saveServiceLog() {
+      const editId = document.getElementById('log-edit-id').value;
       const date = document.getElementById('log-date').value;
       const title = document.getElementById('log-title').value.trim();
       const tech = document.getElementById('log-tech').value.trim();
@@ -594,18 +647,31 @@
 
       const cust = customersData.find(c => c.id === currentActiveCustomerId);
       if (cust) {
-        cust.logs.unshift({
-          id: 'log_' + Date.now(),
-          date: date || new Date().toISOString().split('T')[0],
-          title,
-          tech: tech || '派工技師',
-          desc: desc || '無備註說明'
-        });
+        if (editId) {
+          // 修改現有紀錄
+          const log = cust.logs.find(l => l.id === editId);
+          if (log) {
+            log.date = date || new Date().toISOString().split('T')[0];
+            log.title = title;
+            log.tech = tech || '派工技師';
+            log.desc = desc || '無備註說明';
+          }
+          alert('施工紀錄已更新！');
+        } else {
+          // 新增紀錄
+          cust.logs.unshift({
+            id: 'log_' + Date.now(),
+            date: date || new Date().toISOString().split('T')[0],
+            title,
+            tech: tech || '派工技師',
+            desc: desc || '無備註說明'
+          });
+          alert('成功新增施工紀錄！');
+        }
         renderServiceLogs(cust.logs);
       }
 
       closeActionModal();
-      alert('成功新增施工紀錄！');
     }
 
     // 刪除當前客戶

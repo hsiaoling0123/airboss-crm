@@ -36,16 +36,7 @@
               </tr>
             </thead>
             <tbody id="customer-table-body" class="divide-y divide-gray-100 text-sm text-gray-700">
-              <!-- 範例資料列 -->
-              <tr class="hover:bg-gray-50 transition">
-                <td class="p-4 font-medium text-gray-900">王小明</td>
-                <td class="p-4">0912-345-678</td>
-                <td class="p-4">新北市板橋區文化路一段 100 號</td>
-                <td class="p-4"><span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-xs font-semibold">VIP</span></td>
-                <td class="p-4 text-center">
-                  <button type="button" onclick="viewCustomerDetail('cust_001')" class="bg-gray-100 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-medium cursor-pointer">查看詳情</button>
-                </td>
-              </tr>
+              <!-- 動態渲染客戶列表 -->
             </tbody>
           </table>
         </div>
@@ -61,8 +52,8 @@
           ← 返回客戶列表
         </button>
         <div class="flex gap-2">
-          <button type="button" onclick="openEditCustomerModal('cust_001')" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition cursor-pointer">編輯基本資料</button>
-          <button type="button" onclick="deleteCustomer('cust_001')" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer">刪除客戶</button>
+          <button type="button" onclick="openEditCustomerModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition cursor-pointer">編輯基本資料</button>
+          <button type="button" onclick="deleteCurrentCustomer()" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer">刪除客戶</button>
         </div>
       </div>
 
@@ -79,8 +70,8 @@
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4">
             <h3 class="font-bold text-gray-800 border-b pb-2 text-base">聯絡資訊</h3>
             <div class="space-y-2 text-sm">
-              <p><strong>姓名：</strong> <span id="detail-name" class="text-gray-900 font-medium">王小明</span></p>
-              <p><strong>電話：</strong> <span id="detail-phone" class="text-blue-600 font-medium">0912-345-678</span></p>
+              <p><strong>姓名：</strong> <span id="detail-name" class="text-gray-900 font-medium"></span></p>
+              <p><strong>電話：</strong> <span id="detail-phone" class="text-blue-600 font-medium"></span></p>
               <p><strong>備用電話：</strong> <span id="detail-alt-phone" class="text-gray-600">02-22501234</span></p>
               <p><strong>LINE ID：</strong> <span id="detail-line" class="text-gray-600">ming123</span></p>
             </div>
@@ -88,7 +79,7 @@
           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4">
             <h3 class="font-bold text-gray-800 border-b pb-2 text-base">現場施工作業資訊</h3>
             <div class="space-y-2 text-sm">
-              <p><strong>地址：</strong> <span id="detail-address" class="text-gray-900">新北市板橋區文化路一段 100 號</span> <a href="#" class="text-blue-600 text-xs ml-1 underline hover:text-blue-800 font-medium">Google 導航</a></p>
+              <p><strong>地址：</strong> <span id="detail-address" class="text-gray-900"></span> <a href="#" class="text-blue-600 text-xs ml-1 underline hover:text-blue-800 font-medium">Google 導航</a></p>
               <p><strong>停車資訊：</strong> <span id="detail-parking" class="text-gray-600">社區地下室可停客訪車位</span></p>
               <p><strong>管理員電話：</strong> <span id="detail-admin-phone" class="text-gray-600">02-22509999</span></p>
               <p><strong>注意事項：</strong> <span id="detail-notes" class="text-red-600 font-semibold bg-red-50 px-2 py-1 rounded inline-block mt-1">進屋需穿鞋套，假日禁止施工</span></p>
@@ -104,18 +95,7 @@
           <button type="button" onclick="openAddEquipmentModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition cursor-pointer">+ 新增冷氣設備</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="equipment-grid">
-          <!-- 設備卡片範例 -->
-          <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3">
-            <div class="flex justify-between items-center font-bold text-gray-800">
-              <span class="text-base">客廳 (AC-01)</span>
-              <span class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-semibold">保固中</span>
-            </div>
-            <div class="text-sm text-gray-600 space-y-1">
-              <p>品牌型號：日立 RAS-63HK</p>
-              <p>冷房能力：6.3 kW (2.8 匹 / R32)</p>
-            </div>
-            <p class="text-xs text-gray-400 pt-2 border-t">安裝日期：2023-05-15 (保固至 2030 年)</p>
-          </div>
+          <!-- 動態渲染設備 -->
         </div>
       </div>
 
@@ -127,31 +107,14 @@
         </div>
         
         <div class="space-y-4" id="service-history-list">
-          <!-- 施工紀錄項目範例 -->
-          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-              <span class="font-bold text-gray-900 text-base">2026-06-10 - 定期深層清洗</span>
-              <span class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium">技師：大師傅</span>
-            </div>
-            <p class="text-sm text-gray-700 leading-relaxed"><strong>施工備註：</strong>濾網及風輪清洗完畢，風量恢復正常，排水管測試順暢。</p>
-            
-            <!-- 照片上傳預覽區塊 -->
-            <div class="pt-2">
-              <p class="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">施工照片記錄：</p>
-              <div class="flex gap-3 flex-wrap" id="photo-preview-list">
-                <div class="w-20 h-20 bg-gray-100 rounded-xl border border-gray-200 flex items-center justify-center overflow-hidden shadow-sm hover:opacity-90 cursor-pointer">
-                  <img src="https://via.placeholder.com/150" alt="施工照" class="w-full h-full object-cover">
-                </div>
-              </div>
-            </div>
-          </div>
+          <!-- 動態渲染施工紀錄 -->
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- ==================== 3. 互動表單 / 編輯頁面 Modal 容器 ==================== -->
+  <!-- ==================== 3. 互動表單 Modal 容器 ==================== -->
   <div id="action-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-4 relative max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b pb-3">
@@ -159,38 +122,137 @@
         <button type="button" onclick="closeActionModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold cursor-pointer">&times;</button>
       </div>
       
-      <!-- 動態載入表單內容區 -->
       <div id="modal-body" class="space-y-4 text-sm">
-        <!-- 內容會由 JS 根據點擊按鈕動態生成 -->
+        <!-- 動態表單內容 -->
       </div>
     </div>
   </div>
 
-  <!-- ==================== JavaScript 切換與互動邏輯 ==================== -->
+  <!-- ==================== JavaScript 資料管理與互動邏輯 ==================== -->
   <script>
+    // 模擬資料庫
+    let customersData = [
+      {
+        id: 'cust_001',
+        name: '王小明',
+        phone: '0912-345-678',
+        address: '新北市板橋區文化路一段 100 號',
+        tag: 'VIP',
+        equipment: [
+          { id: 'eq_01', location: '客廳 (AC-01)', model: '日立 RAS-63HK', capacity: '6.3 kW (2.8 匹 / R32)', date: '2023-05-15' }
+        ],
+        logs: [
+          { id: 'log_01', date: '2026-06-10', title: '定期深層清洗', tech: '大師傅', desc: '濾網及風輪清洗完畢，風量恢復正常，排水管測試順暢。' }
+        ]
+      }
+    ];
+
+    let currentActiveCustomerId = null;
+
+    // 頁面載入時渲染列表
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCustomerTable();
+    });
+
+    // 渲染客戶列表
+    function renderCustomerTable() {
+      const tbody = document.getElementById('customer-table-body');
+      tbody.innerHTML = '';
+
+      customersData.forEach(cust => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50 transition';
+        tr.innerHTML = `
+          <td class="p-4 font-medium text-gray-900">${cust.name}</td>
+          <td class="p-4">${cust.phone}</td>
+          <td class="p-4">${cust.address}</td>
+          <td class="p-4"><span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-xs font-semibold">${cust.tag || '一般'}</span></td>
+          <td class="p-4 text-center">
+            <button type="button" onclick="viewCustomerDetail('${cust.id}')" class="bg-gray-100 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-medium cursor-pointer">查看詳情</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
     // 切換至詳細資料頁
     function viewCustomerDetail(customerId) {
-      const listView = document.getElementById('customer-list-view');
-      const detailView = document.getElementById('customer-detail-view');
-      if (listView && detailView) {
-        listView.classList.add('hidden');
-        detailView.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      currentActiveCustomerId = customerId;
+      const cust = customersData.find(c => c.id === customerId);
+      if (!cust) return;
+
+      // 填入基本資料
+      document.getElementById('detail-name').innerText = cust.name;
+      document.getElementById('detail-phone').innerText = cust.phone;
+      document.getElementById('detail-address').innerText = cust.address;
+
+      // 渲染設備列表
+      renderEquipmentList(cust.equipment);
+      // 渲染施工紀錄
+      renderServiceLogs(cust.logs);
+
+      document.getElementById('customer-list-view').classList.add('hidden');
+      document.getElementById('customer-detail-view').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 渲染設備
+    function renderEquipmentList(equipmentArray) {
+      const grid = document.getElementById('equipment-grid');
+      grid.innerHTML = '';
+      if (equipmentArray.length === 0) {
+        grid.innerHTML = '<p class="text-gray-500 text-sm col-span-full">目前尚無冷氣設備紀錄。</p>';
+        return;
       }
+      equipmentArray.forEach(eq => {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3';
+        card.innerHTML = `
+          <div class="flex justify-between items-center font-bold text-gray-800">
+            <span class="text-base">${eq.location}</span>
+            <span class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-semibold">保固中</span>
+          </div>
+          <div class="text-sm text-gray-600 space-y-1">
+            <p>品牌型號：${eq.model}</p>
+            <p>冷房能力：${eq.capacity}</p>
+          </div>
+          <p class="text-xs text-gray-400 pt-2 border-t">安裝日期：${eq.date}</p>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // 渲染施工紀錄
+    function renderServiceLogs(logsArray) {
+      const list = document.getElementById('service-history-list');
+      list.innerHTML = '';
+      if (logsArray.length === 0) {
+        list.innerHTML = '<p class="text-gray-500 text-sm">目前尚無施工歷程紀錄。</p>';
+        return;
+      }
+      logsArray.forEach(log => {
+        const item = document.createElement('div');
+        item.className = 'bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4';
+        item.innerHTML = `
+          <div class="flex justify-between items-center border-b pb-3">
+            <span class="font-bold text-gray-900 text-base">${log.date} - ${log.title}</span>
+            <span class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium">技師：${log.tech}</span>
+          </div>
+          <p class="text-sm text-gray-700 leading-relaxed"><strong>施工備註：</strong>${log.desc}</p>
+        `;
+        list.appendChild(item);
+      });
     }
 
     // 返回列表頁
     function backToCustomerList() {
-      const listView = document.getElementById('customer-list-view');
-      const detailView = document.getElementById('customer-detail-view');
-      if (listView && detailView) {
-        detailView.classList.add('hidden');
-        listView.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      document.getElementById('customer-detail-view').classList.add('hidden');
+      document.getElementById('customer-list-view').classList.remove('hidden');
+      renderCustomerTable();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // 詳細頁內部分頁籤切換
+    // 分頁籤切換
     function switchTab(tabName) {
       ['info', 'equipment', 'history'].forEach(t => {
         const content = document.getElementById(`tab-content-${t}`);
@@ -207,12 +269,12 @@
       });
     }
 
-    // 關閉通用互動視窗
+    // 關閉 Modal
     function closeActionModal() {
       document.getElementById('action-modal').classList.add('hidden');
     }
 
-    // 1. 新增客戶 Modal
+    // 1. 開啟新增客戶 Modal
     function openAddCustomerModal() {
       document.getElementById('modal-title').innerText = '新增客戶資料';
       document.getElementById('modal-body').innerHTML = `
@@ -230,55 +292,93 @@
             <input type="text" id="input-c-address" placeholder="請輸入施工地址" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200">取消</button>
-            <button type="button" onclick="saveNewCustomer()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">儲存客戶</button>
+            <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">取消</button>
+            <button type="button" onclick="saveNewCustomer()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">儲存客戶</button>
           </div>
         </div>
       `;
       document.getElementById('action-modal').classList.remove('hidden');
     }
 
-    // 2. 編輯基本資料 Modal
-    function openEditCustomerModal(customerId) {
+    function saveNewCustomer() {
+      const name = document.getElementById('input-c-name').value.trim();
+      const phone = document.getElementById('input-c-phone').value.trim();
+      const address = document.getElementById('input-c-address').value.trim();
+
+      if (!name || !phone) {
+        alert('請填寫客戶姓名與聯絡電話！');
+        return;
+      }
+
+      const newCust = {
+        id: 'cust_' + Date.now(),
+        name,
+        phone,
+        address: address || '未填寫地址',
+        tag: '一般',
+        equipment: [],
+        logs: []
+      };
+
+      customersData.push(newCust);
+      renderCustomerTable();
+      closeActionModal();
+      alert('成功新增客戶！');
+    }
+
+    // 2. 開啟編輯客戶 Modal
+    function openEditCustomerModal() {
+      const cust = customersData.find(c => c.id === currentActiveCustomerId);
+      if (!cust) return;
+
       document.getElementById('modal-title').innerText = '編輯客戶基本資料';
       document.getElementById('modal-body').innerHTML = `
         <div class="space-y-3">
           <div>
             <label class="block font-medium text-gray-700 mb-1">客戶姓名</label>
-            <input type="text" id="edit-c-name" value="王小明" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+            <input type="text" id="edit-c-name" value="${cust.name}" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
           <div>
             <label class="block font-medium text-gray-700 mb-1">聯絡電話</label>
-            <input type="text" id="edit-c-phone" value="0912-345-678" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
-          </div>
-          <div>
-            <label class="block font-medium text-gray-700 mb-1">備用電話</label>
-            <input type="text" id="edit-c-alt" value="02-22501234" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+            <input type="text" id="edit-c-phone" value="${cust.phone}" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
           <div>
             <label class="block font-medium text-gray-700 mb-1">施工地址</label>
-            <input type="text" id="edit-c-address" value="新北市板橋區文化路一段 100 號" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
-          </div>
-          <div>
-            <label class="block font-medium text-gray-700 mb-1">現場注意事項</label>
-            <textarea id="edit-c-notes" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="2">進屋需穿鞋套，假日禁止施工</textarea>
+            <input type="text" id="edit-c-address" value="${cust.address}" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200">取消</button>
-            <button type="button" onclick="saveEditCustomer()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">儲存變更</button>
+            <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">取消</button>
+            <button type="button" onclick="saveEditCustomer()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 cursor-pointer">儲存變更</button>
           </div>
         </div>
       `;
       document.getElementById('action-modal').classList.remove('hidden');
     }
 
-    // 3. 新增冷氣設備 Modal
+    function saveEditCustomer() {
+      const cust = customersData.find(c => c.id === currentActiveCustomerId);
+      if (!cust) return;
+
+      cust.name = document.getElementById('edit-c-name').value.trim();
+      cust.phone = document.getElementById('edit-c-phone').value.trim();
+      cust.address = document.getElementById('edit-c-address').value.trim();
+
+      // 更新畫面上顯示的文字
+      document.getElementById('detail-name').innerText = cust.name;
+      document.getElementById('detail-phone').innerText = cust.phone;
+      document.getElementById('detail-address').innerText = cust.address;
+
+      closeActionModal();
+      alert('客戶資料已更新！');
+    }
+
+    // 3. 開啟新增冷氣設備 Modal
     function openAddEquipmentModal() {
       document.getElementById('modal-title').innerText = '新增冷氣設備';
       document.getElementById('modal-body').innerHTML = `
         <div class="space-y-3">
           <div>
-            <label class="block font-medium text-gray-700 mb-1">安裝位置 (例如：客廳、主臥)</label>
+            <label class="block font-medium text-gray-700 mb-1">安裝位置 (例如：主臥)</label>
             <input type="text" id="eq-location" placeholder="例如：主臥 (AC-02)" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
           <div>
@@ -294,15 +394,42 @@
             <input type="date" id="eq-date" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200">取消</button>
-            <button type="button" onclick="saveNewEquipment()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">新增設備</button>
+            <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">取消</button>
+            <button type="button" onclick="saveNewEquipment()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">新增設備</button>
           </div>
         </div>
       `;
       document.getElementById('action-modal').classList.remove('hidden');
     }
 
-    // 4. 新增施工紀錄 Modal
+    function saveNewEquipment() {
+      const location = document.getElementById('eq-location').value.trim();
+      const model = document.getElementById('eq-model').value.trim();
+      const capacity = document.getElementById('eq-capacity').value.trim();
+      const date = document.getElementById('eq-date').value;
+
+      if (!location) {
+        alert('請填寫安裝位置！');
+        return;
+      }
+
+      const cust = customersData.find(c => c.id === currentActiveCustomerId);
+      if (cust) {
+        cust.equipment.push({
+          id: 'eq_' + Date.now(),
+          location,
+          model: model || '未填寫型號',
+          capacity: capacity || '未填寫規格',
+          date: date || new Date().toISOString().split('T')[0]
+        });
+        renderEquipmentList(cust.equipment);
+      }
+
+      closeActionModal();
+      alert('成功新增冷氣設備！');
+    }
+
+    // 4. 開啟新增施工紀錄 Modal
     function openAddServiceLogModal() {
       document.getElementById('modal-title').innerText = '新增施工與服務紀錄';
       document.getElementById('modal-body').innerHTML = `
@@ -323,45 +450,48 @@
             <label class="block font-medium text-gray-700 mb-1">施工備註說明</label>
             <textarea id="log-desc" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="3" placeholder="記錄清洗狀況、更換零件或測試數值..."></textarea>
           </div>
-          <div>
-            <label class="block font-medium text-gray-700 mb-1">上傳施工照片</label>
-            <input type="file" id="log-photos" multiple accept="image/*" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-          </div>
           <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200">取消</button>
-            <button type="button" onclick="saveNewServiceLog()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">儲存紀錄</button>
+            <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">取消</button>
+            <button type="button" onclick="saveNewServiceLog()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">儲存紀錄</button>
           </div>
         </div>
       `;
       document.getElementById('action-modal').classList.remove('hidden');
     }
 
-    // 動作儲存模擬函式
-    function saveNewCustomer() {
-      alert("成功新增客戶！");
-      closeActionModal();
-    }
-
-    function saveEditCustomer() {
-      alert("客戶資料已更新！");
-      closeActionModal();
-    }
-
-    function saveNewEquipment() {
-      alert("成功新增冷氣設備！");
-      closeActionModal();
-    }
-
     function saveNewServiceLog() {
-      alert("成功新增施工紀錄與照片！");
+      const date = document.getElementById('log-date').value;
+      const title = document.getElementById('log-title').value.trim();
+      const tech = document.getElementById('log-tech').value.trim();
+      const desc = document.getElementById('log-desc').value.trim();
+
+      if (!title) {
+        alert('請填寫服務項目主題！');
+        return;
+      }
+
+      const cust = customersData.find(c => c.id === currentActiveCustomerId);
+      if (cust) {
+        cust.logs.unshift({
+          id: 'log_' + Date.now(),
+          date: date || new Date().toISOString().split('T')[0],
+          title,
+          tech: tech || '派工技師',
+          desc: desc || '無備註說明'
+        });
+        renderServiceLogs(cust.logs);
+      }
+
       closeActionModal();
+      alert('成功新增施工紀錄！');
     }
 
-    // 刪除客戶
-    function deleteCustomer(customerId) {
+    // 刪除當前客戶
+    function deleteCurrentCustomer() {
       if (!confirm("確定要刪除這位客戶嗎？此操作將會一併移除該客戶底下的設備與施工履歷紀錄！")) {
         return;
       }
+      customersData = customersData.filter(c => c.id !== currentActiveCustomerId);
       alert("客戶資料已成功刪除！");
       backToCustomerList();
     }

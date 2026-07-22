@@ -13,10 +13,10 @@
     <!-- 頂部標頭 -->
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-40 flex justify-between items-center rounded-b-2xl">
         <div class="flex items-center gap-2">
-            <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
+            <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl cursor-pointer">⬅️</a>
             <div>
                 <h1 class="text-base font-black">📊 營業與客源分析</h1>
-                <p class="text-[10px] opacity-90 font-bold">CRM 資料庫即時連動計算</p>
+                <p class="text-[10px] opacity-90 font-bold">雲端 Firestore 資料庫即時連動</p>
             </div>
         </div>
     </header>
@@ -27,7 +27,7 @@
         <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-5 rounded-3xl shadow-lg space-y-4">
             <div class="flex justify-between items-center text-xs opacity-90 font-bold border-b border-white/20 pb-2">
                 <span>📅 2026 年 7 月份即時統計</span>
-                <span class="bg-white/20 px-2 py-0.5 rounded-full">動態同步</span>
+                <span class="bg-white/20 px-2 py-0.5 rounded-full">雲端同步</span>
             </div>
             <div>
                 <p class="text-xs opacity-80 font-bold">本月實收總營業額</p>
@@ -75,14 +75,15 @@
 
     </main>
 
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            renderAnalytics();
+    <script type="module">
+        import { subscribeCustomers } from './firebase-config.js';
+
+        // 即時監聽雲端客戶與派工日誌資料
+        subscribeCustomers((customers) => {
+            renderAnalytics(customers);
         });
 
-        function renderAnalytics() {
-            const customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
-
+        function renderAnalytics(customers) {
             let totalRevenue = 0;
             let totalCount = 0;
             let sourceStats = {};

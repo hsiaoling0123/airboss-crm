@@ -23,7 +23,7 @@
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6">
       <div class="border-b pb-3">
         <h2 class="text-lg font-bold text-gray-900">填寫派工單與報價內容</h2>
-        <p class="text-xs text-gray-500 mt-1">送出後將自動同步至「客戶管理」與「行程看板」，並可一鍵生成報價單預覽。</p>
+        <p class="text-xs text-gray-500 mt-1">送出後將自動同步至雲端資料庫，並可一鍵生成報價單預覽。</p>
       </div>
 
       <div class="space-y-4 text-sm">
@@ -111,7 +111,7 @@
       </div>
 
       <div id="quoteContent" class="space-y-3 text-xs bg-slate-50 p-4 rounded-2xl border text-slate-700 font-medium">
-        </div>
+      </div>
 
       <div class="flex gap-2 pt-2">
         <button onclick="copyQuoteText()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-black py-2.5 rounded-xl text-xs shadow-sm">
@@ -124,7 +124,9 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { addOrderToCloud, addCustomerToCloud } from './firebase-config.js';
+
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('order-date').value = new Date().toISOString().split('T')[0];
     });
@@ -145,7 +147,7 @@
     }
 
     // 預覽報價單
-    function previewQuotation() {
+    window.previewQuotation = function() {
       const data = getFormData();
       if (!data.name || !data.phone || !data.title || !data.amount) {
         alert('請先填寫客戶姓名、電話、服務項目與報價金額，才能產生報價單！');
@@ -168,22 +170,53 @@
 
       document.getElementById('quoteContent').innerHTML = quoteHtml;
       document.getElementById('quoteModal').classList.remove('hidden');
-    }
+    };
 
-    function closeQuoteModal() {
+    window.closeQuoteModal = function() {
       document.getElementById('quoteModal').classList.add('hidden');
-    }
+    };
 
-    function copyQuoteText() {
+    window.copyQuoteText = function() {
       const data = getFormData();
       const text = `【AirBoss 專業冷氣空調報價單】\n客戶：${data.name}\n預定時間：${data.date} ${data.time}\n施工項目：${data.title}\n報價金額：NT$ ${Number(data.amount).toLocaleString()} 元\n備註：${data.desc || '無'}\n\n感謝您的信賴與支持！😊`;
       navigator.clipboard.writeText(text);
       alert('✅ 報價單文字已複製！可直接貼上至 LINE 傳給客戶。');
-    }
+    };
 
-    // 送出並同步 CRM
-    function submitOrderAndSync() {
+    // 送出並同步 CRM 到 Firebase 雲端
+    window.submitOrderAndSync = async function() {
       const data = getFormData();
 
       if (!data.name || !data.phone || !data.address || !data.title || !data.amount) {
-        alert('請填寫完整的派工與報價必要欄
+        alert('請填寫完整的派工與報價必要欄位！');
+        return;
+      }
+
+      try {
+        // 1. 寫入派工單到雲端 orders 集合
+        await addOrderToCloud({
+          ...data,
+          status: '待指派', // 預設狀態
+          createdAt: new Date().toISOString()
+        });
+
+        // 2. 同步建立或備份到客戶資料 customers 集合
+        await addCustomerToCloud({
+          name: data.name,
+          phone: data.phone,
+          source: data.source,
+          address: data.address,
+          notes: data.desc,
+          createdAt: new Date().toISOString()
+        });
+
+        alert('✅ 派工單已成功建立，並同步至雲端 CRM！');
+        window.location.href = 'index.html'; // 成功後導回首頁或看板
+      } catch (error) {
+        console.error("寫入雲端失敗：", error);
+        alert('❌ 儲存至雲端失敗，請檢查網路連線。');
+      }
+    };
+  </script>
+</body>
+</html>

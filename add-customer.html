@@ -12,7 +12,7 @@
 
     <!-- 頂部導覽列 -->
     <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-50 flex justify-between items-center rounded-b-2xl">
-        <button type="button" onclick="goBack()" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full font-bold transition-all">
+        <button type="button" onclick="window.goBack()" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full font-bold transition-all cursor-pointer">
             ‹ 返回
         </button>
         <h1 class="text-base font-black">建立新客戶小檔案 🌸</h1>
@@ -33,7 +33,7 @@
                         <input type="text" id="name" required class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">電話 *</label>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">電話 (主鍵) *</label>
                         <input type="tel" id="phone" required class="w-full p-2.5 bg-amber-50/30 border border-amber-100 rounded-xl text-xs focus:outline-none focus:border-sky-400">
                     </div>
                     <div>
@@ -76,7 +76,7 @@
                     <h2 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
                         <span class="text-sky-400 text-sm">❄️</span> 冷氣設備資料
                     </h2>
-                    <button type="button" onclick="addACRow()" class="text-xs bg-sky-100 text-sky-700 hover:bg-sky-200 font-bold px-3 py-1 rounded-full">
+                    <button type="button" onclick="window.addACRow()" class="text-xs bg-sky-100 text-sky-700 hover:bg-sky-200 font-bold px-3 py-1 rounded-full cursor-pointer">
                         + 新增一台冷氣
                     </button>
                 </div>
@@ -84,40 +84,57 @@
             </div>
 
             <!-- 提交按鈕 -->
-            <button type="submit" class="w-full bg-gradient-to-r from-sky-400 to-indigo-400 hover:opacity-90 text-white font-black py-3.5 rounded-2xl text-sm shadow-sm transition-all">
-                ✨ 儲存客戶資料
+            <button type="submit" class="w-full bg-gradient-to-r from-sky-400 to-indigo-400 hover:opacity-90 text-white font-black py-3.5 rounded-2xl text-sm shadow-sm transition-all cursor-pointer">
+                ✨ 儲存客戶資料至雲端
             </button>
 
         </form>
     </main>
 
-    <script>
-        let acCount = 0;
-        function goBack() { window.location.href = document.referrer || 'index.html'; }
+    <script type="module">
+        import { addCustomerToCloud } from './firebase-config.js';
 
-        function addACRow() {
+        let acCount = 0;
+
+        window.goBack = function() {
+            window.location.href = document.referrer || 'index.html';
+        };
+
+        window.addACRow = function() {
             acCount++;
             const container = document.getElementById('acContainer');
             container.insertAdjacentHTML('beforeend', `
                 <div id="ac-card-${acCount}" class="p-3 bg-amber-50/40 border border-amber-100 rounded-2xl space-y-2">
                     <div class="flex justify-between items-center">
                         <span class="font-bold text-xs text-sky-800">冷氣 #${acCount}</span>
-                        <button type="button" onclick="document.getElementById('ac-card-${acCount}').remove()" class="text-[10px] text-rose-500 font-bold">刪除</button>
+                        <button type="button" onclick="document.getElementById('ac-card-${acCount}').remove()" class="text-[10px] text-rose-500 font-bold cursor-pointer">刪除</button>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" placeholder="品牌 (日立/大金)" class="ac-brand p-2 text-xs border border-amber-100 rounded-xl bg-white">
-                        <input type="text" placeholder="型號 (RAS-28YB)" class="ac-model p-2 text-xs border border-amber-100 rounded-xl bg-white">
-                        <input type="text" placeholder="匹數 (2.8kW)" class="ac-power p-2 text-xs border border-amber-100 rounded-xl bg-white">
-                        <input type="text" placeholder="冷媒 (R32)" class="ac-gas p-2 text-xs border border-amber-100 rounded-xl bg-white">
+                        <input type="text" placeholder="品牌 (日立/大金)" class="ac-brand p-2 text-xs border border-amber-100 rounded-xl bg-white focus:outline-none">
+                        <input type="text" placeholder="型號 (RAS-28YB)" class="ac-model p-2 text-xs border border-amber-100 rounded-xl bg-white focus:outline-none">
+                        <input type="text" placeholder="匹數 (2.8kW)" class="ac-power p-2 text-xs border border-amber-100 rounded-xl bg-white focus:outline-none">
+                        <input type="text" placeholder="冷媒 (R32)" class="ac-gas p-2 text-xs border border-amber-100 rounded-xl bg-white focus:outline-none">
                     </div>
                 </div>
             `);
-        }
+        };
 
-        document.addEventListener('DOMContentLoaded', addACRow);
+        document.addEventListener('DOMContentLoaded', () => {
+            window.addACRow();
+        });
 
-        document.getElementById('customerForm').addEventListener('submit', function(e) {
+        document.getElementById('customerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+
+            if (!name || !phone || !address) {
+                alert('請填寫必要的姓名、電話與地址！');
+                return;
+            }
+
             const acList = [];
             document.querySelectorAll('#acContainer > div').forEach(card => {
                 acList.push({
@@ -129,24 +146,25 @@
             });
 
             const newCustomer = {
-                id: Date.now(),
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                lineId: document.getElementById('lineId').value,
-                email: document.getElementById('email').value,
-                address: document.getElementById('address').value,
-                parkingNote: document.getElementById('parkingNote').value,
-                guardPhone: document.getElementById('guardPhone').value,
+                name: name,
+                phone: phone,
+                lineId: document.getElementById('lineId').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                address: address,
+                parkingNote: document.getElementById('parkingNote').value.trim(),
+                guardPhone: document.getElementById('guardPhone').value.trim(),
                 acList: acList,
                 createdAt: new Date().toISOString()
             };
 
-            let customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
-            customers.unshift(newCustomer);
-            localStorage.setItem('airboss_customers', JSON.stringify(customers));
-
-            alert('🎉 新增客戶成功！');
-            window.location.href = 'customers.html';
+            try {
+                await addCustomerToCloud(newCustomer);
+                alert('🎉 新增客戶成功，已同步至雲端 CRM！');
+                window.location.href = 'customers.html';
+            } catch (error) {
+                console.error("寫入雲端失敗：", error);
+                alert('❌ 儲存至雲端失敗，請檢查網路連線。');
+            }
         });
     </script>
 </body>

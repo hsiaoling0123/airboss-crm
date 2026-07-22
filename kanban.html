@@ -25,7 +25,7 @@
         <div class="flex items-center gap-2">
             <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
             <div>
-                <h1 class="text-base font-black">📅 派工行程看板 (CRM 即時同步)</h1>
+                <h1 class="text-base font-black">📅 派工行程看板 (Firebase 雲端即時同步)</h1>
                 <p class="text-[10px] opacity-90 font-bold">點卡片開單結案、長按 0.3 秒可拖曳改期</p>
             </div>
         </div>
@@ -37,7 +37,7 @@
         <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-2">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                 <span class="text-xs font-black text-slate-800">💵 派工營業額統計</span>
-                <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">即時聯動</span>
+                <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">雲端即時聯動</span>
             </div>
             <div class="grid grid-cols-3 gap-2 text-center pt-1">
                 <div class="p-2 bg-slate-50 rounded-2xl">
@@ -87,7 +87,7 @@
             </div>
         </div>
 
-        <!-- ==================== 檢視內容區 2：每週總覽 (動態日期標題) ==================== -->
+        <!-- ==================== 檢視內容區 2：每週總覽 ==================== -->
         <div id="viewWeek" class="hidden space-y-3">
             <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
                 <div class="flex justify-between items-center border-b pb-2">
@@ -96,23 +96,23 @@
                 
                 <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
                     <p id="lblMon" class="text-xs font-black text-slate-700">週一</p>
-                    <div id="weekMon" class="space-y-1.5 min-h-[40px]"></div>
+                    <div id="weekMon" class="space-y-1.5 min-h-[40px]" data-date-offset="0"></div>
                 </div>
                 <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
                     <p id="lblTue" class="text-xs font-black text-slate-700">週二</p>
-                    <div id="weekTue" class="space-y-1.5 min-h-[40px]"></div>
+                    <div id="weekTue" class="space-y-1.5 min-h-[40px]" data-date-offset="1"></div>
                 </div>
                 <div class="bg-sky-50/70 p-2.5 rounded-2xl border border-sky-100 space-y-1.5">
                     <p id="lblWed" class="text-xs font-black text-sky-800">週三 (今天)</p>
-                    <div id="weekWed" class="space-y-1.5 min-h-[40px]"></div>
+                    <div id="weekWed" class="space-y-1.5 min-h-[40px]" data-date-offset="2"></div>
                 </div>
                 <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
                     <p id="lblThu" class="text-xs font-black text-slate-700">週四 (明天)</p>
-                    <div id="weekThu" class="space-y-1.5 min-h-[40px]"></div>
+                    <div id="weekThu" class="space-y-1.5 min-h-[40px]" data-date-offset="3"></div>
                 </div>
                 <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
                     <p id="lblFri" class="text-xs font-black text-slate-700">週五 / 其他</p>
-                    <div id="weekFri" class="space-y-1.5 min-h-[40px]"></div>
+                    <div id="weekFri" class="space-y-1.5 min-h-[40px]" data-date-offset="4"></div>
                 </div>
             </div>
         </div>
@@ -122,16 +122,14 @@
             <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
                 <div class="flex justify-between items-center border-b pb-2">
                     <h3 class="font-black text-xs text-slate-800">📊 2026 年 7 月份完整日曆</h3>
-                    <span id="monthTotalBadge" class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">動態同步</span>
+                    <span id="monthTotalBadge" class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">雲端同步</span>
                 </div>
 
                 <div class="grid grid-cols-7 text-center font-black text-[10px] text-slate-400 py-1 border-b">
                     <span class="text-red-400">日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span class="text-sky-500">六</span>
                 </div>
 
-                <div id="monthGrid" class="grid grid-cols-7 gap-1 text-center text-xs font-bold pt-1">
-                    <!-- 動態渲染 7 月日曆格 -->
-                </div>
+                <div id="monthGrid" class="grid grid-cols-7 gap-1 text-center text-xs font-bold pt-1"></div>
             </div>
         </div>
 
@@ -175,7 +173,7 @@
 
             <div class="space-y-2 pt-1">
                 <button onclick="submitJobCompletion()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 rounded-2xl text-xs shadow-md transition-all flex items-center justify-center gap-1.5">
-                    <span>✅</span> 確認完工、結案並同步回 CRM 客戶履歷
+                    <span>✅</span> 確認完工、結案並同步回雲端 CRM
                 </button>
                 <button onclick="closeOrderDetailModal()" class="w-full bg-slate-100 text-slate-600 font-bold py-2.5 rounded-2xl text-xs">
                     返回行程看板
@@ -185,20 +183,28 @@
         </div>
     </div>
 
-    <script>
-        let currentActivePhone = null;
-        let currentActiveLogId = null;
+    <script type="module">
+        import { subscribeOrders, updateOrderInCloud } from './firebase-config.js';
+
+        let currentActiveOrderId = null;
+        let globalOrders = [];
+        let mondayDates = []; // 儲存本週一到週五對應的日期字串
 
         window.addEventListener('DOMContentLoaded', () => {
             updateDynamicDateLabels();
-            renderAllKanbanViews();
             initSortableBoards();
+            
+            // 即時監聽 Firebase orders 集合
+            subscribeOrders((orders) => {
+                globalOrders = orders;
+                renderAllKanbanViews(orders);
+            });
         });
 
-        // 自動計算本週日期並更新每週總覽的標題 (例如 7/20（一）)
+        // 自動計算本週日期並更新每週總覽標題
         function updateDynamicDateLabels() {
             const today = new Date();
-            const currentDayOfWeek = today.getDay(); // 0 是週日, 1 是週一...
+            const currentDayOfWeek = today.getDay(); 
             const diffToMon = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
             
             const monday = new Date(today);
@@ -208,6 +214,8 @@
             const weekNames = ['（一）', '（二）', '（三）', '（四）', '（五）'];
             const todayStr = today.toISOString().split('T')[0];
 
+            mondayDates = [];
+
             for (let i = 0; i < 5; i++) {
                 let d = new Date(monday);
                 d.setDate(monday.getDate() + i);
@@ -215,6 +223,7 @@
                 let dd = d.getDate();
                 let dateStr = `${mm}/${dd}${weekNames[i]}`;
                 let isoStr = d.toISOString().split('T')[0];
+                mondayDates.push(isoStr);
 
                 let el = document.getElementById(daysMap[i]);
                 if (el) {
@@ -226,7 +235,6 @@
                 }
             }
 
-            // 更新每日視角標題
             const tomorrow = new Date(today);
             tomorrow.setDate(today.getDate() + 1);
             document.getElementById('labelTodayTitle').innerHTML = `📌 今日行程 (${today.getMonth()+1}/${today.getDate()}) (<span id="countToday">0</span>)`;
@@ -242,7 +250,39 @@
                 filter: '.is-completed',
                 ghostClass: 'opacity-40',
                 dragClass: 'sortable-drag',
-                onEnd: function () {
+                onEnd: async function (evt) {
+                    const itemEl = evt.item;
+                    const orderId = itemEl.getAttribute('data-id');
+                    const targetContainer = evt.to;
+                    
+                    let newDate = '';
+                    // 判斷是從哪個容器拖放而來，決定新的日期
+                    const parentId = targetContainer.id;
+                    const today = new Date();
+                    const todayStr = today.toISOString().split('T')[0];
+                    const tomorrowObj = new Date(today);
+                    tomorrowObj.setDate(today.getDate() + 1);
+                    const tomorrowStr = tomorrowObj.toISOString().split('T')[0];
+
+                    if (parentId === 'colToday') {
+                        newDate = todayStr;
+                    } else if (parentId === 'colTomorrow') {
+                        newDate = tomorrowStr;
+                    } else if (parentId.startsWith('week')) {
+                        const offset = parseInt(targetContainer.getAttribute('data-date-offset'));
+                        if (!isNaN(offset) && mondayDates[offset]) {
+                            newDate = mondayDates[offset];
+                        }
+                    }
+
+                    if (newDate && orderId) {
+                        try {
+                            await updateOrderInCloud(orderId, { date: newDate });
+                        } catch (err) {
+                            console.error("拖曳更新日期失敗：", err);
+                            alert("❌ 雲端更新日期失敗，請重新整理頁面。");
+                        }
+                    }
                     updateCounts();
                 }
             };
@@ -258,9 +298,7 @@
             });
         }
 
-        function renderAllKanbanViews() {
-            const customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
-            
+        function renderAllKanbanViews(orders) {
             const colToday = document.getElementById('colToday');
             const colTomorrow = document.getElementById('colTomorrow');
             const colFuture = document.getElementById('colFuture');
@@ -290,67 +328,62 @@
             tomorrowObj.setDate(today.getDate() + 1);
             const tomorrowStr = tomorrowObj.toISOString().split('T')[0];
 
-            customers.forEach(cust => {
-                if (cust.logs && cust.logs.length > 0) {
-                    cust.logs.forEach(log => {
-                        const isCompleted = log.desc && log.desc.includes('[已完工結案]');
-                        
-                        let priceVal = 3500;
-                        const matchPrice = log.title.match(/\$(\d+)/);
-                        if (matchPrice) priceVal = parseInt(matchPrice[1]);
-                        const matchDescPrice = log.desc && log.desc.match(/實收 \$(\d+)/);
-                        if (matchDescPrice) priceVal = parseInt(matchDescPrice[1]);
+            orders.forEach(order => {
+                const isCompleted = order.status === '已完工' || (order.desc && order.desc.includes('[已完工結案]'));
+                const priceVal = Number(order.amount) || 3500;
 
-                        if (isCompleted) monthRevenue += priceVal;
+                if (isCompleted) monthRevenue += priceVal;
 
-                        const logDate = log.date || todayStr;
-                        dateCardCounts[logDate] = (dateCardCounts[logDate] || 0) + 1;
+                const logDate = order.date || todayStr;
+                dateCardCounts[logDate] = (dateCardCounts[logDate] || 0) + 1;
 
-                        const safeDesc = (log.desc || '').replace(/'/g, "&apos;");
+                const safeDesc = (order.desc || '').replace(/'/g, "&apos;");
 
-                        const cardHtml = `
-                            <div onclick="clickOpenModal('${cust.name}', '${cust.phone}', '${cust.address}', '${log.title}', '${log.id}', '${safeDesc}', this)" 
-                                 class="kanban-card bg-white p-3.5 rounded-2xl border ${isCompleted ? 'is-completed locked-card bg-emerald-50/80 border-emerald-200' : 'border-sky-100'} shadow-sm space-y-2 select-none cursor-pointer hover:border-sky-300 transition-all">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <span class="text-[10px] ${isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800'} font-bold px-2 py-0.5 rounded-full">${log.date}</span>
-                                        <h3 class="font-black text-xs text-slate-800 inline-block ml-1">${cust.name} ${isCompleted ? '🔒' : '📄'}</h3>
-                                    </div>
-                                    <span class="text-xs font-black ${isCompleted ? 'text-emerald-600' : 'text-sky-600'}">$${priceVal}</span>
-                                </div>
-                                <p class="text-[11px] text-slate-500 font-bold">📍 ${cust.address}</p>
-                                <p class="text-[11px] text-slate-500">❄️ ${log.title}</p>
-                                <div class="flex gap-1.5 pt-1">
-                                    <div onclick="event.stopPropagation(); openMapApp('${cust.address}')" class="no-drag flex-1 bg-sky-50 active:bg-sky-100 text-sky-600 font-bold py-2 rounded-xl text-[10px] text-center cursor-pointer">
-                                        🗺️ 導航
-                                    </div>
-                                    <div class="no-drag flex-1 ${isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-emerald-500 text-white'} font-black py-2 rounded-xl text-[10px] text-center shadow-sm">
-                                        ${isCompleted ? '已結案' : '✅ 完工結案'}
-                                    </div>
-                                </div>
+                const cardHtml = `
+                    <div data-id="${order.id}" onclick="clickOpenModal('${order.id}', '${order.name}', '${order.phone}', '${order.address}', '${order.title}', '${safeDesc}', '${isCompleted}', this)" 
+                         class="kanban-card bg-white p-3.5 rounded-2xl border ${isCompleted ? 'is-completed locked-card bg-emerald-50/80 border-emerald-200' : 'border-sky-100'} shadow-sm space-y-2 select-none cursor-pointer hover:border-sky-300 transition-all">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] ${isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800'} font-bold px-2 py-0.5 rounded-full">${order.date}</span>
+                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">${order.name} ${isCompleted ? '🔒' : '📄'}</h3>
                             </div>
-                        `;
+                            <span class="text-xs font-black ${isCompleted ? 'text-emerald-600' : 'text-sky-600'}">$${priceVal.toLocaleString()}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-bold">📍 ${order.address || '未填寫地址'}</p>
+                        <p class="text-[11px] text-slate-500">❄️ ${order.title}</p>
+                        <div class="flex gap-1.5 pt-1">
+                            <div onclick="event.stopPropagation(); openMapApp('${order.address}')" class="no-drag flex-1 bg-sky-50 active:bg-sky-100 text-sky-600 font-bold py-2 rounded-xl text-[10px] text-center cursor-pointer">
+                                🗺️ 導航
+                            </div>
+                            <div class="no-drag flex-1 ${isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-emerald-500 text-white'} font-black py-2 rounded-xl text-[10px] text-center shadow-sm">
+                                ${isCompleted ? '已結案' : '✅ 完工結案'}
+                            </div>
+                        </div>
+                    </div>
+                `;
 
-                        // 分配至每日與每週檢視
-                        if (log.date === todayStr) {
-                            colToday.innerHTML += cardHtml;
-                            todayCount++;
-                            todayRevenue += priceVal;
-                            weekRevenue += priceVal;
-                            weekWed.innerHTML += cardHtml;
-                        } else if (log.date === tomorrowStr) {
-                            colTomorrow.innerHTML += cardHtml;
-                            tomorrowCount++;
-                            weekRevenue += priceVal;
-                            weekThu.innerHTML += cardHtml;
-                        } else {
-                            colFuture.innerHTML += cardHtml;
-                            futureCount++;
-                            weekRevenue += priceVal;
-                            weekMon.innerHTML += cardHtml;
-                        }
-                    });
+                // 分配至每日視角
+                if (order.date === todayStr) {
+                    colToday.innerHTML += cardHtml;
+                    todayCount++;
+                    todayRevenue += priceVal;
+                    weekRevenue += priceVal;
+                } else if (order.date === tomorrowStr) {
+                    colTomorrow.innerHTML += cardHtml;
+                    tomorrowCount++;
+                    weekRevenue += priceVal;
+                } else {
+                    colFuture.innerHTML += cardHtml;
+                    futureCount++;
+                    weekRevenue += priceVal;
                 }
+
+                // 分配至每週總覽
+                if (order.date === mondayDates[0]) weekMon.innerHTML += cardHtml;
+                else if (order.date === mondayDates[1]) weekTue.innerHTML += cardHtml;
+                else if (order.date === mondayDates[2]) weekWed.innerHTML += cardHtml;
+                else if (order.date === mondayDates[3]) weekThu.innerHTML += cardHtml;
+                else if (order.date >= mondayDates[4]) weekFri.innerHTML += cardHtml;
             });
 
             document.getElementById('countToday').innerText = todayCount;
@@ -402,11 +435,10 @@
             document.getElementById('countFuture').innerText = document.getElementById('colFuture').children.length;
         }
 
-        function clickOpenModal(name, phone, address, device, logId, desc, targetElement) {
-            if (targetElement.classList.contains('is-completed')) return;
+        window.clickOpenModal = function(orderId, name, phone, address, device, desc, isCompleted, targetElement) {
+            if (isCompleted === 'true') return;
 
-            currentActivePhone = phone;
-            currentActiveLogId = logId;
+            currentActiveOrderId = orderId;
 
             document.getElementById('detailCustName').innerText = name + " 先生/小姐";
             document.getElementById('detailPhoneCall').innerText = phone;
@@ -419,33 +451,34 @@
             document.getElementById('detailFinalPrice').value = "3500";
 
             document.getElementById('orderDetailModal').classList.remove('opacity-0', 'pointer-events-none');
-        }
+        };
 
-        function closeOrderDetailModal() {
+        window.closeOrderDetailModal = function() {
             document.getElementById('orderDetailModal').classList.add('opacity-0', 'pointer-events-none');
-        }
+        };
 
-        function submitJobCompletion() {
+        window.submitJobCompletion = async function() {
             const price = document.getElementById('detailFinalPrice').value;
             const notes = document.getElementById('workNotes').value;
 
-            let customers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
-            let targetCust = customers.find(c => c.phone === currentActivePhone);
+            if (!currentActiveOrderId) return;
 
-            if (targetCust && targetCust.logs) {
-                let targetLog = targetCust.logs.find(l => l.id === currentActiveLogId);
-                if (targetLog) {
-                    targetLog.desc = `[已完工結案] 實收 $${price}。備註：${notes || '無'}`;
-                }
-                localStorage.setItem('airboss_customers', JSON.stringify(customers));
+            try {
+                await updateOrderInCloud(currentActiveOrderId, {
+                    status: '已完工',
+                    amount: price,
+                    desc: `[已完工結案] 實收 $${price}。備註：${notes || '無'}`
+                });
+
+                alert('✅ 完工結案成功！資料已同步回寫至雲端資料庫！');
+                closeOrderDetailModal();
+            } catch (err) {
+                console.error("完工結案失敗：", err);
+                alert('❌ 雲端更新失敗，請檢查網路連線。');
             }
+        };
 
-            alert('✅ 完工結案成功！資料已同步回寫至 CRM 客戶歷程！');
-            closeOrderDetailModal();
-            renderAllKanbanViews();
-        }
-
-        function switchPeriod(period) {
+        window.switchPeriod = function(period) {
             document.getElementById('btnPeriodDay').className = period === 'day' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all";
             document.getElementById('btnPeriodWeek').className = period === 'week' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all";
             document.getElementById('btnPeriodMonth').className = period === 'month' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all";
@@ -453,11 +486,11 @@
             document.getElementById('viewDay').classList.toggle('hidden', period !== 'day');
             document.getElementById('viewWeek').classList.toggle('hidden', period !== 'week');
             document.getElementById('viewMonth').classList.toggle('hidden', period !== 'month');
-        }
+        };
 
-        function openMapApp(address) {
+        window.openMapApp = function(address) {
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`, '_blank');
-        }
+        };
     </script>
 </body>
 </html>

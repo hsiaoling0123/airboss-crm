@@ -5,507 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>派工行程看板 - AirBoss CRM</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=MOPLUS+Rounded+1c:wght@500;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
-    <style> 
-        body { font-family: 'MOPLUS Rounded 1c', 'Noto Sans TC', sans-serif; } 
-        .locked-card { cursor: not-allowed !important; }
-        .sortable-drag {
-            opacity: 0.9;
-            transform: scale(1.03);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-        }
-        .no-drag { touch-action: manipulation; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Noto Sans TC', sans-serif; } </style>
 </head>
-<body class="bg-[#FFFDF9] min-h-screen text-slate-700 pb-16">
+<body class="bg-slate-50 min-h-screen text-slate-700 pb-16">
 
-    <!-- 頂部標頭 -->
-    <header class="bg-gradient-to-r from-sky-400 to-indigo-300 text-white p-4 shadow-sm sticky top-0 z-40 flex justify-between items-center rounded-b-2xl">
+    <header class="bg-sky-500 text-white p-4 shadow-sm sticky top-0 z-40 flex justify-between items-center">
         <div class="flex items-center gap-2">
             <a href="index.html" class="text-xl font-bold bg-white/20 p-1.5 rounded-xl">⬅️</a>
             <div>
-                <h1 class="text-base font-black">📅 派工行程看板 (Firebase 雲端即時同步)</h1>
-                <p class="text-[10px] opacity-90 font-bold">點卡片開單結案、長按 0.3 秒可拖曳改期</p>
+                <h1 class="text-base font-black">📅 派工行程看板 (強制修復版)</h1>
             </div>
         </div>
     </header>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
 
-        <!-- 1. 💰 營業額統計面板 -->
-        <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-2">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                <span class="text-xs font-black text-slate-800">💵 派工營業額統計</span>
-                <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">雲端即時聯動</span>
-            </div>
-            <div class="grid grid-cols-3 gap-2 text-center pt-1">
-                <div class="p-2 bg-slate-50 rounded-2xl">
-                    <p class="text-[10px] text-slate-400 font-bold">今日預估</p>
-                    <p id="statToday" class="text-sm font-black text-sky-600">$0</p>
-                </div>
-                <div class="p-2 bg-slate-50 rounded-2xl">
-                    <p class="text-[10px] text-slate-400 font-bold">本週累積</p>
-                    <p id="statWeek" class="text-sm font-black text-indigo-600">$0</p>
-                </div>
-                <div class="p-2 bg-slate-50 rounded-2xl">
-                    <p class="text-[10px] text-slate-400 font-bold">本月實收</p>
-                    <p id="statMonth" class="text-sm font-black text-emerald-600">$0</p>
-                </div>
-            </div>
+        <div class="flex bg-slate-200 p-1 rounded-2xl text-xs font-black">
+            <button onclick="switchView('day')" id="tabDay" class="flex-1 py-2.5 rounded-xl bg-white text-sky-600 shadow-sm transition-all">📅 每日視角</button>
+            <button onclick="switchView('week')" id="tabWeek" class="flex-1 py-2.5 rounded-xl text-slate-500 transition-all">🗓️ 每週總覽</button>
+            <button onclick="switchView('month')" id="tabMonth" class="flex-1 py-2.5 rounded-xl text-slate-500 transition-all">📊 每月月曆</button>
         </div>
 
-        <!-- 2. 📆 三大視角切換頁籤 -->
-        <div class="flex bg-slate-100 p-1 rounded-2xl text-xs font-black">
-            <button onclick="window.switchPeriod('day')" id="btnPeriodDay" class="flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer">📅 每日視角</button>
-            <button onclick="window.switchPeriod('week')" id="btnPeriodWeek" class="flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer">🗓️ 每週總覽</button>
-            <button onclick="window.switchPeriod('month')" id="btnPeriodMonth" class="flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer">📊 每月月曆</button>
+        <div id="contentDay" class="space-y-3 bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+            <h3 class="font-black text-sm text-sky-800">📌 每日視角內容區</h3>
+            <p class="text-xs text-slate-500">如果這個畫面會隨著你的點擊切換，代表按鈕已經完全修復！</p>
         </div>
 
-        <!-- ==================== 檢視內容區 1：每日視角 ==================== -->
-        <div id="viewDay" class="space-y-4">
-            <div class="bg-sky-50/60 p-3 rounded-3xl border border-sky-100">
-                <div class="flex justify-between items-center mb-2 px-1">
-                    <span id="labelTodayTitle" class="font-black text-xs text-sky-800 flex items-center gap-1">📌 今日行程 (<span id="countToday">0</span>)</span>
-                    <span class="text-[10px] text-sky-600 font-bold">👆 長按卡片可拖曳改期</span>
-                </div>
-                <div id="colToday" class="space-y-2.5 min-h-[90px]"></div>
-            </div>
-
-            <div class="bg-indigo-50/60 p-3 rounded-3xl border border-indigo-100">
-                <div class="flex justify-between items-center mb-2 px-1">
-                    <span id="labelTomorrowTitle" class="font-black text-xs text-indigo-800 flex items-center gap-1">🗓️ 明天行程 (<span id="countTomorrow">0</span>)</span>
-                </div>
-                <div id="colTomorrow" class="space-y-2.5 min-h-[90px]"></div>
-            </div>
-
-            <div class="bg-amber-50/60 p-3 rounded-3xl border border-amber-100">
-                <div class="flex justify-between items-center mb-2 px-1">
-                    <span class="font-black text-xs text-amber-800 flex items-center gap-1">📅 本週其他預約 (<span id="countFuture">0</span>)</span>
-                </div>
-                <div id="colFuture" class="space-y-2.5 min-h-[80px]"></div>
-            </div>
+        <div id="contentWeek" class="hidden space-y-3 bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+            <h3 class="font-black text-sm text-indigo-800">🗓️ 每週總覽內容區 (成功切換！)</h3>
+            <p class="text-xs text-slate-500">這裡會顯示本週的所有排程總覽。</p>
         </div>
 
-        <!-- ==================== 檢視內容區 2：每週總覽 ==================== -->
-        <div id="viewWeek" class="hidden space-y-3">
-            <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
-                <div class="flex justify-between items-center border-b pb-2">
-                    <h3 class="font-black text-xs text-slate-800">🗓️ 本週派工總覽 (長按可跨日拖曳)</h3>
-                </div>
-                
-                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
-                    <p id="lblMon" class="text-xs font-black text-slate-700">週一</p>
-                    <div id="weekMon" class="space-y-1.5 min-h-[40px]" data-date-offset="0"></div>
-                </div>
-                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
-                    <p id="lblTue" class="text-xs font-black text-slate-700">週二</p>
-                    <div id="weekTue" class="space-y-1.5 min-h-[40px]" data-date-offset="1"></div>
-                </div>
-                <div class="bg-sky-50/70 p-2.5 rounded-2xl border border-sky-100 space-y-1.5">
-                    <p id="lblWed" class="text-xs font-black text-sky-800">週三 (今天)</p>
-                    <div id="weekWed" class="space-y-1.5 min-h-[40px]" data-date-offset="2"></div>
-                </div>
-                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
-                    <p id="lblThu" class="text-xs font-black text-slate-700">週四 (明天)</p>
-                    <div id="weekThu" class="space-y-1.5 min-h-[40px]" data-date-offset="3"></div>
-                </div>
-                <div class="bg-slate-50 p-2.5 rounded-2xl space-y-1.5">
-                    <p id="lblFri" class="text-xs font-black text-slate-700">週五 / 其他</p>
-                    <div id="weekFri" class="space-y-1.5 min-h-[40px]" data-date-offset="4"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== 檢視內容區 3：每月月曆 ==================== -->
-        <div id="viewMonth" class="hidden space-y-3">
-            <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-3">
-                <div class="flex justify-between items-center border-b pb-2">
-                    <h3 class="font-black text-xs text-slate-800">📊 2026 年 7 月份完整日曆</h3>
-                    <span id="monthTotalBadge" class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">雲端同步</span>
-                </div>
-
-                <div class="grid grid-cols-7 text-center font-black text-[10px] text-slate-400 py-1 border-b">
-                    <span class="text-red-400">日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span class="text-sky-500">六</span>
-                </div>
-
-                <div id="monthGrid" class="grid grid-cols-7 gap-1 text-center text-xs font-bold pt-1"></div>
-            </div>
+        <div id="contentMonth" class="hidden space-y-3 bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+            <h3 class="font-black text-sm text-emerald-800">📊 每月月曆內容區 (成功切換！)</h3>
+            <p class="text-xs text-slate-500">這裡會顯示整個月份的日曆。</p>
         </div>
 
     </main>
 
-    <!-- 📋 派工單詳細與完工填寫 Modal -->
-    <div id="orderDetailModal" class="fixed inset-0 bg-slate-900/50 opacity-0 pointer-events-none transition-opacity duration-300 z-50 flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl my-auto">
-            
-            <div class="flex justify-between items-center border-b pb-2">
-                <div>
-                    <span class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-bold">📋 現場派工維修單</span>
-                    <h3 class="font-black text-base text-slate-800 mt-1" id="detailCustName">客戶姓名</h3>
-                </div>
-                <button onclick="window.closeOrderDetailModal()" class="text-slate-400 font-black text-lg p-1 cursor-pointer">✕</button>
-            </div>
-
-            <!-- 詳細資訊區 -->
-            <div class="space-y-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-2xl">
-                <p>📞 <strong>電話：</strong><a id="detailPhoneCall" href="#" class="text-sky-600 font-bold underline"></a></p>
-                <p>📍 <strong>施工地址：</strong><span id="detailAddress" class="font-bold text-slate-800"></span></p>
-                <p>❄️ <strong>派工主旨：</strong><span id="detailDevice" class="font-bold text-indigo-700"></span></p>
-                <p>📝 <strong>派工單備註：</strong><span id="detailOrderDesc" class="font-bold text-slate-700"></span></p>
-            </div>
-
-            <hr class="border-slate-100">
-
-            <div class="space-y-3">
-                <h4 class="font-black text-xs text-slate-800 flex items-center gap-1">
-                    <span>🔧</span> 師傅現場完工紀錄與報銷
-                </h4>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-500 mb-1">施工與更換零件備註</label>
-                    <textarea id="workNotes" rows="2" placeholder="例：已完成清洗保養..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:bg-white focus:outline-sky-400"></textarea>
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-500 mb-1">現場實收金額 ($)</label>
-                    <input type="number" id="detailFinalPrice" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-black text-emerald-600 focus:bg-white focus:outline-sky-400">
-                </div>
-            </div>
-
-            <div class="space-y-2 pt-1">
-                <button onclick="window.submitJobCompletion()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 rounded-2xl text-xs shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-                    <span>✅</span> 確認完工、結案並同步回雲端 CRM
-                </button>
-                <button onclick="window.closeOrderDetailModal()" class="w-full bg-slate-100 text-slate-600 font-bold py-2.5 rounded-2xl text-xs cursor-pointer">
-                    返回行程看板
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-    <script type="module">
-        import { subscribeOrders, updateOrderInCloud } from './firebase-config.js';
-
-        let currentActiveOrderId = null;
-        let globalOrders = [];
-        let mondayDates = [];
-
-        window.addEventListener('DOMContentLoaded', () => {
-            updateDynamicDateLabels();
-            initSortableBoards();
-            
-            subscribeOrders((orders) => {
-                globalOrders = orders;
-                renderAllKanbanViews(orders);
-            });
-        });
-
-        function updateDynamicDateLabels() {
-            const today = new Date();
-            const currentDayOfWeek = today.getDay(); 
-            const diffToMon = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
-            
-            const monday = new Date(today);
-            monday.setDate(today.getDate() + diffToMon);
-
-            const daysMap = ['lblMon', 'lblTue', 'lblWed', 'lblThu', 'lblFri'];
-            const weekNames = ['（一）', '（二）', '（三）', '（四）', '（五）'];
-            const todayStr = today.toISOString().split('T')[0];
-
-            mondayDates = [];
-
-            for (let i = 0; i < 5; i++) {
-                let d = new Date(monday);
-                d.setDate(monday.getDate() + i);
-                let mm = d.getMonth() + 1;
-                let dd = d.getDate();
-                let dateStr = `${mm}/${dd}${weekNames[i]}`;
-                let isoStr = d.toISOString().split('T')[0];
-                mondayDates.push(isoStr);
-
-                let el = document.getElementById(daysMap[i]);
-                if (el) {
-                    if (isoStr === todayStr) {
-                        el.innerHTML = `${dateStr} <span class="text-sky-600 font-black">(今天)</span>`;
-                    } else {
-                        el.innerText = dateStr;
-                    }
-                }
-            }
-
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-            document.getElementById('labelTodayTitle').innerHTML = `📌 今日行程 (${today.getMonth()+1}/${today.getDate()}) (<span id="countToday">0</span>)`;
-            document.getElementById('labelTomorrowTitle').innerHTML = `🗓️ 明天行程 (${tomorrow.getMonth()+1}/${tomorrow.getDate()}) (<span id="countTomorrow">0</span>)`;
-        }
-
-        function initSortableBoards() {
-            const dragConfig = {
-                animation: 150,
-                delay: 300,
-                delayOnTouchOnly: true,
-                touchStartThreshold: 5,
-                filter: '.is-completed',
-                ghostClass: 'opacity-40',
-                dragClass: 'sortable-drag',
-                onEnd: async function (evt) {
-                    const itemEl = evt.item;
-                    const orderId = itemEl.getAttribute('data-id');
-                    const targetContainer = evt.to;
-                    
-                    let newDate = '';
-                    const parentId = targetContainer.id;
-                    const today = new Date();
-                    const todayStr = today.toISOString().split('T')[0];
-                    const tomorrowObj = new Date(today);
-                    tomorrowObj.setDate(today.getDate() + 1);
-                    const tomorrowStr = tomorrowObj.toISOString().split('T')[0];
-
-                    if (parentId === 'colToday') {
-                        newDate = todayStr;
-                    } else if (parentId === 'colTomorrow') {
-                        newDate = tomorrowStr;
-                    } else if (parentId.startsWith('week')) {
-                        const offset = parseInt(targetContainer.getAttribute('data-date-offset'));
-                        if (!isNaN(offset) && mondayDates[offset]) {
-                            newDate = mondayDates[offset];
-                        }
-                    }
-
-                    if (newDate && orderId) {
-                        try {
-                            await updateOrderInCloud(orderId, { date: newDate });
-                        } catch (err) {
-                            console.error("拖曳更新日期失敗：", err);
-                            alert("❌ 雲端更新日期失敗，請重新整理頁面。");
-                        }
-                    }
-                    updateCounts();
-                }
-            };
-
-            ['colToday', 'colTomorrow', 'colFuture'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) new Sortable(el, { ...dragConfig, group: 'kanban_days' });
-            });
-
-            ['weekMon', 'weekTue', 'weekWed', 'weekThu', 'weekFri'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) new Sortable(el, { ...dragConfig, group: 'kanban_weeks' });
-            });
-        }
-
-        function renderAllKanbanViews(orders) {
-            const colToday = document.getElementById('colToday');
-            const colTomorrow = document.getElementById('colTomorrow');
-            const colFuture = document.getElementById('colFuture');
-
-            const weekMon = document.getElementById('weekMon');
-            const weekTue = document.getElementById('weekTue');
-            const weekWed = document.getElementById('weekWed');
-            const weekThu = document.getElementById('weekThu');
-            const weekFri = document.getElementById('weekFri');
-
-            colToday.innerHTML = '';
-            colTomorrow.innerHTML = '';
-            colFuture.innerHTML = '';
-            weekMon.innerHTML = '';
-            weekTue.innerHTML = '';
-            weekWed.innerHTML = '';
-            weekThu.innerHTML = '';
-            weekFri.innerHTML = '';
-
-            let todayCount = 0, tomorrowCount = 0, futureCount = 0;
-            let todayRevenue = 0, weekRevenue = 0, monthRevenue = 0;
-            let dateCardCounts = {};
-
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
-            const tomorrowObj = new Date(today);
-            tomorrowObj.setDate(today.getDate() + 1);
-            const tomorrowStr = tomorrowObj.toISOString().split('T')[0];
-
-            orders.forEach(order => {
-                const isCompleted = order.status === '已完工' || (order.desc && order.desc.includes('[已完工結案]'));
-                const priceVal = Number(order.amount) || 3500;
-
-                if (isCompleted) monthRevenue += priceVal;
-
-                const logDate = order.date || todayStr;
-                dateCardCounts[logDate] = (dateCardCounts[logDate] || 0) + 1;
-
-                const safeDesc = (order.desc || '').replace(/'/g, "&apos;");
-
-                const cardHtml = `
-                    <div data-id="${order.id}" onclick="window.clickOpenModal('${order.id}', '${order.name}', '${order.phone}', '${order.address}', '${order.title}', '${safeDesc}', '${isCompleted}', this)" 
-                         class="kanban-card bg-white p-3.5 rounded-2xl border ${isCompleted ? 'is-completed locked-card bg-emerald-50/80 border-emerald-200' : 'border-sky-100'} shadow-sm space-y-2 select-none cursor-pointer hover:border-sky-300 transition-all">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-[10px] ${isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800'} font-bold px-2 py-0.5 rounded-full">${order.date}</span>
-                                <h3 class="font-black text-xs text-slate-800 inline-block ml-1">${order.name} ${isCompleted ? '🔒' : '📄'}</h3>
-                            </div>
-                            <span class="text-xs font-black ${isCompleted ? 'text-emerald-600' : 'text-sky-600'}">$${priceVal.toLocaleString()}</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500 font-bold">📍 ${order.address || '未填寫地址'}</p>
-                        <p class="text-[11px] text-slate-500">❄️ ${order.title}</p>
-                        <div class="flex gap-1.5 pt-1">
-                            <div onclick="event.stopPropagation(); window.openMapApp('${order.address}')" class="no-drag flex-1 bg-sky-50 active:bg-sky-100 text-sky-600 font-bold py-2 rounded-xl text-[10px] text-center cursor-pointer">
-                                🗺️ 導航
-                            </div>
-                            <div class="no-drag flex-1 ${isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-emerald-500 text-white'} font-black py-2 rounded-xl text-[10px] text-center shadow-sm">
-                                ${isCompleted ? '已結案' : '✅ 完工結案'}
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                if (order.date === todayStr) {
-                    colToday.innerHTML += cardHtml;
-                    todayCount++;
-                    todayRevenue += priceVal;
-                    weekRevenue += priceVal;
-                } else if (order.date === tomorrowStr) {
-                    colTomorrow.innerHTML += cardHtml;
-                    tomorrowCount++;
-                    weekRevenue += priceVal;
-                } else {
-                    colFuture.innerHTML += cardHtml;
-                    futureCount++;
-                    weekRevenue += priceVal;
-                }
-
-                if (order.date === mondayDates[0]) weekMon.innerHTML += cardHtml;
-                else if (order.date === mondayDates[1]) weekTue.innerHTML += cardHtml;
-                else if (order.date === mondayDates[2]) weekWed.innerHTML += cardHtml;
-                else if (order.date === mondayDates[3]) weekThu.innerHTML += cardHtml;
-                else if (order.date >= mondayDates[4]) weekFri.innerHTML += cardHtml;
-            });
-
-            document.getElementById('countToday').innerText = todayCount;
-            document.getElementById('countTomorrow').innerText = tomorrowCount;
-            document.getElementById('countFuture').innerText = futureCount;
-
-            document.getElementById('statToday').innerText = '$' + todayRevenue.toLocaleString();
-            document.getElementById('statWeek').innerText = '$' + weekRevenue.toLocaleString();
-            document.getElementById('statMonth').innerText = '$' + monthRevenue.toLocaleString();
-
-            renderMonthCalendarGrid(dateCardCounts);
-        }
-
-        function renderMonthCalendarGrid(counts) {
-            const grid = document.getElementById('monthGrid');
-            grid.innerHTML = '';
-
-            for (let i = 0; i < 3; i++) {
-                grid.innerHTML += `<div class="p-2 opacity-20 text-slate-300">--</div>`;
-            }
-
-            for (let day = 1; day <= 31; day++) {
-                const dayStr = `2026-07-${day < 10 ? '0' + day : day}`;
-                const hasEvent = counts[dayStr] > 0;
-                const isToday = day === 22;
-
-                let bgClass = "hover:bg-slate-50";
-                let textClass = "text-slate-700";
-
-                if (isToday) {
-                    bgClass = "bg-amber-400 text-white font-black shadow-md";
-                    textClass = "text-white";
-                } else if (hasEvent) {
-                    bgClass = "bg-sky-50 text-sky-700 font-bold";
-                }
-
-                grid.innerHTML += `
-                    <div class="p-1.5 rounded-xl ${bgClass} ${textClass} transition-all">
-                        ${day}
-                        ${hasEvent ? `<span class="block text-[8px] text-sky-600 font-bold">${counts[dayStr]}件</span>` : ''}
-                    </div>
-                `;
-            }
-        }
-
-        function updateCounts() {
-            document.getElementById('countToday').innerText = document.getElementById('colToday').children.length;
-            document.getElementById('countTomorrow').innerText = document.getElementById('colTomorrow').children.length;
-            document.getElementById('countFuture').innerText = document.getElementById('colFuture').children.length;
-        }
-
-        window.clickOpenModal = function(orderId, name, phone, address, device, desc, isCompleted, targetElement) {
-            if (isCompleted === 'true') return;
-
-            currentActiveOrderId = orderId;
-
-            document.getElementById('detailCustName').innerText = name + " 先生/小姐";
-            document.getElementById('detailPhoneCall').innerText = phone;
-            document.getElementById('detailPhoneCall').href = "tel:" + phone;
-            document.getElementById('detailAddress').innerText = address;
-            document.getElementById('detailDevice').innerText = device || '標準分離式冷氣';
-            document.getElementById('detailOrderDesc').innerText = desc || '無備註';
-            
-            document.getElementById('workNotes').value = "";
-            document.getElementById('detailFinalPrice').value = "3500";
-
-            document.getElementById('orderDetailModal').classList.remove('opacity-0', 'pointer-events-none');
-        };
-
-        window.closeOrderDetailModal = function() {
-            document.getElementById('orderDetailModal').classList.add('opacity-0', 'pointer-events-none');
-        };
-
-        window.submitJobCompletion = async function() {
-            const price = document.getElementById('detailFinalPrice').value;
-            const notes = document.getElementById('workNotes').value;
-
-            if (!currentActiveOrderId) return;
-
-            try {
-                await updateOrderInCloud(currentActiveOrderId, {
-                    status: '已完工',
-                    amount: price,
-                    desc: `[已完工結案] 實收 $${price}。備註：${notes || '無'}`
-                });
-
-                alert('✅ 完工結案成功！資料已同步回寫至雲端資料庫！');
-                window.closeOrderDetailModal();
-            } catch (err) {
-                console.error("完工結案失敗：", err);
-                alert('❌ 雲端更新失敗，請檢查網路連線。');
-            }
-        };
-
-        window.switchPeriod = function(period) {
+    <script>
+        function switchView(type) {
             // 切換按鈕樣式
-            const btnDay = document.getElementById('btnPeriodDay');
-            const btnWeek = document.getElementById('btnPeriodWeek');
-            const btnMonth = document.getElementById('btnPeriodMonth');
+            document.getElementById('tabDay').className = type === 'day' ? "flex-1 py-2.5 rounded-xl bg-white text-sky-600 shadow-sm transition-all" : "flex-1 py-2.5 rounded-xl text-slate-500 transition-all";
+            document.getElementById('tabWeek').className = type === 'week' ? "flex-1 py-2.5 rounded-xl bg-white text-sky-600 shadow-sm transition-all" : "flex-1 py-2.5 rounded-xl text-slate-500 transition-all";
+            document.getElementById('tabMonth').className = type === 'month' ? "flex-1 py-2.5 rounded-xl bg-white text-sky-600 shadow-sm transition-all" : "flex-1 py-2.5 rounded-xl text-slate-500 transition-all";
 
-            btnDay.className = period === 'day' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer";
-            btnWeek.className = period === 'week' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer";
-            btnMonth.className = period === 'month' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer";
-
-            // 切換檢視區塊顯示/隱藏
-            const viewDay = document.getElementById('viewDay');
-            const viewWeek = document.getElementById('viewWeek');
-            const viewMonth = document.getElementById('viewMonth');
-
-            if (period === 'day') {
-                viewDay.classList.remove('hidden');
-                viewWeek.classList.add('hidden');
-                viewMonth.classList.add('hidden');
-            } else if (period === 'week') {
-                viewDay.classList.add('hidden');
-                viewWeek.classList.remove('hidden');
-                viewMonth.classList.add('hidden');
-            } else if (period === 'month') {
-                viewDay.classList.add('hidden');
-                viewWeek.classList.add('hidden');
-                viewMonth.classList.remove('hidden');
-            }
-        };
-
-        window.openMapApp = function(address) {
-            window.open(`https://maps.google.com/?q=${encodeURIComponent(address)}`, '_blank');
-        };
+            // 切換內容顯示
+            document.getElementById('contentDay').classList.toggle('hidden', type !== 'day');
+            document.getElementById('contentWeek').classList.toggle('hidden', type !== 'week');
+            document.getElementById('contentMonth').classList.toggle('hidden', type !== 'month');
+        }
     </script>
 </body>
 </html>

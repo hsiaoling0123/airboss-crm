@@ -36,15 +36,14 @@
               </tr>
             </thead>
             <tbody id="customer-table-body" class="divide-y divide-gray-100 text-sm text-gray-700">
-              <!-- 範例資料列 -->
+              <!-- 範例資料列（無刪除按鈕） -->
               <tr class="hover:bg-gray-50 transition">
                 <td class="p-4 font-medium text-gray-900">王小明</td>
                 <td class="p-4">0912-345-678</td>
                 <td class="p-4">新北市板橋區文化路一段 100 號</td>
                 <td class="p-4"><span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-xs font-semibold">VIP</span></td>
-                <td class="p-4 text-center space-x-2">
+                <td class="p-4 text-center">
                   <button onclick="viewCustomerDetail('cust_001')" class="bg-gray-100 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-medium">查看詳情</button>
-                  <button onclick="deleteCustomer('cust_001')" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-medium">刪除</button>
                 </td>
               </tr>
             </tbody>
@@ -56,7 +55,7 @@
     <!-- ==================== 2. 客戶詳細資料頁面 (Detail View - 預設隱藏) ==================== -->
     <div id="customer-detail-view" class="hidden space-y-6">
       
-      <!-- 頂部返回與操作列 -->
+      <!-- 頂部返回與操作列（保留刪除按鈕） -->
       <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <button onclick="backToCustomerList()" class="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-medium text-sm">
           ← 返回客戶列表
@@ -178,7 +177,7 @@
       document.getElementById(`tab-btn-${tabName}`).className = "py-3 border-b-2 border-blue-600 text-blue-600 font-medium transition";
     }
 
-    // 刪除客戶資料函式
+    // 刪除客戶資料函式（保留在詳細頁供內部觸發）
     async function deleteCustomer(customerId) {
       if (!confirm("確定要刪除這位客戶嗎？此操作將會一併移除該客戶底下的設備與施工履歷紀錄！")) {
         return;

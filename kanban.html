@@ -474,13 +474,33 @@
         };
 
         window.switchPeriod = function(period) {
-            document.getElementById('btnPeriodDay').className = period === 'day' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer";
-            document.getElementById('btnPeriodWeek').className = period === 'week' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer";
-            document.getElementById('btnPeriodMonth').className = period === 'month' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer";
+            // 切換按鈕樣式
+            const btnDay = document.getElementById('btnPeriodDay');
+            const btnWeek = document.getElementById('btnPeriodWeek');
+            const btnMonth = document.getElementById('btnPeriodMonth');
 
-            document.getElementById('viewDay').classList.toggle('hidden', period !== 'day');
-            document.getElementById('viewWeek').classList.toggle('hidden', period !== 'week');
-            document.getElementById('viewMonth').classList.toggle('hidden', period !== 'month');
+            btnDay.className = period === 'day' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer";
+            btnWeek.className = period === 'week' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer";
+            btnMonth.className = period === 'month' ? "flex-1 py-2 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer" : "flex-1 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer";
+
+            // 切換檢視區塊顯示/隱藏
+            const viewDay = document.getElementById('viewDay');
+            const viewWeek = document.getElementById('viewWeek');
+            const viewMonth = document.getElementById('viewMonth');
+
+            if (period === 'day') {
+                viewDay.classList.remove('hidden');
+                viewWeek.classList.add('hidden');
+                viewMonth.classList.add('hidden');
+            } else if (period === 'week') {
+                viewDay.classList.add('hidden');
+                viewWeek.classList.remove('hidden');
+                viewMonth.classList.add('hidden');
+            } else if (period === 'month') {
+                viewDay.classList.add('hidden');
+                viewWeek.classList.add('hidden');
+                viewMonth.classList.remove('hidden');
+            }
         };
 
         window.openMapApp = function(address) {

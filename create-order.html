@@ -40,6 +40,24 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
+            <label class="block font-medium text-gray-700 mb-1">客戶來源 *</label>
+            <select id="order-source" class="w-full border rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none font-bold text-slate-700">
+              <option value="FB 粉絲團">🌐 FB 粉絲團</option>
+              <option value="Google 搜尋">🔍 Google 搜尋</option>
+              <option value="老客戶介紹">🤝 老客戶介紹</option>
+              <option value="LINE 官方帳號">💬 LINE 官方帳號</option>
+              <option value="路過看到 / 實體廣告">🏢 路過看到 / 實體廣告</option>
+              <option value="其他">📌 其他</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">服務項目 / 派工主旨 *</label>
+            <input type="text" id="order-title" placeholder="例如：日立冷氣定期深層清洗" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
             <label class="block font-medium text-gray-700 mb-1">預定施工日期 *</label>
             <input type="date" id="order-date" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
@@ -56,23 +74,18 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block font-medium text-gray-700 mb-1">服務項目 / 派工主旨 *</label>
-            <input type="text" id="order-title" placeholder="例如：日立冷氣定期深層清洗" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
-          </div>
-          <div>
             <label class="block font-medium text-gray-700 mb-1">報價金額 (NTD) *</label>
             <input type="number" id="order-amount" placeholder="例如：3500" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">指派施工技師</label>
+            <input type="text" id="order-tech" placeholder="例如：大師傅" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
         </div>
 
         <div>
           <label class="block font-medium text-gray-700 mb-1">施工地址 *</label>
           <input type="text" id="order-address" placeholder="例如：新北市板橋區文化路一段 100 號" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
-
-        <div>
-          <label class="block font-medium text-gray-700 mb-1">指派施工技師</label>
-          <input type="text" id="order-tech" placeholder="例如：大師傅" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
         </div>
 
         <div>
@@ -120,6 +133,7 @@
       return {
         name: document.getElementById('order-name').value.trim(),
         phone: document.getElementById('order-phone').value.trim(),
+        source: document.getElementById('order-source').value,
         date: document.getElementById('order-date').value,
         time: document.getElementById('order-time').value,
         tech: document.getElementById('order-tech').value.trim(),
@@ -172,53 +186,4 @@
       const data = getFormData();
 
       if (!data.name || !data.phone || !data.address || !data.title || !data.amount) {
-        alert('請填寫完整的派工與報價必要欄位！');
-        return;
-      }
-
-      let sharedCustomers = JSON.parse(localStorage.getItem('airboss_customers')) || [];
-      let existingCustomer = sharedCustomers.find(c => c.phone === data.phone);
-
-      const newLogItem = {
-        id: 'log_' + Date.now(),
-        date: data.date,
-        title: `${data.title} [${data.time}] (報價: $${data.amount})`,
-        tech: data.tech || '派工技師',
-        desc: data.desc || '由派工單自動同步建立',
-        photos: []
-      };
-
-      if (existingCustomer) {
-        existingCustomer.logs.unshift(newLogItem);
-        if (data.address && existingCustomer.address === '未填寫地址') {
-          existingCustomer.address = data.address;
-        }
-      } else {
-        const newCust = {
-          id: 'cust_' + Date.now(),
-          name: data.name,
-          phone: data.phone,
-          altPhone: '',
-          lineId: '',
-          email: '',
-          birthday: '',
-          source: '派工單匯入',
-          customerType: '一般',
-          address: data.address,
-          parking: '無',
-          adminPhone: '無',
-          notes: data.desc || '無',
-          equipment: [],
-          logs: [newLogItem]
-        };
-        sharedCustomers.push(newCust);
-      }
-
-      localStorage.setItem('airboss_customers', JSON.stringify(sharedCustomers));
-
-      alert('派工單已成功建立，並已自動同步至客戶與行程資料庫！');
-      window.location.href = 'index.html';
-    }
-  </script>
-</body>
-</html>
+        alert('請填寫完整的派工與報價必要欄

@@ -34,9 +34,9 @@
             </div>
 
             <div class="flex bg-slate-100 p-1 rounded-2xl text-[11px] font-bold text-slate-500">
-                <button onclick="setRange('today')" id="range-today" class="flex-1 py-1.5 rounded-xl bg-white text-sky-600 shadow-sm transition-all">每日</button>
-                <button onclick="setRange('week')" id="range-week" class="flex-1 py-1.5 rounded-xl transition-all">每週</button>
-                <button onclick="setRange('month')" id="range-month" class="flex-1 py-1.5 rounded-xl transition-all">每月</button>
+                <button onclick="setRange('today')" id="range-today" class="flex-1 py-1.5 rounded-xl bg-white text-sky-600 shadow-sm transition-all cursor-pointer">每日</button>
+                <button onclick="setRange('week')" id="range-week" class="flex-1 py-1.5 rounded-xl transition-all cursor-pointer">每週</button>
+                <button onclick="setRange('month')" id="range-month" class="flex-1 py-1.5 rounded-xl transition-all cursor-pointer">每月</button>
             </div>
 
             <div class="grid grid-cols-2 gap-2 text-center pt-1">
@@ -68,21 +68,8 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCfy9ARrE9wp-bCrABsFVb-qM8_sp9_wqs",
-            authDomain: "airboss-4f084.firebaseapp.com",
-            projectId: "airboss-4f084",
-            storageBucket: "airboss-4f084.firebasestorage.app",
-            messagingSenderId: "1067344741307",
-            appId: "1:1067344741307:web:15a54741a5bdb26e897a9e",
-            measurementId: "G-P9ZGJH366L"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        import { db } from "./firebase-config.js";
+        import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // 社群與行銷平台清單
         const platforms = [
@@ -122,7 +109,7 @@
                 return `
                     <label class="flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer ${p.color} ${isChecked ? 'opacity-50 line-through' : ''}">
                         <div class="flex items-center gap-2.5">
-                            <input type="checkbox" onchange="toggleTask('${p.id}')" ${isChecked ? 'checked' : ''} class="w-4 h-4 rounded-md border-slate-300 text-sky-500 focus:ring-sky-400">
+                            <input type="checkbox" onchange="toggleTask('${p.id}')" ${isChecked ? 'checked' : ''} class="w-4 h-4 rounded-md border-slate-300 text-sky-500 focus:ring-sky-400 cursor-pointer">
                             <span>${p.name}</span>
                         </div>
                         <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isChecked ? 'bg-emerald-500 text-white' : 'bg-white/80 text-slate-400'}">
@@ -182,9 +169,9 @@
         window.setRange = function(range) {
             currentRange = range;
             ['today', 'week', 'month'].forEach(r => {
-                document.getElementById(`range-${r}`).className = 'flex-1 py-1.5 rounded-xl transition-all text-slate-500';
+                document.getElementById(`range-${r}`).className = 'flex-1 py-1.5 rounded-xl transition-all text-slate-500 cursor-pointer';
             });
-            document.getElementById(`range-${range}`).className = 'flex-1 py-1.5 rounded-xl bg-white text-sky-600 shadow-sm font-bold';
+            document.getElementById(`range-${range}`).className = 'flex-1 py-1.5 rounded-xl bg-white text-sky-600 shadow-sm font-bold cursor-pointer';
 
             const labels = { 'today': '今日統計', 'week': '近 7 天統計', 'month': '近 30 天統計' };
             document.getElementById('statRangeLabel').innerText = labels[range];

@@ -149,10 +149,10 @@
         address: '新北市板橋區文化路一段 100 號',
         notes: '進屋需穿鞋套，假日禁止施工',
         equipment: [
-          { id: 'eq_01', location: '客廳 (AC-01)', model: '日立 RAS-63HK', capacity: '6.3 kW (2.8 匹 / R32)', date: '2023-05-15' }
+          { id: 'eq_01', location: '客廳 (AC-01)', model: '日立 RAS-63HK', capacity: '6.3 kW (2.8 匹 / R32)', date: '2023-05-15', warranty: '保固中', photos: ['https://via.placeholder.com/150'] }
         ],
         logs: [
-          { id: 'log_01', date: '2026-06-10', title: '定期深層清洗', tech: '大師傅', desc: '濾網及風輪清洗完畢，風量恢復正常，排水管測試順暢。' }
+          { id: 'log_01', date: '2026-06-10', title: '定期深層清洗', tech: '大師傅', desc: '濾網及風輪清洗完畢，風量恢復正常，排水管測試順暢。', photos: ['https://via.placeholder.com/150'] }
         ]
       }
     ];
@@ -213,7 +213,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // 渲染設備（加上點擊修改與刪除功能）
+    // 渲染設備列表（包含保固狀態與照片預覽）
     function renderEquipmentList(equipmentArray) {
       const grid = document.getElementById('equipment-grid');
       grid.innerHTML = '';
@@ -222,13 +222,27 @@
         return;
       }
       equipmentArray.forEach(eq => {
+        const warrantyClass = eq.warranty === '保固中' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600';
+        
+        let photosHtml = '';
+        if (eq.photos && eq.photos.length > 0) {
+          photosHtml = `
+            <div class="pt-2">
+              <p class="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">設備照片：</p>
+              <div class="flex gap-2 flex-wrap">
+                ${eq.photos.map(p => `<div class="w-16 h-16 bg-gray-100 rounded-lg border overflow-hidden"><img src="${p}" class="w-full h-full object-cover"></div>`).join('')}
+              </div>
+            </div>
+          `;
+        }
+
         const card = document.createElement('div');
         card.className = 'bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-3 relative hover:shadow-md transition';
         card.innerHTML = `
           <div class="flex justify-between items-center font-bold text-gray-800">
             <span class="text-base">${eq.location}</span>
             <div class="flex items-center gap-2">
-              <span class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-semibold">保固中</span>
+              <span class="text-xs ${warrantyClass} px-2.5 py-1 rounded-full font-semibold">${eq.warranty || '保固中'}</span>
               <button type="button" onclick="openEditEquipmentModal('${eq.id}')" class="text-xs bg-gray-100 hover:bg-blue-600 hover:text-white px-2.5 py-1 rounded-lg transition cursor-pointer">修改</button>
             </div>
           </div>
@@ -237,12 +251,13 @@
             <p>冷房能力：${eq.capacity}</p>
           </div>
           <p class="text-xs text-gray-400 pt-2 border-t">安裝日期：${eq.date}</p>
+          ${photosHtml}
         `;
         grid.appendChild(card);
       });
     }
 
-    // 渲染施工紀錄（加上點擊修改與刪除功能）
+    // 渲染施工紀錄（包含照片預覽）
     function renderServiceLogs(logsArray) {
       const list = document.getElementById('service-history-list');
       list.innerHTML = '';
@@ -251,6 +266,18 @@
         return;
       }
       logsArray.forEach(log => {
+        let photosHtml = '';
+        if (log.photos && log.photos.length > 0) {
+          photosHtml = `
+            <div class="pt-2">
+              <p class="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">施工照片記錄：</p>
+              <div class="flex gap-3 flex-wrap">
+                ${log.photos.map(p => `<div class="w-20 h-20 bg-gray-100 rounded-xl border border-gray-200 flex items-center justify-center overflow-hidden shadow-sm"><img src="${p}" class="w-full h-full object-cover"></div>`).join('')}
+              </div>
+            </div>
+          `;
+        }
+
         const item = document.createElement('div');
         item.className = 'bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4 relative hover:shadow-md transition';
         item.innerHTML = `
@@ -262,6 +289,7 @@
             </div>
           </div>
           <p class="text-sm text-gray-700 leading-relaxed"><strong>施工備註：</strong>${log.desc}</p>
+          ${photosHtml}
         `;
         list.appendChild(item);
       });
@@ -500,7 +528,7 @@
       alert('客戶基本資料已更新！');
     }
 
-    // 3. 開啟新增或修改冷氣設備 Modal
+    // 3. 開啟新增或修改冷氣設備 Modal（包含保固狀態下拉選單與照片上傳）
     function openAddEquipmentModal() {
       document.getElementById('modal-title').innerText = '新增冷氣設備';
       document.getElementById('modal-body').innerHTML = `
@@ -521,6 +549,17 @@
           <div>
             <label class="block font-medium text-gray-700 mb-1">安裝日期</label>
             <input type="date" id="eq-date" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">保固狀態</label>
+            <select id="eq-warranty" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+              <option value="保固中">保固中</option>
+              <option value="過保">過保</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">上傳設備照片</label>
+            <input type="file" id="eq-photos" multiple accept="image/*" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-750 hover:file:bg-blue-100">
           </div>
           <div class="flex justify-end gap-2 pt-2">
             <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">取消</button>
@@ -544,6 +583,7 @@
       document.getElementById('eq-model').value = eq.model || '';
       document.getElementById('eq-capacity').value = eq.capacity || '';
       document.getElementById('eq-date').value = eq.date || '';
+      document.getElementById('eq-warranty').value = eq.warranty || '保固中';
     }
 
     function saveEquipment() {
@@ -552,32 +592,46 @@
       const model = document.getElementById('eq-model').value.trim();
       const capacity = document.getElementById('eq-capacity').value.trim();
       const date = document.getElementById('eq-date').value;
+      const warranty = document.getElementById('eq-warranty').value;
+      const fileInput = document.getElementById('eq-photos');
 
       if (!location) {
         alert('請填寫安裝位置！');
         return;
       }
 
+      // 模擬讀取上傳照片
+      let photosArr = [];
+      if (fileInput.files && fileInput.files.length > 0) {
+        for (let i = 0; i < fileInput.files.length; i++) {
+          photosArr.push(URL.createObjectURL(fileInput.files[i]));
+        }
+      }
+
       const cust = customersData.find(c => c.id === currentActiveCustomerId);
       if (cust) {
         if (editId) {
-          // 修改現有設備
           const eq = cust.equipment.find(e => e.id === editId);
           if (eq) {
             eq.location = location;
             eq.model = model || '未填寫型號';
             eq.capacity = capacity || '未填寫規格';
             eq.date = date || new Date().toISOString().split('T')[0];
+            eq.warranty = warranty;
+            if (photosArr.length > 0) {
+              eq.photos = photosArr;
+            }
           }
           alert('冷氣設備已更新！');
         } else {
-          // 新增設備
           cust.equipment.push({
             id: 'eq_' + Date.now(),
             location,
             model: model || '未填寫型號',
             capacity: capacity || '未填寫規格',
-            date: date || new Date().toISOString().split('T')[0]
+            date: date || new Date().toISOString().split('T')[0],
+            warranty,
+            photos: photosArr.length > 0 ? photosArr : ['https://via.placeholder.com/150']
           });
           alert('成功新增冷氣設備！');
         }
@@ -587,7 +641,7 @@
       closeActionModal();
     }
 
-    // 4. 開啟新增或修改施工紀錄 Modal
+    // 4. 開啟新增或修改施工紀錄 Modal（包含照片上傳功能）
     function openAddServiceLogModal() {
       document.getElementById('modal-title').innerText = '新增施工與服務紀錄';
       document.getElementById('modal-body').innerHTML = `
@@ -608,6 +662,10 @@
           <div>
             <label class="block font-medium text-gray-700 mb-1">施工備註說明</label>
             <textarea id="log-desc" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="3" placeholder="記錄清洗狀況、更換零件或測試數值..."></textarea>
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">上傳施工照片</label>
+            <input type="file" id="log-photos" multiple accept="image/*" class="w-full border rounded-lg px-3 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
           </div>
           <div class="flex justify-end gap-2 pt-2">
             <button type="button" onclick="closeActionModal()" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">取消</button>
@@ -639,32 +697,42 @@
       const title = document.getElementById('log-title').value.trim();
       const tech = document.getElementById('log-tech').value.trim();
       const desc = document.getElementById('log-desc').value.trim();
+      const fileInput = document.getElementById('log-photos');
 
       if (!title) {
         alert('請填寫服務項目主題！');
         return;
       }
 
+      let photosArr = [];
+      if (fileInput.files && fileInput.files.length > 0) {
+        for (let i = 0; i < fileInput.files.length; i++) {
+          photosArr.push(URL.createObjectURL(fileInput.files[i]));
+        }
+      }
+
       const cust = customersData.find(c => c.id === currentActiveCustomerId);
       if (cust) {
         if (editId) {
-          // 修改現有紀錄
           const log = cust.logs.find(l => l.id === editId);
           if (log) {
             log.date = date || new Date().toISOString().split('T')[0];
             log.title = title;
             log.tech = tech || '派工技師';
             log.desc = desc || '無備註說明';
+            if (photosArr.length > 0) {
+              log.photos = photosArr;
+            }
           }
           alert('施工紀錄已更新！');
         } else {
-          // 新增紀錄
           cust.logs.unshift({
             id: 'log_' + Date.now(),
             date: date || new Date().toISOString().split('T')[0],
             title,
             tech: tech || '派工技師',
-            desc: desc || '無備註說明'
+            desc: desc || '無備註說明',
+            photos: photosArr.length > 0 ? photosArr : ['https://via.placeholder.com/150']
           });
           alert('成功新增施工紀錄！');
         }

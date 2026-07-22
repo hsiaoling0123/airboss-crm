@@ -18,7 +18,7 @@
         <h2 class="text-xl font-bold text-gray-800">客戶資料管理</h2>
         <div class="flex items-center gap-2 w-full sm:w-auto">
           <input type="text" id="search-customer" placeholder="搜尋姓名、電話、地址..." class="px-4 py-2 border rounded-lg w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-          <button onclick="openAddCustomerModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium whitespace-nowrap">+ 新增客戶</button>
+          <button type="button" onclick="openAddCustomerModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium whitespace-nowrap cursor-pointer">+ 新增客戶</button>
         </div>
       </div>
 
@@ -43,7 +43,7 @@
                 <td class="p-4">新北市板橋區文化路一段 100 號</td>
                 <td class="p-4"><span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-xs font-semibold">VIP</span></td>
                 <td class="p-4 text-center">
-                  <button type="button" onclick="viewCustomerDetail('cust_001')" class="bg-gray-100 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-medium cursor-pointer relative z-10">查看詳情</button>
+                  <button type="button" onclick="viewCustomerDetail('cust_001')" class="bg-gray-100 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-lg transition text-xs font-medium cursor-pointer">查看詳情</button>
                 </td>
               </tr>
             </tbody>
@@ -57,20 +57,20 @@
       
       <!-- 頂部返回與操作列 -->
       <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-        <button type="button" onclick="backToCustomerList()" class="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-medium text-sm cursor-pointer relative z-10">
+        <button type="button" onclick="backToCustomerList()" class="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-medium text-sm cursor-pointer">
           ← 返回客戶列表
         </button>
         <div class="flex gap-2">
-          <button type="button" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition cursor-pointer relative z-10">編輯基本資料</button>
-          <button type="button" onclick="deleteCustomer('cust_001')" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer relative z-10">刪除客戶</button>
+          <button type="button" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition cursor-pointer">編輯基本資料</button>
+          <button type="button" onclick="deleteCustomer('cust_001')" class="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer">刪除客戶</button>
         </div>
       </div>
 
       <!-- 分頁籤切換按鈕 -->
       <div class="flex border-b border-gray-200 gap-8 text-sm font-medium bg-white px-4 rounded-xl shadow-sm border border-gray-100">
-        <button type="button" onclick="switchTab('info')" id="tab-btn-info" class="py-3 border-b-2 border-blue-600 text-blue-600 transition cursor-pointer relative z-10">基本與現場資訊</button>
-        <button type="button" onclick="switchTab('equipment')" id="tab-btn-equipment" class="py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition cursor-pointer relative z-10">冷氣設備履歷</button>
-        <button type="button" onclick="switchTab('history')" id="tab-btn-history" class="py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition cursor-pointer relative z-10">施工歷程與照片</button>
+        <button type="button" onclick="switchTab('info')" id="tab-btn-info" class="py-3 border-b-2 border-blue-600 text-blue-600 transition cursor-pointer">基本與現場資訊</button>
+        <button type="button" onclick="switchTab('equipment')" id="tab-btn-equipment" class="py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition cursor-pointer">冷氣設備履歷</button>
+        <button type="button" onclick="switchTab('history')" id="tab-btn-history" class="py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition cursor-pointer">施工歷程與照片</button>
       </div>
 
       <!-- 標籤內容區塊 1：基本與現場資訊 -->
@@ -101,7 +101,7 @@
       <div id="tab-content-equipment" class="hidden space-y-4">
         <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100">
           <h3 class="font-bold text-gray-800 text-base">設備清單管理</h3>
-          <button type="button" onclick="openAddEquipmentModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition cursor-pointer relative z-10">+ 新增冷氣設備</button>
+          <button type="button" onclick="openAddEquipmentModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition cursor-pointer">+ 新增冷氣設備</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="equipment-grid">
           <!-- 設備卡片範例 -->
@@ -123,7 +123,7 @@
       <div id="tab-content-history" class="hidden space-y-4">
         <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100">
           <h3 class="font-bold text-gray-800 text-base">歷次服務與施工照片</h3>
-          <button type="button" onclick="openAddServiceLogModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition cursor-pointer relative z-10">+ 新增施工紀錄</button>
+          <button type="button" onclick="openAddServiceLogModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition cursor-pointer">+ 新增施工紀錄</button>
         </div>
         
         <div class="space-y-4" id="service-history-list">
@@ -153,48 +153,62 @@
 
   <!-- ==================== JavaScript 切換與互動邏輯 ==================== -->
   <script>
-    // 切換至詳細資料頁
-    function viewCustomerDetail(customerId) {
-      document.getElementById('customer-list-view').classList.add('hidden');
-      document.getElementById('customer-detail-view').classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    // 確保全域可以呼叫
+    window.viewCustomerDetail = function(customerId) {
+      const listView = document.getElementById('customer-list-view');
+      const detailView = document.getElementById('customer-detail-view');
+      if (listView && detailView) {
+        listView.classList.add('hidden');
+        detailView.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
 
-    // 返回列表頁
-    function backToCustomerList() {
-      document.getElementById('customer-detail-view').classList.add('hidden');
-      document.getElementById('customer-list-view').classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.backToCustomerList = function() {
+      const listView = document.getElementById('customer-list-view');
+      const detailView = document.getElementById('customer-detail-view');
+      if (listView && detailView) {
+        detailView.classList.add('hidden');
+        listView.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
 
-    // 詳細頁內部分頁籤切換
-    function switchTab(tabName) {
+    window.switchTab = function(tabName) {
       ['info', 'equipment', 'history'].forEach(t => {
-        document.getElementById(`tab-content-${t}`).classList.add('hidden');
-        document.getElementById(`tab-btn-${t}`).className = "py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium transition cursor-pointer relative z-10";
+        const content = document.getElementById(`tab-content-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (content && btn) {
+          if (t === tabName) {
+            content.classList.remove('hidden');
+            btn.className = "py-3 border-b-2 border-blue-600 text-blue-600 font-medium transition cursor-pointer";
+          } else {
+            content.classList.add('hidden');
+            btn.className = "py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition cursor-pointer";
+          }
+        }
       });
-      document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
-      document.getElementById(`tab-btn-${tabName}`).className = "py-3 border-b-2 border-blue-600 text-blue-600 font-medium transition cursor-pointer relative z-10";
-    }
+    };
 
-    // 刪除客戶資料函式
-    async function deleteCustomer(customerId) {
+    window.deleteCustomer = function(customerId) {
       if (!confirm("確定要刪除這位客戶嗎？此操作將會一併移除該客戶底下的設備與施工履歷紀錄！")) {
         return;
       }
+      alert("客戶資料已成功刪除！");
+      window.backToCustomerList();
+    };
 
-      try {
-        // 串接 Firebase Firestore 刪除指令（未來可解開註解）
-        // await firebase.firestore().collection('customers').doc(customerId).delete();
+    window.openAddCustomerModal = function() {
+      alert("開啟新增客戶視窗");
+    };
 
-        alert("客戶資料已成功刪除！");
-        backToCustomerList();
-        // loadCustomers(); // 重新載入列表
-      } catch (error) {
-        console.error("刪除失敗：", error);
-        alert("刪除失敗，請稍後再試。");
-      }
-    }
+    window.openAddEquipmentModal = function() {
+      alert("開啟新增冷氣設備視窗");
+    };
+
+    window.openAddServiceLogModal = function() {
+      alert("開啟新增施工紀錄視窗");
+    };
   </script>
 </body>
 </html>
